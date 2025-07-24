@@ -1,9 +1,9 @@
 {
-  "_hash": "ucVT6LCUFs-kEYtzcIs4RGwZKf9CZJtrfDQlG7SIyDY",
+  "_hash": "7Kr3BSEz2VBOHUmQeirr8lg2XSLHHsB63kk2m5b8tZ0",
   "project": {
-    "rootDir": "/Users/troye/code/new"
+    "rootDir": "/Users/troye/code/troye/new-care"
   },
   "versions": {
-    "nuxt": "3.17.5"
+    "nuxt": "4.0.1"
   }
 }

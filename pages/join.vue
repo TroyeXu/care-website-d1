@@ -37,7 +37,7 @@
       </q-card-section>
       <q-separator />
       <q-card-actions align="right">
-        <q-btn color="primary" to="/register" label="立即加入" />
+        <q-btn color="primary" to="/auth/register" label="立即加入" />
       </q-card-actions>
     </q-card>
   </q-page>

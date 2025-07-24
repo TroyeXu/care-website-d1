@@ -49,6 +49,34 @@
       "nuxt": [
         "../node_modules/nuxt"
       ],
+      "vue-i18n": [
+        "../node_modules/vue-i18n/dist/vue-i18n",
+        "../node_modules/vue-i18n"
+      ],
+      "@intlify/shared": [
+        "../node_modules/@intlify/shared/dist/shared",
+        "../node_modules/@intlify/shared"
+      ],
+      "@intlify/message-compiler": [
+        "../node_modules/@intlify/message-compiler/dist/message-compiler",
+        "../node_modules/@intlify/message-compiler"
+      ],
+      "@intlify/core-base": [
+        "../node_modules/@intlify/core-base/dist/core-base",
+        "../node_modules/@intlify/core-base"
+      ],
+      "@intlify/core": [
+        "../node_modules/@intlify/core/dist/core.node",
+        "../node_modules/@intlify/core"
+      ],
+      "@intlify/utils/h3": [
+        "../node_modules/@intlify/utils/dist/h3",
+        "../node_modules/@intlify/utils"
+      ],
+      "ufo": [
+        "../node_modules/ufo/dist/index",
+        "../node_modules/ufo"
+      ],
       "~": [
         ".."
       ],
@@ -76,18 +104,6 @@
       "#shared": [
         "../shared"
       ],
-      "assets": [
-        "../assets"
-      ],
-      "assets/*": [
-        "../assets/*"
-      ],
-      "public": [
-        "../public"
-      ],
-      "public/*": [
-        "../public/*"
-      ],
       "#app": [
         "../node_modules/nuxt/dist/app"
       ],
@@ -103,32 +119,17 @@
       "#pwa": [
         "../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index"
       ],
-      "vue-i18n": [
-        "../node_modules/vue-i18n/dist/vue-i18n"
-      ],
-      "@intlify/shared": [
-        "../node_modules/@intlify/shared/dist/shared"
-      ],
-      "@intlify/message-compiler": [
-        "../node_modules/@intlify/message-compiler/dist/message-compiler"
-      ],
-      "@intlify/core-base": [
-        "../node_modules/@intlify/core-base/dist/core-base"
-      ],
-      "@intlify/core": [
-        "../node_modules/@intlify/core/dist/core.node"
-      ],
-      "@intlify/utils/h3": [
-        "../node_modules/@intlify/utils/dist/h3"
-      ],
-      "ufo": [
-        "../node_modules/ufo/dist/index"
-      ],
-      "is-https": [
-        "../node_modules/is-https/dist/index"
-      ],
       "#i18n": [
         "../node_modules/@nuxtjs/i18n/dist/runtime/composables/index"
+      ],
+      "#i18n-kit": [
+        "../node_modules/@nuxtjs/i18n/dist/runtime/kit"
+      ],
+      "#i18n-kit/*": [
+        "../node_modules/@nuxtjs/i18n/dist/runtime/kit/*"
+      ],
+      "#internal-i18n-types": [
+        "../node_modules/@nuxtjs/i18n/dist/types"
       ],
       "#sitemap": [
         "../node_modules/@nuxtjs/sitemap/dist/runtime"
@@ -136,17 +137,23 @@
       "#sitemap/*": [
         "../node_modules/@nuxtjs/sitemap/dist/runtime/*"
       ],
+      "vee-validate": [
+        "../node_modules/vee-validate/dist/vee-validate"
+      ],
+      "@vee-validate/yup": [
+        "../node_modules/@vee-validate/yup/dist/vee-validate-yup"
+      ],
       "#vue-router": [
         "../node_modules/vue-router"
       ],
       "#unhead/composables": [
-        "../node_modules/nuxt/dist/head/runtime/composables/v3"
+        "../node_modules/nuxt/dist/head/runtime/composables"
       ],
       "#imports": [
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/dev.json"
+        "./manifest/meta/dev"
       ],
       "#components": [
         "./components"
@@ -167,7 +174,7 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "strict": true,
-    "noUncheckedIndexedAccess": false,
+    "noUncheckedIndexedAccess": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "module": "preserve",
@@ -187,9 +194,27 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "../**/*",
-    "../.config/nuxt.*",
+    "../i18n/**/*",
     "./nuxt.d.ts",
+    "../**/*",
+    "../modules/*/runtime/**/*",
+    "../layers/*/app/**/*",
+    "../layers/*/modules/*/runtime/**/*",
+    "../shared/**/*.d.ts",
+    "../modules/*/shared/**/*.d.ts",
+    "../layers/*/shared/**/*.d.ts",
+    "../*.d.ts",
+    "../layers/*/*.d.ts",
+    "./nuxt.node.d.ts",
+    "../modules/*.*",
+    "../nuxt.config.*",
+    "../.config/nuxt.*",
+    "../layers/*/nuxt.config.*",
+    "../layers/*/.config/nuxt.*",
+    "../layers/*/modules/**/*",
+    "../shared/**/*",
+    "../modules/*/shared/**/*",
+    "../layers/*/shared/**/*",
     "../node_modules/@pinia/nuxt/runtime",
     "../node_modules/@pinia/nuxt/dist/runtime",
     "../node_modules/@vite-pwa/nuxt/runtime",
@@ -202,15 +227,14 @@
     "../node_modules/nuxt-site-config/dist/dist/runtime",
     "../node_modules/@nuxtjs/sitemap/runtime",
     "../node_modules/@nuxtjs/sitemap/dist/runtime",
+    "../node_modules/@vee-validate/nuxt/runtime",
+    "../node_modules/@vee-validate/nuxt/dist/runtime",
     "../node_modules/@nuxt/devtools/runtime",
     "../node_modules/@nuxt/devtools/dist/runtime",
     "../node_modules/@nuxt/telemetry/runtime",
-    "../node_modules/@nuxt/telemetry/dist/runtime",
-    ".."
+    "../node_modules/@nuxt/telemetry/dist/runtime"
   ],
   "exclude": [
-    "../dist",
-    "../.data",
     "../node_modules",
     "../node_modules/nuxt/node_modules",
     "../node_modules/@pinia/nuxt/node_modules",
@@ -219,8 +243,14 @@
     "../node_modules/nuxt-quasar-ui/node_modules",
     "../node_modules/nuxt-site-config/node_modules",
     "../node_modules/@nuxtjs/sitemap/node_modules",
+    "../node_modules/@vee-validate/nuxt/node_modules",
     "../node_modules/@nuxt/devtools/node_modules",
     "../node_modules/@nuxt/telemetry/node_modules",
+    "../dist",
+    "../.data",
+    "../modules/*/runtime/server/**/*",
+    "../layers/*/server/**/*",
+    "../layers/*/modules/*/runtime/server/**/*",
     "../node_modules/@pinia/nuxt/runtime/server",
     "../node_modules/@pinia/nuxt/dist/runtime/server",
     "../node_modules/@vite-pwa/nuxt/runtime/server",
@@ -233,10 +263,11 @@
     "../node_modules/nuxt-site-config/dist/dist/runtime/server",
     "../node_modules/@nuxtjs/sitemap/runtime/server",
     "../node_modules/@nuxtjs/sitemap/dist/runtime/server",
+    "../node_modules/@vee-validate/nuxt/runtime/server",
+    "../node_modules/@vee-validate/nuxt/dist/runtime/server",
     "../node_modules/@nuxt/devtools/runtime/server",
     "../node_modules/@nuxt/devtools/dist/runtime/server",
     "../node_modules/@nuxt/telemetry/runtime/server",
-    "../node_modules/@nuxt/telemetry/dist/runtime/server",
-    "../.output"
+    "../node_modules/@nuxt/telemetry/dist/runtime/server"
   ]
 }

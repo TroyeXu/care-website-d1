@@ -12,7 +12,9 @@ type HydrationStrategies = {
 }
 type LazyComponent<T> = (T & DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }>)
 interface _GlobalComponents {
-      'CaregiverCard': typeof import("../components/CaregiverCard.vue")['default']
+      'ApiModeToggle': typeof import("../components/ApiModeToggle.vue")['default']
+    'BookingForm': typeof import("../components/BookingForm.vue")['default']
+    'CaregiverCard': typeof import("../components/CaregiverCard.vue")['default']
     'ConsultationForm': typeof import("../components/ConsultationForm.vue")['default']
     'HelloWorld': typeof import("../components/HelloWorld.vue")['default']
     'LoginForm': typeof import("../components/LoginForm.vue")['default']
@@ -164,6 +166,10 @@ interface _GlobalComponents {
     'QVideo': typeof import("quasar")['QVideo']
     'QVirtualScroll': typeof import("quasar")['QVirtualScroll']
     'SiteLink': typeof import("../node_modules/nuxt-site-config/dist/runtime/nuxt/component/SiteLink.vue")['default']
+    'ErrorMessage': typeof import("vee-validate")['ErrorMessage']
+    'Field': typeof import("vee-validate")['Field']
+    'FieldArray': typeof import("vee-validate")['FieldArray']
+    'Form': typeof import("vee-validate")['Form']
     'NuxtPage': typeof import("../node_modules/nuxt/dist/pages/runtime/page")['default']
     'NoScript': typeof import("../node_modules/nuxt/dist/head/runtime/components")['NoScript']
     'Link': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Link']
@@ -175,8 +181,10 @@ interface _GlobalComponents {
     'Html': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
     'Body': typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
     'NuxtIsland': typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
-    'NuxtRouteAnnouncer': IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
-      'LazyCaregiverCard': LazyComponent<typeof import("../components/CaregiverCard.vue")['default']>
+    'NuxtRouteAnnouncer': typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']
+      'LazyApiModeToggle': LazyComponent<typeof import("../components/ApiModeToggle.vue")['default']>
+    'LazyBookingForm': LazyComponent<typeof import("../components/BookingForm.vue")['default']>
+    'LazyCaregiverCard': LazyComponent<typeof import("../components/CaregiverCard.vue")['default']>
     'LazyConsultationForm': LazyComponent<typeof import("../components/ConsultationForm.vue")['default']>
     'LazyHelloWorld': LazyComponent<typeof import("../components/HelloWorld.vue")['default']>
     'LazyLoginForm': LazyComponent<typeof import("../components/LoginForm.vue")['default']>
@@ -328,6 +336,10 @@ interface _GlobalComponents {
     'LazyQVideo': LazyComponent<typeof import("quasar")['QVideo']>
     'LazyQVirtualScroll': LazyComponent<typeof import("quasar")['QVirtualScroll']>
     'LazySiteLink': LazyComponent<typeof import("../node_modules/nuxt-site-config/dist/runtime/nuxt/component/SiteLink.vue")['default']>
+    'LazyErrorMessage': LazyComponent<typeof import("vee-validate")['ErrorMessage']>
+    'LazyField': LazyComponent<typeof import("vee-validate")['Field']>
+    'LazyFieldArray': LazyComponent<typeof import("vee-validate")['FieldArray']>
+    'LazyForm': LazyComponent<typeof import("vee-validate")['Form']>
     'LazyNuxtPage': LazyComponent<typeof import("../node_modules/nuxt/dist/pages/runtime/page")['default']>
     'LazyNoScript': LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['NoScript']>
     'LazyLink': LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Link']>
@@ -339,13 +351,15 @@ interface _GlobalComponents {
     'LazyHtml': LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']>
     'LazyBody': LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']>
     'LazyNuxtIsland': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']>
-    'LazyNuxtRouteAnnouncer': LazyComponent<IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>>
+    'LazyNuxtRouteAnnouncer': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
 }
 
 declare module 'vue' {
   export interface GlobalComponents extends _GlobalComponents { }
 }
 
+export const ApiModeToggle: typeof import("../components/ApiModeToggle.vue")['default']
+export const BookingForm: typeof import("../components/BookingForm.vue")['default']
 export const CaregiverCard: typeof import("../components/CaregiverCard.vue")['default']
 export const ConsultationForm: typeof import("../components/ConsultationForm.vue")['default']
 export const HelloWorld: typeof import("../components/HelloWorld.vue")['default']
@@ -498,6 +512,10 @@ export const QUploaderAddTrigger: typeof import("quasar")['QUploaderAddTrigger']
 export const QVideo: typeof import("quasar")['QVideo']
 export const QVirtualScroll: typeof import("quasar")['QVirtualScroll']
 export const SiteLink: typeof import("../node_modules/nuxt-site-config/dist/runtime/nuxt/component/SiteLink.vue")['default']
+export const ErrorMessage: typeof import("vee-validate")['ErrorMessage']
+export const Field: typeof import("vee-validate")['Field']
+export const FieldArray: typeof import("vee-validate")['FieldArray']
+export const Form: typeof import("vee-validate")['Form']
 export const NuxtPage: typeof import("../node_modules/nuxt/dist/pages/runtime/page")['default']
 export const NoScript: typeof import("../node_modules/nuxt/dist/head/runtime/components")['NoScript']
 export const Link: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Link']
@@ -509,7 +527,9 @@ export const Head: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
-export const NuxtRouteAnnouncer: IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
+export const NuxtRouteAnnouncer: typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']
+export const LazyApiModeToggle: LazyComponent<typeof import("../components/ApiModeToggle.vue")['default']>
+export const LazyBookingForm: LazyComponent<typeof import("../components/BookingForm.vue")['default']>
 export const LazyCaregiverCard: LazyComponent<typeof import("../components/CaregiverCard.vue")['default']>
 export const LazyConsultationForm: LazyComponent<typeof import("../components/ConsultationForm.vue")['default']>
 export const LazyHelloWorld: LazyComponent<typeof import("../components/HelloWorld.vue")['default']>
@@ -662,6 +682,10 @@ export const LazyQUploaderAddTrigger: LazyComponent<typeof import("quasar")['QUp
 export const LazyQVideo: LazyComponent<typeof import("quasar")['QVideo']>
 export const LazyQVirtualScroll: LazyComponent<typeof import("quasar")['QVirtualScroll']>
 export const LazySiteLink: LazyComponent<typeof import("../node_modules/nuxt-site-config/dist/runtime/nuxt/component/SiteLink.vue")['default']>
+export const LazyErrorMessage: LazyComponent<typeof import("vee-validate")['ErrorMessage']>
+export const LazyField: LazyComponent<typeof import("vee-validate")['Field']>
+export const LazyFieldArray: LazyComponent<typeof import("vee-validate")['FieldArray']>
+export const LazyForm: LazyComponent<typeof import("vee-validate")['Form']>
 export const LazyNuxtPage: LazyComponent<typeof import("../node_modules/nuxt/dist/pages/runtime/page")['default']>
 export const LazyNoScript: LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['NoScript']>
 export const LazyLink: LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Link']>
@@ -673,6 +697,6 @@ export const LazyHead: LazyComponent<typeof import("../node_modules/nuxt/dist/he
 export const LazyHtml: LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']>
 export const LazyBody: LazyComponent<typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']>
 export const LazyNuxtIsland: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']>
-export const LazyNuxtRouteAnnouncer: LazyComponent<IslandComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>>
+export const LazyNuxtRouteAnnouncer: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/server-placeholder")['default']>
 
 export const componentNames: string[]

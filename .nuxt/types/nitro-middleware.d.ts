@@ -1,4 +1,9 @@
-export type MiddlewareKey = never
+export type MiddlewareKey = "auth" | "caregiver" | "patient"
+declare module 'nitropack/types' {
+  interface NitroRouteConfig {
+    appMiddleware?: MiddlewareKey | MiddlewareKey[] | Record<MiddlewareKey, boolean>
+  }
+}
 declare module 'nitropack' {
   interface NitroRouteConfig {
     appMiddleware?: MiddlewareKey | MiddlewareKey[] | Record<MiddlewareKey, boolean>

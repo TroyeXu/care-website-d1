@@ -5,9 +5,12 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   // 添加相容性日期
   compatibilityDate: '2025-06-14',
+  // Nuxt 4 不再需要 future.compatibilityVersion 設定
   runtimeConfig: {
     public: {
       baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+      supabaseUrl: process.env.SUPABASE_URL,
+      supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
     },
   },
   modules: [
@@ -16,6 +19,7 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     'nuxt-quasar-ui',
     '@nuxtjs/sitemap',
+    '@vee-validate/nuxt',
   ],
   css: [
     'quasar/fonts',
@@ -45,11 +49,22 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
     defaultLocale: 'zh',
     locales: [
-      { code: 'en', language: 'en', file: 'en.json', name: 'English' },
-      { code: 'zh', language: 'zh-TW', file: 'zh.json', name: '中文' },
+      { 
+        code: 'en', 
+        language: 'en', 
+        file: 'en.json', 
+        name: 'English',
+        iso: 'en'
+      },
+      { 
+        code: 'zh', 
+        language: 'zh-TW', 
+        file: 'zh.json', 
+        name: '中文',
+        iso: 'zh-TW'
+      },
     ],
     lazy: true,
-    langDir: 'locales',
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_redirected',

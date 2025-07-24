@@ -8,8 +8,8 @@ export const localeCodes =  [
 ]
 
 export const localeLoaders = {
-  "en": [{ key: "../locales/en.json", load: () => import("../locales/en.json" /* webpackChunkName: "locale__Users_troye_code_new_locales_en_json" */), cache: true }],
-  "zh": [{ key: "../locales/zh.json", load: () => import("../locales/zh.json" /* webpackChunkName: "locale__Users_troye_code_new_locales_zh_json" */), cache: true }]
+  "en": [{ key: "../locales/en.json", load: () => import("../locales/en.json" /* webpackChunkName: "locale__Users_troye_code_troye_new_care_locales_en_json" */), cache: true }],
+  "zh": [{ key: "../locales/zh.json", load: () => import("../locales/zh.json" /* webpackChunkName: "locale__Users_troye_code_troye_new_care_locales_zh_json" */), cache: true }]
 }
 
 export const vueI18nConfigs = [
@@ -44,7 +44,7 @@ export const nuxtI18nOptions = {
       "language": "en",
       "name": "English",
       "files": [
-        "/Users/troye/code/new/locales/en.json"
+        "/Users/troye/code/troye/new-care/locales/en.json"
       ]
     },
     {
@@ -52,7 +52,7 @@ export const nuxtI18nOptions = {
       "language": "zh-TW",
       "name": "中文",
       "files": [
-        "/Users/troye/code/new/locales/zh.json"
+        "/Users/troye/code/troye/new-care/locales/zh.json"
       ]
     }
   ],
@@ -94,7 +94,7 @@ export const normalizedLocales = [
     "name": "English",
     "files": [
       {
-        "path": "/Users/troye/code/new/locales/en.json"
+        "path": "/Users/troye/code/troye/new-care/locales/en.json"
       }
     ]
   },
@@ -104,7 +104,7 @@ export const normalizedLocales = [
     "name": "中文",
     "files": [
       {
-        "path": "/Users/troye/code/new/locales/zh.json"
+        "path": "/Users/troye/code/troye/new-care/locales/zh.json"
       }
     ]
   }

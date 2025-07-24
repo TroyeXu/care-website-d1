@@ -3,6 +3,10 @@ import type { CustomAppConfig } from 'nuxt/schema'
 import type { Defu } from 'defu'
 
 
+declare global {
+  const defineAppConfig: <T>(appConfig: T) => T
+}
+
 declare const inlineConfig = {
   "nuxt": {}
 }

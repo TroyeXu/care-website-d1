@@ -7,12 +7,15 @@ declare global {
   const abortNavigation: typeof import('../../node_modules/nuxt/dist/app/composables/router')['abortNavigation']
   const acceptHMRUpdate: typeof import('../../node_modules/@pinia/nuxt/dist/runtime/composables')['acceptHMRUpdate']
   const addRouteMiddleware: typeof import('../../node_modules/nuxt/dist/app/composables/router')['addRouteMiddleware']
+  const bookingSchema: typeof import('../../utils/validationSchemas')['bookingSchema']
   const callOnce: typeof import('../../node_modules/nuxt/dist/app/composables/once')['callOnce']
   const cancelIdleCallback: typeof import('../../node_modules/nuxt/dist/app/compat/idle-callback')['cancelIdleCallback']
   const clearError: typeof import('../../node_modules/nuxt/dist/app/composables/error')['clearError']
   const clearNuxtData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['clearNuxtData']
   const clearNuxtState: typeof import('../../node_modules/nuxt/dist/app/composables/state')['clearNuxtState']
+  const commonValidations: typeof import('../../utils/validationSchemas')['commonValidations']
   const computed: typeof import('vue')['computed']
+  const contactSchema: typeof import('../../utils/validationSchemas')['contactSchema']
   const createError: typeof import('../../node_modules/nuxt/dist/app/composables/error')['createError']
   const createSitePathResolver: typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/utils')['createSitePathResolver']
   const customRef: typeof import('vue')['customRef']
@@ -22,6 +25,7 @@ declare global {
   const defineI18nConfig: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['defineI18nConfig']
   const defineI18nLocale: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['defineI18nLocale']
   const defineI18nRoute: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['defineI18nRoute']
+  const defineLazyHydrationComponent: typeof import('../../node_modules/nuxt/dist/app/composables/lazy-hydration')['defineLazyHydrationComponent']
   const defineNuxtComponent: typeof import('../../node_modules/nuxt/dist/app/composables/component')['defineNuxtComponent']
   const defineNuxtLink: typeof import('../../node_modules/nuxt/dist/app/components/nuxt-link')['defineNuxtLink']
   const defineNuxtPlugin: typeof import('../../node_modules/nuxt/dist/app/nuxt')['defineNuxtPlugin']
@@ -36,6 +40,7 @@ declare global {
   const getAppManifest: typeof import('../../node_modules/nuxt/dist/app/composables/manifest')['getAppManifest']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getMockDataForStore: typeof import('../../utils/mockData')['getMockDataForStore']
   const getRouteRules: typeof import('../../node_modules/nuxt/dist/app/composables/manifest')['getRouteRules']
   const h: typeof import('vue')['h']
   const hasInjectionContext: typeof import('vue')['hasInjectionContext']
@@ -51,8 +56,16 @@ declare global {
   const isVue2: typeof import('../../node_modules/nuxt/dist/app/compat/vue-demi')['isVue2']
   const isVue3: typeof import('../../node_modules/nuxt/dist/app/compat/vue-demi')['isVue3']
   const loadPayload: typeof import('../../node_modules/nuxt/dist/app/composables/payload')['loadPayload']
+  const loginSchema: typeof import('../../utils/validationSchemas')['loginSchema']
   const markRaw: typeof import('vue')['markRaw']
   const mergeModels: typeof import('vue')['mergeModels']
+  const mockBookings: typeof import('../../utils/mockData')['mockBookings']
+  const mockCaregivers: typeof import('../../utils/mockData')['mockCaregivers']
+  const mockCostModifiers: typeof import('../../utils/mockData')['mockCostModifiers']
+  const mockPayments: typeof import('../../utils/mockData')['mockPayments']
+  const mockReviews: typeof import('../../utils/mockData')['mockReviews']
+  const mockServiceTypes: typeof import('../../utils/mockData')['mockServiceTypes']
+  const mockUsers: typeof import('../../utils/mockData')['mockUsers']
   const navigateTo: typeof import('../../node_modules/nuxt/dist/app/composables/router')['navigateTo']
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
@@ -72,12 +85,18 @@ declare global {
   const onServerPrefetch: typeof import('vue')['onServerPrefetch']
   const onUnmounted: typeof import('vue')['onUnmounted']
   const onUpdated: typeof import('vue')['onUpdated']
+  const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
+  const passwordChangeSchema: typeof import('../../utils/validationSchemas')['passwordChangeSchema']
+  const passwordResetSchema: typeof import('../../utils/validationSchemas')['passwordResetSchema']
+  const paymentSchema: typeof import('../../utils/validationSchemas')['paymentSchema']
   const pinia: typeof import('../../stores/index')['pinia']
   const prefetchComponents: typeof import('../../node_modules/nuxt/dist/app/composables/preload')['prefetchComponents']
   const preloadComponents: typeof import('../../node_modules/nuxt/dist/app/composables/preload')['preloadComponents']
   const preloadPayload: typeof import('../../node_modules/nuxt/dist/app/composables/payload')['preloadPayload']
   const preloadRouteComponents: typeof import('../../node_modules/nuxt/dist/app/composables/preload')['preloadRouteComponents']
   const prerenderRoutes: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['prerenderRoutes']
+  const printTestResults: typeof import('../../utils/testMockApi')['printTestResults']
+  const profileUpdateSchema: typeof import('../../utils/validationSchemas')['profileUpdateSchema']
   const provide: typeof import('vue')['provide']
   const proxyRefs: typeof import('vue')['proxyRefs']
   const reactive: typeof import('vue')['reactive']
@@ -85,9 +104,11 @@ declare global {
   const ref: typeof import('vue')['ref']
   const refreshCookie: typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['refreshCookie']
   const refreshNuxtData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['refreshNuxtData']
+  const registerSchema: typeof import('../../utils/validationSchemas')['registerSchema']
   const reloadNuxtApp: typeof import('../../node_modules/nuxt/dist/app/composables/chunk')['reloadNuxtApp']
   const requestIdleCallback: typeof import('../../node_modules/nuxt/dist/app/compat/idle-callback')['requestIdleCallback']
   const resolveComponent: typeof import('vue')['resolveComponent']
+  const reviewSchema: typeof import('../../utils/validationSchemas')['reviewSchema']
   const setInterval: typeof import('../../node_modules/nuxt/dist/app/compat/interval')['setInterval']
   const setPageLayout: typeof import('../../node_modules/nuxt/dist/app/composables/router')['setPageLayout']
   const setResponseStatus: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['setResponseStatus']
@@ -97,21 +118,27 @@ declare global {
   const showError: typeof import('../../node_modules/nuxt/dist/app/composables/error')['showError']
   const storeToRefs: typeof import('../../node_modules/@pinia/nuxt/dist/runtime/composables')['storeToRefs']
   const stores: typeof import('../../stores/index')['default']
+  const testMockApiSetup: typeof import('../../utils/testMockApi')['testMockApiSetup']
   const toRaw: typeof import('vue')['toRaw']
   const toRef: typeof import('vue')['toRef']
   const toRefs: typeof import('vue')['toRefs']
+  const toTypedSchema: typeof import('@vee-validate/yup')['toTypedSchema']
   const toValue: typeof import('vue')['toValue']
   const triggerRef: typeof import('vue')['triggerRef']
   const tryUseNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt')['tryUseNuxtApp']
   const unref: typeof import('vue')['unref']
   const updateAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']
   const updateSiteConfig: typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/updateSiteConfig')['updateSiteConfig']
+  const useApiConfig: typeof import('../../composables/useApiConfig')['useApiConfig']
+  const useApiRoutes: typeof import('../../composables/useApiRoutes')['useApiRoutes']
+  const useApiService: typeof import('../../composables/useApiService')['useApiService']
   const useAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']
   const useApplePwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useApplePwaIcon']
   const useAppleSplashScreenPwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useAppleSplashScreenPwaIcon']
   const useAsyncData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuthStore: typeof import('../../stores/auth')['useAuthStore']
+  const useBookingStore: typeof import('../../stores/bookings')['useBookingStore']
   const useBrowserLocale: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useBrowserLocale']
   const useCareActions: typeof import('../../composables/useCareActions')['default']
   const useCareFilters: typeof import('../../composables/useCareFilters')['default']
@@ -122,19 +149,38 @@ declare global {
   const useCookie: typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['useCookie']
   const useCookieLocale: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useCookieLocale']
   const useCostCalculations: typeof import('../../composables/useCostCalculations')['default']
+  const useCostCalculator: typeof import('../../composables/useCostCalculator')['useCostCalculator']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useDialogPluginComponent: typeof import('quasar')['useDialogPluginComponent']
   const useError: typeof import('../../node_modules/nuxt/dist/app/composables/error')['useError']
   const useFaviconPwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useFaviconPwaIcon']
   const useFetch: typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']
+  const useField: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useField']
+  const useFieldArray: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFieldArray']
+  const useFieldError: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFieldError']
+  const useFieldValue: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFieldValue']
+  const useForm: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useForm']
   const useFormChild: typeof import('quasar')['useFormChild']
+  const useFormContext: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFormContext']
+  const useFormErrors: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFormErrors']
+  const useFormValues: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFormValues']
   const useHead: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHead']
   const useHeadSafe: typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHeadSafe']
+  const useHttpClient: typeof import('../../composables/useHttpClient')['useHttpClient']
   const useHydration: typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')['useHydration']
   const useI18n: typeof import('../../node_modules/vue-i18n/dist/vue-i18n')['useI18n']
+  const useI18nPreloadKeys: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useI18nPreloadKeys']
   const useId: typeof import('vue')['useId']
   const useInterval: typeof import('quasar')['useInterval']
+  const useIsFieldDirty: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFieldDirty']
+  const useIsFieldTouched: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFieldTouched']
+  const useIsFieldValid: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFieldValid']
+  const useIsFormDirty: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFormDirty']
+  const useIsFormTouched: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFormTouched']
+  const useIsFormValid: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFormValid']
+  const useIsSubmitting: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsSubmitting']
+  const useIsValidating: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsValidating']
   const useLazyAsyncData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useLazyAsyncData']
   const useLazyFetch: typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useLazyFetch']
   const useLink: typeof import('../../node_modules/vue-router')['useLink']
@@ -143,7 +189,9 @@ declare global {
   const useLocalePath: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useLocalePath']
   const useLocaleRoute: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useLocaleRoute']
   const useMaskablePwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useMaskablePwaIcon']
+  const useMatchingAlgorithm: typeof import('../../composables/useMatchingAlgorithm')['useMatchingAlgorithm']
   const useMeta: typeof import('quasar')['useMeta']
+  const useMockApi: typeof import('../../composables/useMockApi')['useMockApi']
   const useModel: typeof import('vue')['useModel']
   const useNitroOrigin: typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/useNitroOrigin')['useNitroOrigin']
   const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']
@@ -161,6 +209,7 @@ declare global {
   const useRequestHeader: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestHeader']
   const useRequestHeaders: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestHeaders']
   const useRequestURL: typeof import('../../node_modules/nuxt/dist/app/composables/url')['useRequestURL']
+  const useResetForm: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useResetForm']
   const useResponseHeader: typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useResponseHeader']
   const useReviewStore: typeof import('../../stores/reviews')['useReviewStore']
   const useRoute: typeof import('../../node_modules/nuxt/dist/app/composables/router')['useRoute']
@@ -206,12 +255,17 @@ declare global {
   const useSlots: typeof import('vue')['useSlots']
   const useSplitAttrs: typeof import('quasar')['useSplitAttrs']
   const useState: typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']
+  const useSubmitCount: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useSubmitCount']
+  const useSubmitForm: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useSubmitForm']
+  const useSupabase: typeof import('../../composables/useSupabase')['useSupabase']
   const useSwitchLocalePath: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useSwitchLocalePath']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTick: typeof import('quasar')['useTick']
   const useTimeout: typeof import('quasar')['useTimeout']
   const useTransitionState: typeof import('vue')['useTransitionState']
   const useTransparentPwaIcon: typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useTransparentPwaIcon']
+  const useValidateField: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useValidateField']
+  const useValidateForm: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useValidateForm']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
   const watchPostEffect: typeof import('vue')['watchPostEffect']
@@ -230,6 +284,39 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { ApiConfig } from '../../composables/useApiConfig'
+  import('../../composables/useApiConfig')
+  // @ts-ignore
+  export type { ApiServiceConfig } from '../../composables/useApiService'
+  import('../../composables/useApiService')
+  // @ts-ignore
+  export type { CostCalculationParams, CostBreakdown } from '../../composables/useCostCalculator'
+  import('../../composables/useCostCalculator')
+  // @ts-ignore
+  export type { RequestConfig, ApiError } from '../../composables/useHttpClient'
+  import('../../composables/useHttpClient')
+  // @ts-ignore
+  export type { MatchingCriteria, MatchResult } from '../../composables/useMatchingAlgorithm'
+  import('../../composables/useMatchingAlgorithm')
+  // @ts-ignore
+  export type { ApiResponse, PaginatedResponse } from '../../composables/useMockApi'
+  import('../../composables/useMockApi')
+  // @ts-ignore
+  export type { User, Review, Payment, ServiceType, CostModifier } from '../../utils/mockData'
+  import('../../utils/mockData')
+  // @ts-ignore
+  export type { LoginFormData, RegisterFormData, ProfileUpdateFormData, PasswordResetFormData, PasswordChangeFormData, ContactFormData, BookingFormData, PaymentFormData, ReviewFormData } from '../../utils/validationSchemas'
+  import('../../utils/validationSchemas')
+  // @ts-ignore
+  export type { AuthState, LoginCredentials, RegisterData } from '../../stores/auth'
+  import('../../stores/auth')
+  // @ts-ignore
+  export type { Booking } from '../../stores/bookings'
+  import('../../stores/bookings')
+  // @ts-ignore
+  export type { Caregiver, CaregiverFilter } from '../../stores/caregivers'
+  import('../../stores/caregivers')
 }
 // for vue template auto import
 import { UnwrapRef } from 'vue'
@@ -241,12 +328,15 @@ declare module 'vue' {
     readonly abortNavigation: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/router')['abortNavigation']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('../../node_modules/@pinia/nuxt/dist/runtime/composables')['acceptHMRUpdate']>
     readonly addRouteMiddleware: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/router')['addRouteMiddleware']>
+    readonly bookingSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['bookingSchema']>
     readonly callOnce: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/once')['callOnce']>
     readonly cancelIdleCallback: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/compat/idle-callback')['cancelIdleCallback']>
     readonly clearError: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/error')['clearError']>
     readonly clearNuxtData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['clearNuxtData']>
     readonly clearNuxtState: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/state')['clearNuxtState']>
+    readonly commonValidations: UnwrapRef<typeof import('../../utils/validationSchemas')['commonValidations']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
+    readonly contactSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['contactSchema']>
     readonly createError: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/error')['createError']>
     readonly createSitePathResolver: UnwrapRef<typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/utils')['createSitePathResolver']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
@@ -256,6 +346,7 @@ declare module 'vue' {
     readonly defineI18nConfig: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['defineI18nConfig']>
     readonly defineI18nLocale: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['defineI18nLocale']>
     readonly defineI18nRoute: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['defineI18nRoute']>
+    readonly defineLazyHydrationComponent: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/lazy-hydration')['defineLazyHydrationComponent']>
     readonly defineNuxtComponent: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/component')['defineNuxtComponent']>
     readonly defineNuxtLink: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/components/nuxt-link')['defineNuxtLink']>
     readonly defineNuxtPlugin: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['defineNuxtPlugin']>
@@ -270,6 +361,7 @@ declare module 'vue' {
     readonly getAppManifest: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/manifest')['getAppManifest']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getMockDataForStore: UnwrapRef<typeof import('../../utils/mockData')['getMockDataForStore']>
     readonly getRouteRules: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/manifest')['getRouteRules']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly hasInjectionContext: UnwrapRef<typeof import('vue')['hasInjectionContext']>
@@ -285,8 +377,16 @@ declare module 'vue' {
     readonly isVue2: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/compat/vue-demi')['isVue2']>
     readonly isVue3: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/compat/vue-demi')['isVue3']>
     readonly loadPayload: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/payload')['loadPayload']>
+    readonly loginSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['loginSchema']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly mergeModels: UnwrapRef<typeof import('vue')['mergeModels']>
+    readonly mockBookings: UnwrapRef<typeof import('../../utils/mockData')['mockBookings']>
+    readonly mockCaregivers: UnwrapRef<typeof import('../../utils/mockData')['mockCaregivers']>
+    readonly mockCostModifiers: UnwrapRef<typeof import('../../utils/mockData')['mockCostModifiers']>
+    readonly mockPayments: UnwrapRef<typeof import('../../utils/mockData')['mockPayments']>
+    readonly mockReviews: UnwrapRef<typeof import('../../utils/mockData')['mockReviews']>
+    readonly mockServiceTypes: UnwrapRef<typeof import('../../utils/mockData')['mockServiceTypes']>
+    readonly mockUsers: UnwrapRef<typeof import('../../utils/mockData')['mockUsers']>
     readonly navigateTo: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/router')['navigateTo']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
@@ -306,12 +406,18 @@ declare module 'vue' {
     readonly onServerPrefetch: UnwrapRef<typeof import('vue')['onServerPrefetch']>
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
+    readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
+    readonly passwordChangeSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['passwordChangeSchema']>
+    readonly passwordResetSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['passwordResetSchema']>
+    readonly paymentSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['paymentSchema']>
     readonly pinia: UnwrapRef<typeof import('../../stores/index')['pinia']>
     readonly prefetchComponents: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/preload')['prefetchComponents']>
     readonly preloadComponents: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/preload')['preloadComponents']>
     readonly preloadPayload: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/payload')['preloadPayload']>
     readonly preloadRouteComponents: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/preload')['preloadRouteComponents']>
     readonly prerenderRoutes: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['prerenderRoutes']>
+    readonly printTestResults: UnwrapRef<typeof import('../../utils/testMockApi')['printTestResults']>
+    readonly profileUpdateSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['profileUpdateSchema']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly proxyRefs: UnwrapRef<typeof import('vue')['proxyRefs']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
@@ -319,9 +425,11 @@ declare module 'vue' {
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly refreshCookie: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['refreshCookie']>
     readonly refreshNuxtData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['refreshNuxtData']>
+    readonly registerSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['registerSchema']>
     readonly reloadNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/chunk')['reloadNuxtApp']>
     readonly requestIdleCallback: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/compat/idle-callback')['requestIdleCallback']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
+    readonly reviewSchema: UnwrapRef<typeof import('../../utils/validationSchemas')['reviewSchema']>
     readonly setInterval: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/compat/interval')['setInterval']>
     readonly setPageLayout: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/router')['setPageLayout']>
     readonly setResponseStatus: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['setResponseStatus']>
@@ -331,21 +439,27 @@ declare module 'vue' {
     readonly showError: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/error')['showError']>
     readonly storeToRefs: UnwrapRef<typeof import('../../node_modules/@pinia/nuxt/dist/runtime/composables')['storeToRefs']>
     readonly stores: UnwrapRef<typeof import('../../stores/index')['default']>
+    readonly testMockApiSetup: UnwrapRef<typeof import('../../utils/testMockApi')['testMockApiSetup']>
     readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
+    readonly toTypedSchema: UnwrapRef<typeof import('@vee-validate/yup')['toTypedSchema']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly tryUseNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['tryUseNuxtApp']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly updateAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']>
     readonly updateSiteConfig: UnwrapRef<typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/updateSiteConfig')['updateSiteConfig']>
+    readonly useApiConfig: UnwrapRef<typeof import('../../composables/useApiConfig')['useApiConfig']>
+    readonly useApiRoutes: UnwrapRef<typeof import('../../composables/useApiRoutes')['useApiRoutes']>
+    readonly useApiService: UnwrapRef<typeof import('../../composables/useApiService')['useApiService']>
     readonly useAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']>
     readonly useApplePwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useApplePwaIcon']>
     readonly useAppleSplashScreenPwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useAppleSplashScreenPwaIcon']>
     readonly useAsyncData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuthStore: UnwrapRef<typeof import('../../stores/auth')['useAuthStore']>
+    readonly useBookingStore: UnwrapRef<typeof import('../../stores/bookings')['useBookingStore']>
     readonly useBrowserLocale: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useBrowserLocale']>
     readonly useCareActions: UnwrapRef<typeof import('../../composables/useCareActions')['default']>
     readonly useCareFilters: UnwrapRef<typeof import('../../composables/useCareFilters')['default']>
@@ -356,19 +470,38 @@ declare module 'vue' {
     readonly useCookie: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/cookie')['useCookie']>
     readonly useCookieLocale: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useCookieLocale']>
     readonly useCostCalculations: UnwrapRef<typeof import('../../composables/useCostCalculations')['default']>
+    readonly useCostCalculator: UnwrapRef<typeof import('../../composables/useCostCalculator')['useCostCalculator']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useDialogPluginComponent: UnwrapRef<typeof import('quasar')['useDialogPluginComponent']>
     readonly useError: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/error')['useError']>
     readonly useFaviconPwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useFaviconPwaIcon']>
     readonly useFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useFetch']>
+    readonly useField: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useField']>
+    readonly useFieldArray: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFieldArray']>
+    readonly useFieldError: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFieldError']>
+    readonly useFieldValue: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFieldValue']>
+    readonly useForm: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useForm']>
     readonly useFormChild: UnwrapRef<typeof import('quasar')['useFormChild']>
+    readonly useFormContext: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFormContext']>
+    readonly useFormErrors: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFormErrors']>
+    readonly useFormValues: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useFormValues']>
     readonly useHead: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHead']>
     readonly useHeadSafe: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/head')['useHeadSafe']>
+    readonly useHttpClient: UnwrapRef<typeof import('../../composables/useHttpClient')['useHttpClient']>
     readonly useHydration: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/hydrate')['useHydration']>
     readonly useI18n: UnwrapRef<typeof import('../../node_modules/vue-i18n/dist/vue-i18n')['useI18n']>
+    readonly useI18nPreloadKeys: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useI18nPreloadKeys']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useInterval: UnwrapRef<typeof import('quasar')['useInterval']>
+    readonly useIsFieldDirty: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFieldDirty']>
+    readonly useIsFieldTouched: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFieldTouched']>
+    readonly useIsFieldValid: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFieldValid']>
+    readonly useIsFormDirty: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFormDirty']>
+    readonly useIsFormTouched: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFormTouched']>
+    readonly useIsFormValid: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsFormValid']>
+    readonly useIsSubmitting: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsSubmitting']>
+    readonly useIsValidating: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useIsValidating']>
     readonly useLazyAsyncData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useLazyAsyncData']>
     readonly useLazyFetch: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/fetch')['useLazyFetch']>
     readonly useLink: UnwrapRef<typeof import('../../node_modules/vue-router')['useLink']>
@@ -377,7 +510,9 @@ declare module 'vue' {
     readonly useLocalePath: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useLocalePath']>
     readonly useLocaleRoute: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useLocaleRoute']>
     readonly useMaskablePwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useMaskablePwaIcon']>
+    readonly useMatchingAlgorithm: UnwrapRef<typeof import('../../composables/useMatchingAlgorithm')['useMatchingAlgorithm']>
     readonly useMeta: UnwrapRef<typeof import('quasar')['useMeta']>
+    readonly useMockApi: UnwrapRef<typeof import('../../composables/useMockApi')['useMockApi']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useNitroOrigin: UnwrapRef<typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/useNitroOrigin')['useNitroOrigin']>
     readonly useNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']>
@@ -395,6 +530,7 @@ declare module 'vue' {
     readonly useRequestHeader: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestHeader']>
     readonly useRequestHeaders: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useRequestHeaders']>
     readonly useRequestURL: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/url')['useRequestURL']>
+    readonly useResetForm: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useResetForm']>
     readonly useResponseHeader: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/ssr')['useResponseHeader']>
     readonly useReviewStore: UnwrapRef<typeof import('../../stores/reviews')['useReviewStore']>
     readonly useRoute: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/router')['useRoute']>
@@ -440,12 +576,17 @@ declare module 'vue' {
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useSplitAttrs: UnwrapRef<typeof import('quasar')['useSplitAttrs']>
     readonly useState: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']>
+    readonly useSubmitCount: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useSubmitCount']>
+    readonly useSubmitForm: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useSubmitForm']>
+    readonly useSupabase: UnwrapRef<typeof import('../../composables/useSupabase')['useSupabase']>
     readonly useSwitchLocalePath: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useSwitchLocalePath']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTick: UnwrapRef<typeof import('quasar')['useTick']>
     readonly useTimeout: UnwrapRef<typeof import('quasar')['useTimeout']>
     readonly useTransitionState: UnwrapRef<typeof import('vue')['useTransitionState']>
     readonly useTransparentPwaIcon: UnwrapRef<typeof import('../../node_modules/@vite-pwa/nuxt/dist/runtime/composables/index')['useTransparentPwaIcon']>
+    readonly useValidateField: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useValidateField']>
+    readonly useValidateForm: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useValidateForm']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>
