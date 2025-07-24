@@ -11581,10 +11581,6 @@ function createHeadContext(ctx, config, locale = ctx.getLocale(), locales = ctx.
 function localeHead(ctx, { dir = true, lang: lang2 = true, seo = true }) {
   return localeHead$1(createHeadContext(ctx, { dir, lang: lang2, seo }));
 }
-function _useLocaleHead(ctx, options) {
-  const metaObject = ref(localeHead$1(createHeadContext(ctx, options)));
-  return metaObject;
-}
 const separator = "___";
 function normalizeRouteName(routeName) {
   if (typeof routeName === "string") return routeName;
@@ -15881,13 +15877,6 @@ const DatetimeFormat = DatetimeFormatImpl;
 registerMessageCompiler(compile);
 registerMessageResolver(resolveValue);
 registerLocaleFallbacker(fallbackWithLocaleChain);
-function useLocaleHead({ dir = true, lang: lang2 = true, seo = true } = {}, nuxtApp = useNuxtApp()) {
-  const common = useComposableContext(nuxtApp);
-  common.seoSettings = { dir, lang: lang2, seo };
-  const head = _useLocaleHead(common, common.seoSettings);
-  common.metaState = head.value;
-  return head;
-}
 function useRouteBaseName(nuxtApp = useNuxtApp()) {
   const common = useComposableContext(nuxtApp);
   return (route) => {
@@ -20529,12 +20518,10 @@ const AppComponent = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "da
 function usePageSeo(title, description, image = "/vite.svg") {
   const route = useRoute();
   const config = /* @__PURE__ */ useRuntimeConfig();
-  const baseUrl = config.public.baseUrl || "";
-  const { link: i18nLinks } = useLocaleHead({});
+  const baseUrl = config.public.baseUrl || "http://localhost:3001";
   useHead({
     link: [
-      { rel: "canonical", href: baseUrl + route.fullPath },
-      ...i18nLinks || []
+      { rel: "canonical", href: baseUrl + route.fullPath }
     ],
     meta: [{ name: "robots", content: "index, follow" }],
     script: [

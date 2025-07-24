@@ -3,7 +3,6 @@ import {
   useRoute,
   useRuntimeConfig,
   useHead,
-  useLocaleHead,
 } from '#imports'
 
 export default function usePageSeo(
@@ -13,14 +12,11 @@ export default function usePageSeo(
 ) {
   const route = useRoute()
   const config = useRuntimeConfig()
-  const baseUrl = config.public.baseUrl || ''
-
-  const { link: i18nLinks } = useLocaleHead({ addSeoAttributes: true })
+  const baseUrl = config.public.baseUrl || 'http://localhost:3001'
 
   useHead({
     link: [
       { rel: 'canonical', href: baseUrl + route.fullPath },
-      ...(i18nLinks || []),
     ],
     meta: [{ name: 'robots', content: 'index, follow' }],
     script: [

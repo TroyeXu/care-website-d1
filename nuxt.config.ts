@@ -8,9 +8,9 @@ export default defineNuxtConfig({
   // Nuxt 4 不再需要 future.compatibilityVersion 設定
   runtimeConfig: {
     public: {
-      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3001',
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
+      supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
     },
   },
   modules: [
@@ -46,6 +46,7 @@ export default defineNuxtConfig({
     },
   },
   i18n: {
+    baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3001',
     strategy: 'no_prefix',
     defaultLocale: 'zh',
     locales: [

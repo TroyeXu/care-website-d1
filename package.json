@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --port 3333",
     "build": "nuxt build",
     "preview": "nuxt preview",
     "predeploy": "npm run build",

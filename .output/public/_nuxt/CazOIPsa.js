@@ -1,1 +1,0 @@
-import{c1 as e,ai as a,al as s,s as r}from"./DLx3-ifv.js";const u=e(i=>{const{$auth:t}=a();if(!t.isAuthenticated)return s("/auth/login");if(!t.isCaregiver)throw r({statusCode:403,statusMessage:"此頁面僅限看護人員使用"})});export{u as default};
