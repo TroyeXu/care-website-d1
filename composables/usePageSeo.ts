@@ -12,7 +12,7 @@ export default function usePageSeo(
 ) {
   const route = useRoute()
   const config = useRuntimeConfig()
-  const baseUrl = config.public.baseUrl || 'http://localhost:3001'
+  const baseUrl = config.public.baseUrl || 'http://localhost:3333'
 
   useHead({
     link: [

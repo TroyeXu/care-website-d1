@@ -6,9 +6,12 @@ export default defineNuxtConfig({
   // 添加相容性日期
   compatibilityDate: '2025-06-14',
   // Nuxt 4 不再需要 future.compatibilityVersion 設定
+  site: {
+    url: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3333',
+  },
   runtimeConfig: {
     public: {
-      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3001',
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3333',
       supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
       supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
     },
@@ -46,7 +49,6 @@ export default defineNuxtConfig({
     },
   },
   i18n: {
-    baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3001',
     strategy: 'no_prefix',
     defaultLocale: 'zh',
     locales: [

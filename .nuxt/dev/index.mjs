@@ -937,11 +937,11 @@ const _inlineRuntimeConfig = {
     }
   },
   "public": {
-    "baseUrl": "http://localhost:3001",
+    "baseUrl": "http://localhost:3333",
     "supabaseUrl": "https://irjeyglrspwqlvgwtvka.supabase.co",
     "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyamV5Z2xyc3B3cWx2Z3d0dmthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0NTg4MjAsImV4cCI6MjA2ODAzNDgyMH0.sTo24SfDnUbIezHtT_3CYC2ev_VWgExak6qmIbxtGrY",
     "i18n": {
-      "baseUrl": "http://localhost:3001",
+      "baseUrl": "",
       "defaultLocale": "zh",
       "rootRedirect": "",
       "redirectStatusCode": 302,
@@ -1055,8 +1055,12 @@ const _inlineRuntimeConfig = {
         "name": "care-calculator"
       },
       {
+        "_priority": -3,
+        "_context": "nuxt-site-config:config",
+        "url": "http://localhost:3333"
+      },
+      {
         "_context": "@nuxtjs/i18n",
-        "url": "http://localhost:3001",
         "defaultLocale": "zh"
       }
     ],
@@ -4095,6 +4099,9 @@ const sources$1 = [
             },
             {
                 "loc": "/join"
+            },
+            {
+                "loc": "/test"
             },
             {
                 "loc": "/"

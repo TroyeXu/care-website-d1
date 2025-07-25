@@ -42,9 +42,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useApiService } from '~/composables/useApiService'
-import usePageSeo from '~/composables/usePageSeo'
 
-usePageSeo('看護列表 - 護理服務平台', '瀏覽所有專業看護員，找到最合適的人選')
+// 簡化的頁面設定
+useHead({
+  title: '看護列表 - 護理服務平台',
+  meta: [
+    { name: 'description', content: '瀏覽所有專業看護員，找到最合適的人選' }
+  ]
+})
 
 // 組合式函數
 const apiService = useApiService()

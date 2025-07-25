@@ -32,10 +32,15 @@
                   dense
                   :error="!!errorMessage"
                   :error-message="errorMessage"
-                  prefix-icon="email"
                   placeholder="請輸入您的電子郵件"
                   autocomplete="email"
-                />
+                  aria-label="電子郵件輸入欄位"
+                  clearable
+                >
+                  <template #prepend>
+                    <q-icon name="email" color="primary" />
+                  </template>
+                </q-input>
               </Field>
             </div>
           </div>
@@ -52,15 +57,22 @@
                   dense
                   :error="!!errorMessage"
                   :error-message="errorMessage"
-                  prefix-icon="lock"
                   placeholder="請輸入您的密碼"
                   autocomplete="current-password"
+                  aria-label="密碼輸入欄位"
                 >
-                  <template v-slot:append>
-                    <q-icon
-                      :name="showPassword ? 'visibility' : 'visibility_off'"
-                      class="cursor-pointer"
+                  <template #prepend>
+                    <q-icon name="lock" color="primary" />
+                  </template>
+                  <template #append>
+                    <q-btn
+                      flat
+                      round
+                      dense
+                      :icon="showPassword ? 'visibility' : 'visibility_off'"
                       @click="showPassword = !showPassword"
+                      :aria-label="showPassword ? '隱藏密碼' : '顯示密碼'"
+                      tabindex="-1"
                     />
                   </template>
                 </q-input>
@@ -98,14 +110,27 @@
                 :loading="isSubmitting || loading"
                 :disable="Object.keys(errors).length > 0"
                 icon="login"
+                aria-label="提交登入表單"
+                :aria-describedby="Object.keys(errors).length > 0 ? 'form-errors' : undefined"
               >
                 {{ isSubmitting ? '登入中...' : '登入' }}
               </q-btn>
+              <!-- 表單錯誤提示 -->
+              <div
+                v-if="Object.keys(errors).length > 0"
+                id="form-errors"
+                class="text-negative text-caption q-mt-sm"
+                role="alert"
+                aria-live="polite"
+              >
+                請修正表單中的錯誤後再提交
+              </div>
             </div>
           </div>
 
-          <!-- 測試帳號提示 -->
+          <!-- 測試帳號提示 (僅開發環境) -->
           <q-expansion-item
+            v-if="isDevelopment"
             icon="info"
             label="測試帳號資訊"
             class="q-mb-md"
@@ -255,6 +280,9 @@ const rememberMe = ref(false)
 const showForgotPasswordDialog = ref(false)
 const showErrorDialog = ref(false)
 const errorMessage = ref('')
+
+// 環境判斷
+const isDevelopment = process.env.NODE_ENV === 'development'
 
 // 表單引用
 const { setFieldValue } = useForm()
