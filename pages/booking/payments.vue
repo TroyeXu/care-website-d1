@@ -3,12 +3,7 @@
     <div class="row justify-center">
       <div class="col-12 col-lg-10">
         <!-- 標題 -->
-        <div class="row items-center q-mb-lg">
-          <div class="text-h5 text-primary">
-            <q-icon name="account_balance_wallet" size="md" class="q-mr-sm" />
-            支付管理
-          </div>
-        </div>
+        <PageHeader title="支付管理" icon="account_balance_wallet" />
         
         <!-- 支付紀錄 -->
         <q-card flat bordered class="q-mb-lg">
@@ -25,18 +20,14 @@
               </q-btn>
             </div>
             
-            <div v-if="isLoading" class="text-center q-pa-lg">
-              <q-spinner-dots size="50px" color="primary" />
-              <div class="text-body2 q-mt-md">載入中...</div>
-            </div>
+            <LoadingState v-if="isLoading" :loading="isLoading" />
             
-            <div v-else-if="payments.length === 0" class="text-center q-pa-lg">
-              <q-icon name="payment" size="80px" color="grey-5" />
-              <div class="text-h6 q-mt-md text-grey-7">尚無支付紀錄</div>
-              <div class="text-body2 text-grey-6">
-                您的支付紀錄將在此顯示
-              </div>
-            </div>
+            <EmptyState
+              v-else-if="payments.length === 0"
+              icon="payment"
+              title="尚無支付紀錄"
+              description="您的支付紀錄將在此顯示"
+            />
             
             <q-list v-else bordered class="rounded-borders">
               <q-item
@@ -68,13 +59,7 @@
                 </q-item-section>
                 
                 <q-item-section side>
-                  <q-chip
-                    :color="getStatusColor(payment.status)"
-                    text-color="white"
-                    size="sm"
-                  >
-                    {{ getStatusName(payment.status) }}
-                  </q-chip>
+                  <StatusChip :status="payment.status" type="payment" />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -84,34 +69,32 @@
               <q-separator class="q-mb-md" />
               <div class="row q-gutter-md">
                 <div class="col">
-                  <q-card flat class="bg-blue-1">
-                    <q-card-section class="text-center">
-                      <div class="text-h6 text-blue-8">
-                        NT$ {{ totalAmount.toLocaleString() }}
-                      </div>
-                      <div class="text-caption text-blue-6">總支付金額</div>
-                    </q-card-section>
-                  </q-card>
+                  <StatCard
+                    :value="totalAmount"
+                    label="總支付金額"
+                    color="blue"
+                    icon="account_balance_wallet"
+                    prefix="NT$ "
+                    :loading="isLoading"
+                  />
                 </div>
                 <div class="col">
-                  <q-card flat class="bg-green-1">
-                    <q-card-section class="text-center">
-                      <div class="text-h6 text-green-8">
-                        {{ completedPayments }}
-                      </div>
-                      <div class="text-caption text-green-6">成功交易</div>
-                    </q-card-section>
-                  </q-card>
+                  <StatCard
+                    :value="completedPayments"
+                    label="成功交易"
+                    color="green"
+                    icon="check_circle"
+                    :loading="isLoading"
+                  />
                 </div>
                 <div class="col">
-                  <q-card flat class="bg-orange-1">
-                    <q-card-section class="text-center">
-                      <div class="text-h6 text-orange-8">
-                        {{ payments.length }}
-                      </div>
-                      <div class="text-caption text-orange-6">總交易次數</div>
-                    </q-card-section>
-                  </q-card>
+                  <StatCard
+                    :value="payments.length"
+                    label="總交易次數"
+                    color="orange"
+                    icon="receipt"
+                    :loading="isLoading"
+                  />
                 </div>
               </div>
             </div>
@@ -218,27 +201,6 @@ const getPaymentMethodName = (method: string) => {
   return methodMap[method] || method
 }
 
-// 獲取狀態名稱
-const getStatusName = (status: string) => {
-  const statusMap: Record<string, string> = {
-    'completed': '已完成',
-    'pending': '處理中',
-    'failed': '失敗',
-    'cancelled': '已取消'
-  }
-  return statusMap[status] || status
-}
-
-// 獲取狀態顏色
-const getStatusColor = (status: string) => {
-  const colorMap: Record<string, string> = {
-    'completed': 'positive',
-    'pending': 'warning',
-    'failed': 'negative',
-    'cancelled': 'grey'
-  }
-  return colorMap[status] || 'grey'
-}
 
 // 生命週期
 onMounted(() => {

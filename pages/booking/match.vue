@@ -3,30 +3,38 @@
     <div class="row justify-center">
       <div class="col-12 col-lg-10">
         <!-- 標題區域 -->
-        <div class="row items-center justify-between q-mb-lg">
-          <div class="text-h5 text-primary">
-            <q-icon name="psychology" size="md" class="q-mr-sm" />
-            智能媒合推薦
-          </div>
-          <q-btn
-            flat
-            icon="tune"
-            @click="showPreferences = !showPreferences"
-            :color="hasPreferences ? 'primary' : 'grey'"
-          >
-            偏好設定
-          </q-btn>
-        </div>
+        <PageHeader title="智能媒合推薦" icon="psychology">
+          <template #actions>
+            <q-btn
+              flat
+              icon="tune"
+              @click="showPreferences = !showPreferences"
+              :color="hasPreferences ? 'primary' : 'grey'"
+            >
+              偏好設定
+            </q-btn>
+          </template>
+        </PageHeader>
         
         <!-- 偏好設定 -->
         <q-slide-transition>
-          <q-card v-show="showPreferences" flat bordered class="q-mb-lg">
-            <q-card-section>
-              <div class="text-h6 q-mb-md">媒合偏好</div>
+          <FilterPanel
+            v-show="showPreferences"
+            title="媒合偏好"
+            v-model="preferences"
+            :show-actions="true"
+            :applying="isMatching"
+            :auto-apply="false"
+            @apply="findMatches"
+            @clear="clearPreferences"
+            class="q-mb-lg"
+          >
+            <template #default="{ filters, updateFilter }">
               <div class="row q-gutter-md">
                 <div class="col-12 col-sm-6 col-md-4">
                   <q-select
-                    v-model="preferences.location"
+                    :model-value="filters.location"
+                    @update:model-value="updateFilter('location', $event)"
                     :options="locationOptions"
                     label="希望服務地區"
                     outlined
@@ -37,23 +45,23 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6 col-md-4">
-                  <q-input
-                    v-model.number="preferences.maxHourlyRate"
-                    type="number"
+                  <FormInput
+                    name="maxHourlyRate"
                     label="最高時薪預算"
-                    outlined
-                    dense
-                    min="0"
+                    type="number"
                     suffix="元/小時"
+                    :value="filters.maxHourlyRate"
+                    @input="updateFilter('maxHourlyRate', $event.target.value)"
+                    min="0"
                   />
                 </div>
                 <div class="col-12 col-sm-6 col-md-4">
-                  <q-input
-                    v-model.number="preferences.minRating"
-                    type="number"
+                  <FormInput
+                    name="minRating"
                     label="最低評分要求"
-                    outlined
-                    dense
+                    type="number"
+                    :value="filters.minRating"
+                    @input="updateFilter('minRating', $event.target.value)"
                     min="1"
                     max="5"
                     step="0.1"
@@ -63,7 +71,8 @@
               <div class="row q-gutter-md q-mt-md">
                 <div class="col-12">
                   <q-select
-                    v-model="preferences.requiredSkills"
+                    :model-value="filters.requiredSkills"
+                    @update:model-value="updateFilter('requiredSkills', $event)"
                     :options="skillOptions"
                     label="需要的專業技能"
                     outlined
@@ -74,51 +83,29 @@
                   />
                 </div>
               </div>
-              <div class="row q-gutter-md q-mt-md">
-                <div class="col">
-                  <q-btn
-                    flat
-                    color="grey"
-                    @click="clearPreferences"
-                  >
-                    清除偏好
-                  </q-btn>
-                </div>
-                <div class="col-auto">
-                  <q-btn
-                    color="primary"
-                    @click="findMatches"
-                    :loading="isMatching"
-                  >
-                    重新媒合
-                  </q-btn>
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
+            </template>
+          </FilterPanel>
         </q-slide-transition>
         
         <!-- 媒合結果 -->
-        <div v-if="isMatching" class="text-center q-pa-lg">
-          <q-spinner-orbit size="50px" color="primary" />
-          <div class="text-body2 q-mt-md">智能媒合中...</div>
-        </div>
+        <LoadingState v-if="isMatching" :loading="isMatching" message="智能媒合中..." spinner-type="rings" />
         
-        <div v-else-if="matchedCaregivers.length === 0 && hasSearched" class="text-center q-pa-lg">
-          <q-icon name="search_off" size="80px" color="grey-5" />
-          <div class="text-h6 q-mt-md text-grey-7">沒有找到符合條件的看護師</div>
-          <div class="text-body2 text-grey-6 q-mt-sm">
-            請嘗試調整您的媒合偏好或擴大搜尋範圍
-          </div>
-          <q-btn
-            flat
-            color="primary"
-            @click="clearPreferences"
-            class="q-mt-md"
-          >
-            重設條件
-          </q-btn>
-        </div>
+        <EmptyState
+          v-else-if="matchedCaregivers.length === 0 && hasSearched"
+          icon="search_off"
+          title="沒有找到符合條件的看護師"
+          description="請嘗試調整您的媒合偏好或擴大搜尋範圍"
+        >
+          <template #actions>
+            <q-btn
+              flat
+              color="primary"
+              @click="clearPreferences"
+            >
+              重設條件
+            </q-btn>
+          </template>
+        </EmptyState>
         
         <div v-else-if="matchedCaregivers.length > 0">
           <!-- 媒合統計 -->

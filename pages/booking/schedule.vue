@@ -3,12 +3,8 @@
     <div class="row justify-center">
       <div class="col-12 col-lg-10">
         <!-- 標題區域 -->
-        <div class="row items-center justify-between q-mb-lg">
-          <div class="text-h5 text-primary">
-            <q-icon name="calendar_today" size="md" class="q-mr-sm" />
-            排程管理
-          </div>
-          <div class="row q-gutter-sm">
+        <PageHeader title="排程管理" icon="calendar_today">
+          <template #actions>
             <q-btn
               flat
               icon="view_week"
@@ -32,12 +28,20 @@
             >
               新增預約
             </q-btn>
-          </div>
-        </div>
+          </template>
+        </PageHeader>
         
         <!-- 篩選器 -->
-        <q-card flat bordered class="q-mb-lg">
-          <q-card-section class="q-pa-md">
+        <FilterPanel
+          title="排程篩選"
+          v-model="scheduleFilters"
+          :collapsible="false"
+          :show-clear="false"
+          :auto-apply="true"
+          @apply="applyFilters"
+          class="q-mb-lg"
+        >
+          <template #default="{ filters, updateFilter }">
             <div class="row q-gutter-md items-center">
               <div class="col-auto">
                 <q-btn-group>
@@ -45,23 +49,27 @@
                     icon="chevron_left"
                     @click="previousPeriod"
                     flat
+                    aria-label="上一個時期"
                   />
                   <q-btn
                     :label="currentPeriodLabel"
                     flat
                     @click="showDatePicker = true"
+                    aria-label="選擇日期"
                   />
                   <q-btn
                     icon="chevron_right"
                     @click="nextPeriod"
                     flat
+                    aria-label="下一個時期"
                   />
                 </q-btn-group>
               </div>
               
               <div class="col">
                 <q-select
-                  v-model="statusFilter"
+                  :model-value="filters.status"
+                  @update:model-value="updateFilter('status', $event)"
                   :options="statusOptions"
                   label="狀態篩選"
                   outlined
@@ -69,7 +77,6 @@
                   clearable
                   emit-value
                   map-options
-                  class="q-ml-md"
                   style="max-width: 200px"
                 />
               </div>
@@ -80,19 +87,17 @@
                   icon="refresh"
                   @click="loadBookings"
                   :loading="isLoading"
+                  aria-label="重新載入資料"
                 >
                   更新
                 </q-btn>
               </div>
             </div>
-          </q-card-section>
-        </q-card>
+          </template>
+        </FilterPanel>
         
         <!-- 載入狀態 -->
-        <div v-if="isLoading" class="text-center q-pa-lg">
-          <q-spinner-grid size="50px" color="primary" />
-          <div class="text-body2 q-mt-md">載入中...</div>
-        </div>
+        <LoadingState v-if="isLoading" :loading="isLoading" spinner-type="grid" />
         
         <!-- 排程表 -->
         <div v-else>
@@ -378,6 +383,10 @@ const isLoading = ref(false)
 const currentView = ref<'week' | 'month'>('week')
 const currentDate = ref(new Date().toISOString().split('T')[0])
 const statusFilter = ref('')
+const scheduleFilters = ref({
+  status: '',
+  dateRange: null
+})
 const selectedBooking = ref<Booking | null>(null)
 const showBookingDetailsDialog = ref(false)
 const showCreateBooking = ref(false)
@@ -494,6 +503,11 @@ const filteredBookings = computed(() => {
 })
 
 // 方法
+const applyFilters = (filters: any) => {
+  scheduleFilters.value = { ...filters }
+  statusFilter.value = filters.status || ''
+}
+
 const getStartOfWeek = (date: Date) => {
   const d = new Date(date)
   const day = d.getDay()
