@@ -30,8 +30,10 @@ export { requestIdleCallback, cancelIdleCallback } from '#app/compat/idle-callba
 export { setInterval } from '#app/compat/interval';
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
 export { useApiConfig, ApiConfig } from '../composables/useApiConfig';
+export { useApiHandler } from '../composables/useApiHandler';
 export { useApiRoutes } from '../composables/useApiRoutes';
 export { useApiService, ApiServiceConfig } from '../composables/useApiService';
+export { useBookingFilters } from '../composables/useBookingFilters';
 export { default as useCareActions } from '../composables/useCareActions';
 export { default as useCareFilters } from '../composables/useCareFilters';
 export { useCareService } from '../composables/useCareService';

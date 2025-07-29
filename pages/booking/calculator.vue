@@ -1,59 +1,82 @@
 <template>
-  <q-layout view="hHh LpR fff">
-    <!-- 漸變背景的頁首 -->
-    <q-header elevated class="header-gradient text-white">
-      <q-toolbar>
-        <q-toolbar-title class="header-title">
-          <q-icon name="medical_services" size="md" class="q-mr-sm" />
-          <h1 class="text-h5 q-my-none">專業護理服務計費系統</h1>
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-header>
+  <div class="calculator-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-bg-pattern"></div>
+      <div class="hero-content">
+        <div class="container">
+          <div class="hero-text-center">
+            <div class="hero-icon-wrapper">
+              <q-icon name="calculate" class="hero-icon" />
+            </div>
+            <h1 class="hero-title">專業護理費用計算器</h1>
+            <p class="hero-subtitle">智能計算，透明收費，讓您清楚了解每一筆護理服務費用</p>
+            <div class="hero-badges">
+              <q-chip color="white" text-color="primary" icon="check_circle">
+                即時計算
+              </q-chip>
+              <q-chip color="white" text-color="primary" icon="visibility">
+                透明收費
+              </q-chip>
+              <q-chip color="white" text-color="primary" icon="security">
+                專業可靠
+              </q-chip>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-wave">
+        <svg viewBox="0 0 1440 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,133.3C672,139,768,181,864,208C960,235,1056,245,1152,224C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+      </div>
+    </section>
 
-    <q-page-container class="page-background">
-      <q-page padding>
-        <div class="row q-col-gutter-md">
-          <!-- 左側主卡片 -->
-          <div class="col-12 col-md-8">
-            <q-card class="main-card" flat bordered>
-              <!-- 篩選器區域 -->
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <div class="calculator-grid">
+          <!-- 計算器主卡片 -->
+          <div class="calculator-main-card">
+            <q-card class="modern-card main-calculator" flat>
+              <q-card-section class="card-header">
+                <div class="section-title">
+                  <q-icon name="tune" class="title-icon" />
+                  <h3>服務選擇</h3>
+                </div>
+              </q-card-section>
+              
               <q-card-section>
                 <!-- 服務類型選擇 -->
-                <div class="service-type-selector q-mb-md">
-                  <div class="row no-wrap">
-                    <div class="col text-center">
-                      <q-btn
-                        :color="
-                          selectedCategory === '鐘點制' ? 'primary' : 'grey-5'
-                        "
-                        :text-color="
-                          selectedCategory === '鐘點制' ? 'white' : 'grey-8'
-                        "
-                        class="service-type-btn"
-                        size="lg"
-                        no-caps
-                        unelevated
-                        @click="selectedCategory = '鐘點制'"
-                      >
-                        鐘點制
-                      </q-btn>
+                <div class="service-type-selector">
+                  <div class="type-cards">
+                    <div 
+                      class="type-card" 
+                      :class="{ active: selectedCategory === '鐘點制' }"
+                      @click="selectedCategory = '鐘點制'"
+                    >
+                      <div class="type-icon">
+                        <q-icon name="schedule" />
+                      </div>
+                      <h4>鐘點制</h4>
+                      <p>彈性時間，按小時計費</p>
+                      <div class="type-badge" v-if="selectedCategory === '鐘點制'">
+                        <q-icon name="check" />
+                      </div>
                     </div>
-                    <div class="col text-center">
-                      <q-btn
-                        :color="
-                          selectedCategory === '包班制' ? 'secondary' : 'grey-5'
-                        "
-                        :text-color="
-                          selectedCategory === '包班制' ? 'white' : 'grey-8'
-                        "
-                        class="service-type-btn"
-                        size="lg"
-                        no-caps
-                        unelevated
-                        @click="selectedCategory = '包班制'"
-                      >
-                        包班制
-                      </q-btn>
+                    <div 
+                      class="type-card" 
+                      :class="{ active: selectedCategory === '包班制' }"
+                      @click="selectedCategory = '包班制'"
+                    >
+                      <div class="type-icon">
+                        <q-icon name="event" />
+                      </div>
+                      <h4>包班制</h4>
+                      <p>長期照護，按班次計費</p>
+                      <div class="type-badge" v-if="selectedCategory === '包班制'">
+                        <q-icon name="check" />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -361,14 +384,22 @@
               </q-card-section>
             </q-card>
           </div>
-
-          <!-- 右側摘要卡片 -->
-          <div class="col-12 col-md-4">
-            <q-card class="summary-card" flat bordered>
-              <q-card-section>
-                <div class="text-h6 text-primary">
-                  <q-icon name="summarize" /> 費用統計
+          
+          <!-- 費用摘要卡片 -->
+          <div class="calculator-summary-card">
+            <q-card class="modern-card summary-calculator" flat>
+              <q-card-section class="card-header">
+                <div class="section-title">
+                  <q-icon name="assessment" class="title-icon" />
+                  <h3>費用統計</h3>
                 </div>
+                <div class="total-badge">
+                  <div class="total-amount">{{ formatCurrency(totalCost + tipAmount) }}</div>
+                  <div class="total-label">總計費用</div>
+                </div>
+              </q-card-section>
+              
+              <q-card-section>
                 <!-- 移除小費設定，已移動到最下方 -->
 
                 <!-- 即時費用計算器（鐘點制） -->
@@ -784,53 +815,41 @@
             </q-card>
           </div>
         </div>
-      </q-page>
-    </q-page-container>
+      </div>
+    </main>
 
-    <q-footer
-      elevated
-      class="footer-gradient text-white"
-      style="min-height: 64px"
-    >
-      <q-toolbar style="height: 5rem">
-        <q-toolbar-title>
-          <div class="row items-center" style="width: 100%">
-            <div class="col-grow" style="white-space: nowrap">
-              <div class="column" style="line-height: 1.5">
-                <div class="row items-center">
-                  <span class="text-subtitle1">總費用：</span>
-                  <span ref="totalCostElement" class="text-h5 cost-display">{{
-                    formatCurrency(totalCost + tipAmount)
-                  }}</span>
-                  <span
-                    v-if="selectedCategory === '鐘點制'"
-                    class="text-subtitle1"
-                    style="margin-left: 8px"
-                  >
-                    ({{ hourCount * dayCount }} 小時)
-                  </span>
-                  <span class="text-subtitle1">元</span>
-                  <q-badge
-                    v-if="tipAmount > 0"
-                    color="pink-6"
-                    class="q-ml-sm"
-                    style="padding: 4px 8px"
-                  >
-                    含小費 {{ formatCurrency(tipAmount) }} 元
-                  </q-badge>
-                </div>
-                <div
-                  v-if="selectedCategory === '鐘點制'"
-                  class="row items-center q-mt-xs"
-                >
-                  <span class="text-caption text-grey-7">每小時上限500元</span>
-                </div>
-              </div>
+    <!-- 底部行動按鈕 -->
+    <div class="bottom-action-bar">
+      <div class="container">
+        <div class="action-content">
+          <div class="cost-summary">
+            <div class="final-cost">
+              <span class="cost-label">總計：</span>
+              <span class="cost-amount" ref="totalCostElement">{{ formatCurrency(totalCost + tipAmount) }}</span>
+              <span class="cost-unit">元</span>
+            </div>
+            <div class="cost-details" v-if="selectedCategory === '鐘點制'">
+              <span class="detail-text">({{ hourCount * dayCount }} 小時)</span>
+              <q-badge v-if="tipAmount > 0" color="pink-6" class="tip-badge">
+                含小費 {{ formatCurrency(tipAmount) }} 元
+              </q-badge>
             </div>
           </div>
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-footer>
+          <div class="action-buttons">
+            <q-btn 
+              color="primary" 
+              size="lg" 
+              class="action-btn"
+              @click="navigateTo('/booking/create')"
+              :disable="selectedItems.length === 0"
+            >
+              <q-icon name="shopping_cart" class="q-mr-sm" />
+              立即預約
+            </q-btn>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- 幫助對話框 -->
     <q-dialog v-model="showHelp">
@@ -853,7 +872,7 @@
         </q-card-section>
       </q-card>
     </q-dialog>
-  </q-layout>
+  </div>
 </template>
 
 <script setup>
@@ -917,36 +936,379 @@ const {
 </script>
 
 <style scoped>
-/* 基本樣式 */
-.header-gradient {
-  background: linear-gradient(135deg, #3a6186, #89253e);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  position: fixed;
+/* 計算器頁面樣式 */
+.calculator-page {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 80px 0 120px;
+  overflow: hidden;
+}
+
+.hero-bg-pattern {
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 10;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 2px);
+  background-size: 60px 60px;
+  animation: float 20s ease-in-out infinite;
 }
 
-.header-title {
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-text-center {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  color: white;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(45deg, #ffffff, #e2e8f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.hero-badges {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.hero-wave svg {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 60px;
+}
+
+/* 容器 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* 主要內容區 */
+.main-content {
+  padding: 4rem 0;
+}
+
+.calculator-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* 現代化卡片 */
+.modern-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.modern-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.section-title {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
 }
 
-.footer-gradient {
-  background: linear-gradient(135deg, #89253e, #3a6186);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+.title-icon {
+  font-size: 1.5rem;
+  color: #667eea;
+}
+
+.section-title h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* 服務類型選擇器 */
+.service-type-selector {
+  margin-bottom: 2rem;
+}
+
+.type-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.type-card {
+  position: relative;
+  padding: 2rem 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.type-card:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+}
+
+.type-card.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.type-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.type-card.active .type-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.type-card h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.type-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.type-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 32px;
+  height: 32px;
+  background: #10b981;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* 費用摘要卡片 */
+.total-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.total-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.total-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+/* 底部行動按鈕 */
+.bottom-action-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 10;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+  padding: 1rem 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  backdrop-filter: blur(10px);
 }
 
-.page-background {
-  background-color: #f8f9fa;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e0e6ed' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  position: relative;
+.action-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.cost-summary {
+  flex: 1;
+}
+
+.final-cost {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.cost-label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.cost-amount {
+  color: #667eea;
+}
+
+.cost-unit {
+  font-size: 1rem;
+  color: #64748b;
+}
+
+.cost-details {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.detail-text {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.tip-badge {
+  font-size: 0.75rem;
+}
+
+.action-buttons {
+  flex-shrink: 0;
+}
+
+.action-btn {
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.action-btn:hover {
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .calculator-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .type-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .hero-badges {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 /* 粒子效果樣式 */

@@ -22,7 +22,7 @@ import { readFile } from 'node:fs/promises';
 import consola, { consola as consola$1, createConsola } from 'file:///Users/troye/code/troye/new-care/node_modules/consola/dist/index.mjs';
 import { ErrorParser } from 'file:///Users/troye/code/troye/new-care/node_modules/youch-core/build/index.js';
 import { Youch } from 'file:///Users/troye/code/troye/new-care/node_modules/nitropack/node_modules/youch/build/index.js';
-import { SourceMapConsumer } from 'file:///Users/troye/code/troye/new-care/node_modules/source-map/source-map.js';
+import { SourceMapConsumer } from 'file:///Users/troye/code/troye/new-care/node_modules/nitropack/node_modules/source-map/source-map.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { stringify, uneval } from 'file:///Users/troye/code/troye/new-care/node_modules/devalue/index.js';
 import { captureRawStackTrace, parseRawStackTrace } from 'file:///Users/troye/code/troye/new-care/node_modules/errx/dist/index.js';
@@ -4095,22 +4095,13 @@ const sources$1 = [
         },
         "urls": [
             {
-                "loc": "/app"
-            },
-            {
                 "loc": "/join"
-            },
-            {
-                "loc": "/test"
             },
             {
                 "loc": "/"
             },
             {
-                "loc": "/login"
-            },
-            {
-                "loc": "/register"
+                "loc": "/info/app"
             },
             {
                 "loc": "/auth/login"
@@ -4138,9 +4129,6 @@ const sources$1 = [
             },
             {
                 "loc": "/booking/match"
-            },
-            {
-                "loc": "/demo/api-demo"
             },
             {
                 "loc": "/info/services"
@@ -4174,12 +4162,6 @@ const sources$1 = [
             },
             {
                 "loc": "/booking/calculator"
-            },
-            {
-                "loc": "/demo/form-validation"
-            },
-            {
-                "loc": "/demo/responsive-test"
             }
         ],
         "sourceType": "app"

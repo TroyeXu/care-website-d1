@@ -20,6 +20,16 @@ interface _GlobalComponents {
     'LoginForm': typeof import("../components/LoginForm.vue")['default']
     'PaymentForm': typeof import("../components/PaymentForm.vue")['default']
     'RegisterForm': typeof import("../components/RegisterForm.vue")['default']
+    'CommonCaregiverListItem': typeof import("../components/common/CaregiverListItem.vue")['default']
+    'CommonEmptyState': typeof import("../components/common/EmptyState.vue")['default']
+    'CommonFilterPanel': typeof import("../components/common/FilterPanel.vue")['default']
+    'CommonLoadingState': typeof import("../components/common/LoadingState.vue")['default']
+    'CommonPageHeader': typeof import("../components/common/PageHeader.vue")['default']
+    'CommonStatCard': typeof import("../components/common/StatCard.vue")['default']
+    'CommonStatusChip': typeof import("../components/common/StatusChip.vue")['default']
+    'FormButton': typeof import("../components/form/FormButton.vue")['default']
+    'FormInput': typeof import("../components/form/FormInput.vue")['default']
+    'FormPasswordInput': typeof import("../components/form/PasswordInput.vue")['default']
     'NuxtWelcome': typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
     'NuxtLayout': typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
     'NuxtErrorBoundary': typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']
@@ -190,6 +200,16 @@ interface _GlobalComponents {
     'LazyLoginForm': LazyComponent<typeof import("../components/LoginForm.vue")['default']>
     'LazyPaymentForm': LazyComponent<typeof import("../components/PaymentForm.vue")['default']>
     'LazyRegisterForm': LazyComponent<typeof import("../components/RegisterForm.vue")['default']>
+    'LazyCommonCaregiverListItem': LazyComponent<typeof import("../components/common/CaregiverListItem.vue")['default']>
+    'LazyCommonEmptyState': LazyComponent<typeof import("../components/common/EmptyState.vue")['default']>
+    'LazyCommonFilterPanel': LazyComponent<typeof import("../components/common/FilterPanel.vue")['default']>
+    'LazyCommonLoadingState': LazyComponent<typeof import("../components/common/LoadingState.vue")['default']>
+    'LazyCommonPageHeader': LazyComponent<typeof import("../components/common/PageHeader.vue")['default']>
+    'LazyCommonStatCard': LazyComponent<typeof import("../components/common/StatCard.vue")['default']>
+    'LazyCommonStatusChip': LazyComponent<typeof import("../components/common/StatusChip.vue")['default']>
+    'LazyFormButton': LazyComponent<typeof import("../components/form/FormButton.vue")['default']>
+    'LazyFormInput': LazyComponent<typeof import("../components/form/FormInput.vue")['default']>
+    'LazyFormPasswordInput': LazyComponent<typeof import("../components/form/PasswordInput.vue")['default']>
     'LazyNuxtWelcome': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
     'LazyNuxtLayout': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
     'LazyNuxtErrorBoundary': LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']>
@@ -366,6 +386,16 @@ export const HelloWorld: typeof import("../components/HelloWorld.vue")['default'
 export const LoginForm: typeof import("../components/LoginForm.vue")['default']
 export const PaymentForm: typeof import("../components/PaymentForm.vue")['default']
 export const RegisterForm: typeof import("../components/RegisterForm.vue")['default']
+export const CommonCaregiverListItem: typeof import("../components/common/CaregiverListItem.vue")['default']
+export const CommonEmptyState: typeof import("../components/common/EmptyState.vue")['default']
+export const CommonFilterPanel: typeof import("../components/common/FilterPanel.vue")['default']
+export const CommonLoadingState: typeof import("../components/common/LoadingState.vue")['default']
+export const CommonPageHeader: typeof import("../components/common/PageHeader.vue")['default']
+export const CommonStatCard: typeof import("../components/common/StatCard.vue")['default']
+export const CommonStatusChip: typeof import("../components/common/StatusChip.vue")['default']
+export const FormButton: typeof import("../components/form/FormButton.vue")['default']
+export const FormInput: typeof import("../components/form/FormInput.vue")['default']
+export const FormPasswordInput: typeof import("../components/form/PasswordInput.vue")['default']
 export const NuxtWelcome: typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']
 export const NuxtLayout: typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']
 export const NuxtErrorBoundary: typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']
@@ -536,6 +566,16 @@ export const LazyHelloWorld: LazyComponent<typeof import("../components/HelloWor
 export const LazyLoginForm: LazyComponent<typeof import("../components/LoginForm.vue")['default']>
 export const LazyPaymentForm: LazyComponent<typeof import("../components/PaymentForm.vue")['default']>
 export const LazyRegisterForm: LazyComponent<typeof import("../components/RegisterForm.vue")['default']>
+export const LazyCommonCaregiverListItem: LazyComponent<typeof import("../components/common/CaregiverListItem.vue")['default']>
+export const LazyCommonEmptyState: LazyComponent<typeof import("../components/common/EmptyState.vue")['default']>
+export const LazyCommonFilterPanel: LazyComponent<typeof import("../components/common/FilterPanel.vue")['default']>
+export const LazyCommonLoadingState: LazyComponent<typeof import("../components/common/LoadingState.vue")['default']>
+export const LazyCommonPageHeader: LazyComponent<typeof import("../components/common/PageHeader.vue")['default']>
+export const LazyCommonStatCard: LazyComponent<typeof import("../components/common/StatCard.vue")['default']>
+export const LazyCommonStatusChip: LazyComponent<typeof import("../components/common/StatusChip.vue")['default']>
+export const LazyFormButton: LazyComponent<typeof import("../components/form/FormButton.vue")['default']>
+export const LazyFormInput: LazyComponent<typeof import("../components/form/FormInput.vue")['default']>
+export const LazyFormPasswordInput: LazyComponent<typeof import("../components/form/PasswordInput.vue")['default']>
 export const LazyNuxtWelcome: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/welcome.vue")['default']>
 export const LazyNuxtLayout: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-layout")['default']>
 export const LazyNuxtErrorBoundary: LazyComponent<typeof import("../node_modules/nuxt/dist/app/components/nuxt-error-boundary.vue")['default']>

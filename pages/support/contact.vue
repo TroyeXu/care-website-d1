@@ -1,215 +1,307 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="row justify-center">
-      <div class="col-12 col-md-8 col-lg-6">
-        <q-card flat bordered class="contact-card">
-          <q-card-section>
-            <div class="text-h5 text-primary q-mb-sm">
-              <q-icon name="contact_support" size="md" class="q-mr-sm" />
-              聯繫我們
-            </div>
-            <div class="text-body2 text-grey-7">
-              我們很樂意為您提供協助，請選擇最適合的聯絡方式
-            </div>
-          </q-card-section>
+  <q-page class="contact-page">
+    <!-- 頁面標題區域 -->
+    <div class="hero-section">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-icon">
+            <q-icon name="support_agent" size="48px" />
+          </div>
+          <h1 class="hero-title">聯繫我們</h1>
+          <p class="hero-subtitle">我們很樂意為您提供協助，請選擇最適合的聯絡方式</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主要內容區域 -->
+    <div class="main-content">
+      <div class="container">
+        <div class="content-grid">
+          <!-- 聯絡資訊卡片 -->
+          <div class="contact-info-section">
+            <q-card class="contact-info-card">
+              <q-card-section class="card-header">
+                <h2 class="section-title">
+                  <q-icon name="info" class="title-icon" />
+                  聯絡資訊
+                </h2>
+              </q-card-section>
           
-          <q-separator />
+              
+              <q-card-section class="contact-methods">
+                <div class="contact-method-grid">
+                  <div class="contact-method">
+                    <div class="method-icon">
+                      <q-icon name="phone" size="32px" />
+                    </div>
+                    <div class="method-content">
+                      <h3 class="method-title">客服電話</h3>
+                      <p class="method-value">02-1234-5678</p>
+                      <p class="method-desc">服務時間：週一至週五 09:00-18:00</p>
+                    </div>
+                  </div>
+                  
+                  <div class="contact-method">
+                    <div class="method-icon">
+                      <q-icon name="email" size="32px" />
+                    </div>
+                    <div class="method-content">
+                      <h3 class="method-title">電子郵件</h3>
+                      <p class="method-value">service@care-platform.com</p>
+                      <p class="method-desc">我們會在24小時內回覆您</p>
+                    </div>
+                  </div>
+                  
+                  <div class="contact-method">
+                    <div class="method-icon">
+                      <q-icon name="location_on" size="32px" />
+                    </div>
+                    <div class="method-content">
+                      <h3 class="method-title">服務地址</h3>
+                      <p class="method-value">台北市信義區信義路五段7號</p>
+                      <p class="method-desc">台北101大樓35樓</p>
+                    </div>
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
           
-          <!-- 聯絡資訊 -->
-          <q-card-section>
-            <div class="text-h6 q-mb-md">聯絡資訊</div>
-            <q-list>
-              <q-item>
-                <q-item-section avatar>
-                  <q-icon name="phone" color="primary" size="md" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>客服電話</q-item-label>
-                  <q-item-label caption>02-1234-5678</q-item-label>
-                  <q-item-label caption class="text-grey-6">服務時間：週一至週五 09:00-18:00</q-item-label>
-                </q-item-section>
-              </q-item>
+          <!-- 聯絡表單卡片 -->
+          <div class="contact-form-section">
+            <q-card class="contact-form-card">
+              <q-card-section class="card-header">
+                <h2 class="section-title">
+                  <q-icon name="edit" class="title-icon" />
+                  線上聯絡
+                </h2>
+                <p class="section-desc">填寫以下表單，我們會盡快回覆您</p>
+              </q-card-section>
               
-              <q-item>
-                <q-item-section avatar>
-                  <q-icon name="email" color="primary" size="md" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>電子郵件</q-item-label>
-                  <q-item-label caption>service@care-platform.com</q-item-label>
-                  <q-item-label caption class="text-grey-6">我們會在24小時內回覆您</q-item-label>
-                </q-item-section>
-              </q-item>
-              
-              <q-item>
-                <q-item-section avatar>
-                  <q-icon name="location_on" color="primary" size="md" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>服務地址</q-item-label>
-                  <q-item-label caption>台北市信義區信義路五段7號</q-item-label>
-                  <q-item-label caption class="text-grey-6">台北101大樓35樓</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
-          
-          <q-separator />
-          
-          <!-- 聯絡表單 -->
-          <q-card-section>
-            <div class="text-h6 q-mb-md">線上聯絡</div>
-            
-            <Form
-              :validation-schema="contactSchema"
-              @submit="handleSubmit"
-              v-slot="{ errors, isSubmitting }"
-            >
-              <div class="row q-gutter-md q-mb-md">
-                <div class="col-12 col-sm-6">
-                  <Field
-                    name="name"
-                    v-slot="{ field, errorMessage }"
-                  >
-                    <q-input
-                      v-bind="field"
-                      label="姓名 *"
-                      outlined
-                      dense
-                      :error="!!errorMessage"
-                      :error-message="errorMessage"
-                      placeholder="請輸入您的姓名"
-                    />
-                  </Field>
-                </div>
-                <div class="col-12 col-sm-6">
-                  <Field
-                    name="email"
-                    v-slot="{ field, errorMessage }"
-                  >
-                    <q-input
-                      v-bind="field"
-                      label="電子郵件 *"
-                      type="email"
-                      outlined
-                      dense
-                      :error="!!errorMessage"
-                      :error-message="errorMessage"
-                      placeholder="example@email.com"
-                    />
-                  </Field>
-                </div>
-              </div>
-              
-              <div class="row q-gutter-md q-mb-md">
-                <div class="col-12 col-sm-6">
-                  <Field
-                    name="phone"
-                    v-slot="{ field, errorMessage }"
-                  >
-                    <q-input
-                      v-bind="field"
-                      label="電話號碼 *"
-                      outlined
-                      dense
-                      :error="!!errorMessage"
-                      :error-message="errorMessage"
-                      placeholder="09XXXXXXXX"
-                    />
-                  </Field>
-                </div>
-                <div class="col-12 col-sm-6">
-                  <Field
-                    name="subject"
-                    v-slot="{ field, errorMessage }"
-                  >
-                    <q-select
-                      v-bind="field"
-                      label="聯絡主題 *"
-                      :options="subjectOptions"
-                      outlined
-                      dense
-                      emit-value
-                      map-options
-                      :error="!!errorMessage"
-                      :error-message="errorMessage"
-                    />
-                  </Field>
-                </div>
-              </div>
-              
-              <div class="row q-gutter-md q-mb-lg">
-                <div class="col-12">
-                  <Field
-                    name="message"
-                    v-slot="{ field, errorMessage }"
-                  >
-                    <q-input
-                      v-bind="field"
-                      label="詳細訊息 *"
-                      type="textarea"
-                      outlined
-                      :error="!!errorMessage"
-                      :error-message="errorMessage"
-                      rows="5"
-                      placeholder="請詳細描述您的問題或需求，我們會盡快為您解答"
-                    />
-                  </Field>
-                </div>
-              </div>
-              
-              <div class="text-right">
-                <q-btn
-                  type="submit"
-                  color="primary"
-                  size="lg"
-                  :loading="isSubmitting || loading"
-                  :disable="Object.keys(errors).length > 0"
-                  icon="send"
+              <q-card-section class="form-content">
+                <Form
+                  :validation-schema="contactSchema"
+                  @submit="handleSubmit"
+                  v-slot="{ errors, isSubmitting }"
                 >
-                  {{ isSubmitting ? '送出中...' : '送出訊息' }}
-                </q-btn>
-              </div>
-            </Form>
-          </q-card-section>
-        </q-card>
+                  <div class="form-grid">
+                    <div class="form-row">
+                      <div class="form-field">
+                        <Field
+                          name="name"
+                          v-slot="{ field, errorMessage }"
+                        >
+                          <q-input
+                            v-bind="field"
+                            label="姓名"
+                            outlined
+                            :error="!!errorMessage"
+                            :error-message="errorMessage"
+                            placeholder="請輸入您的姓名"
+                            class="custom-input"
+                          >
+                            <template v-slot:prepend>
+                              <q-icon name="person" class="input-icon" />
+                            </template>
+                          </q-input>
+                        </Field>
+                      </div>
+                      <div class="form-field">
+                        <Field
+                          name="email"
+                          v-slot="{ field, errorMessage }"
+                        >
+                          <q-input
+                            v-bind="field"
+                            label="電子郵件"
+                            type="email"
+                            outlined
+                            :error="!!errorMessage"
+                            :error-message="errorMessage"
+                            placeholder="example@email.com"
+                            class="custom-input"
+                          >
+                            <template v-slot:prepend>
+                              <q-icon name="email" class="input-icon" />
+                            </template>
+                          </q-input>
+                        </Field>
+                      </div>
+                    </div>
+                    
+                    <div class="form-row">
+                      <div class="form-field">
+                        <Field
+                          name="phone"
+                          v-slot="{ field, errorMessage }"
+                        >
+                          <q-input
+                            v-bind="field"
+                            label="電話號碼"
+                            outlined
+                            :error="!!errorMessage"
+                            :error-message="errorMessage"
+                            placeholder="09XXXXXXXX"
+                            class="custom-input"
+                          >
+                            <template v-slot:prepend>
+                              <q-icon name="phone" class="input-icon" />
+                            </template>
+                          </q-input>
+                        </Field>
+                      </div>
+                      <div class="form-field">
+                        <Field
+                          name="subject"
+                          v-slot="{ field, errorMessage }"
+                        >
+                          <q-select
+                            v-bind="field"
+                            label="聯絡主題"
+                            :options="subjectOptions"
+                            outlined
+                            emit-value
+                            map-options
+                            :error="!!errorMessage"
+                            :error-message="errorMessage"
+                            class="custom-select"
+                          >
+                            <template v-slot:prepend>
+                              <q-icon name="topic" class="input-icon" />
+                            </template>
+                          </q-select>
+                        </Field>
+                      </div>
+                    </div>
+                    
+                    <div class="form-row full-width">
+                      <div class="form-field">
+                        <Field
+                          name="message"
+                          v-slot="{ field, errorMessage }"
+                        >
+                          <q-input
+                            v-bind="field"
+                            label="詳細訊息"
+                            type="textarea"
+                            outlined
+                            :error="!!errorMessage"
+                            :error-message="errorMessage"
+                            rows="5"
+                            placeholder="請詳細描述您的問題或需求，我們會盡快為您解答"
+                            class="custom-textarea"
+                          >
+                            <template v-slot:prepend>
+                              <q-icon name="message" class="input-icon textarea-icon" />
+                            </template>
+                          </q-input>
+                        </Field>
+                      </div>
+                    </div>
+                    
+                    <!-- 成功狀態顯示 -->
+                    <div v-if="submitSuccess" class="success-message">
+                      <div class="success-content">
+                        <q-icon name="check_circle" size="32px" class="success-icon" />
+                        <h3 class="success-title">訊息已成功送出！</h3>
+                        <p class="success-desc">感謝您的聯絡，我們將在24小時內回覆您</p>
+                      </div>
+                    </div>
+                    
+                    <!-- 錯誤狀態顯示 -->
+                    <div v-if="submitError" class="error-message">
+                      <div class="error-content">
+                        <q-icon name="error" size="32px" class="error-icon" />
+                        <h3 class="error-title">送出失敗</h3>
+                        <p class="error-desc">{{ submitError }}</p>
+                        <q-btn 
+                          flat 
+                          color="negative" 
+                          @click="submitError = ''"
+                          class="error-dismiss"
+                        >
+                          關閉
+                        </q-btn>
+                      </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                      <q-btn
+                        type="submit"
+                        color="primary"
+                        size="lg"
+                        :loading="isSubmitting || loading"
+                        :disable="Object.keys(errors).length > 0 || submitSuccess"
+                        :icon="submitSuccess ? 'check' : 'send'"
+                        class="submit-btn"
+                        :class="{ 'success-btn': submitSuccess }"
+                        unelevated
+                      >
+                        <span v-if="submitSuccess">已送出</span>
+                        <span v-else-if="isSubmitting || loading">
+                          <q-spinner size="18px" class="q-mr-sm" />
+                          送出中...
+                        </span>
+                        <span v-else>送出訊息</span>
+                      </q-btn>
+                    </div>
+                  </div>
+                </Form>
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
         
         <!-- 常見問題快速連結 -->
-        <q-card flat bordered class="q-mt-md">
-          <q-card-section>
-            <div class="text-h6 q-mb-md">常見問題</div>
-            <div class="row q-gutter-md">
-              <div class="col-12 col-sm-6">
+        <div class="faq-section">
+          <q-card class="faq-card">
+            <q-card-section class="card-header">
+              <h2 class="section-title">
+                <q-icon name="quiz" class="title-icon" />
+                常見問題
+              </h2>
+              <p class="section-desc">快速找到您需要的答案</p>
+            </q-card-section>
+            
+            <q-card-section>
+              <div class="faq-grid">
                 <q-btn
                   flat
                   no-caps
-                  class="full-width text-left"
-                  icon="help_outline"
+                  class="faq-btn"
                   @click="navigateTo('/content/blog')"
                 >
-                  <div class="q-ml-sm">
-                    <div class="text-weight-medium">使用說明</div>
-                    <div class="text-caption text-grey-6">如何使用平台服務</div>
+                  <div class="faq-content">
+                    <div class="faq-icon">
+                      <q-icon name="help_outline" size="24px" />
+                    </div>
+                    <div class="faq-text">
+                      <div class="faq-title">使用說明</div>
+                      <div class="faq-desc">如何使用平台服務</div>
+                    </div>
                   </div>
                 </q-btn>
-              </div>
-              <div class="col-12 col-sm-6">
+                
                 <q-btn
                   flat
                   no-caps
-                  class="full-width text-left"
-                  icon="payment"
+                  class="faq-btn"
                   @click="navigateTo('/info/pricing')"
                 >
-                  <div class="q-ml-sm">
-                    <div class="text-weight-medium">收費說明</div>
-                    <div class="text-caption text-grey-6">服務費用與付款方式</div>
+                  <div class="faq-content">
+                    <div class="faq-icon">
+                      <q-icon name="payment" size="24px" />
+                    </div>
+                    <div class="faq-text">
+                      <div class="faq-title">收費說明</div>
+                      <div class="faq-desc">服務費用與付款方式</div>
+                    </div>
                   </div>
                 </q-btn>
               </div>
-            </div>
-          </q-card-section>
-        </q-card>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
     </div>
   </q-page>
@@ -245,19 +337,29 @@ const subjectOptions = [
   { label: '其他問題', value: '其他問題' }
 ]
 
+// 響應式資料
+const submitSuccess = ref(false)
+const submitError = ref('')
+
 // 表單提交處理
 const handleSubmit = async (values: ContactFormData) => {
   loading.value = true
+  submitError.value = ''
   
   try {
     const response = await apiService.submitContactForm(values)
     
-    // 顯示成功訊息
+    // 設定成功狀態
+    submitSuccess.value = true
+    
+    // 顯示成功通知
     $q.notify({
       type: 'positive',
       message: response.message || '您的訊息已成功送出，我們會盡快回覆您',
       icon: 'check_circle',
-      timeout: 5000,
+      timeout: 6000,
+      position: 'top',
+      classes: 'success-notification',
       actions: [
         {
           label: '確定',
@@ -267,27 +369,23 @@ const handleSubmit = async (values: ContactFormData) => {
       ]
     })
     
-    // 顯示成功對話框
-    $q.dialog({
-      title: '訊息已送出',
-      message: '感謝您的聯絡，我們已收到您的訊息，將在24小時內回覆您。',
-      ok: {
-        color: 'primary',
-        label: '確定'
-      }
-    }).onOk(() => {
-      // 可以選擇跳轉到其他頁面
-      // navigateTo('/')
-    })
+    // 3秒後重置成功狀態
+    setTimeout(() => {
+      submitSuccess.value = false
+    }, 3000)
     
   } catch (error: any) {
     console.error('送出聯絡表單失敗:', error)
     
+    submitError.value = error.message || '送出失敗，請稍後再試'
+    
     $q.notify({
       type: 'negative',
-      message: error.message || '送出失敗，請稍後再試',
+      message: submitError.value,
       icon: 'error',
-      timeout: 5000
+      timeout: 6000,
+      position: 'top',
+      classes: 'error-notification'
     })
   } finally {
     loading.value = false
@@ -329,27 +427,561 @@ useHead({
 </script>
 
 <style scoped>
-.contact-card {
+/* 全局樣式 */
+.contact-page {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* Hero 區域 */
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 4rem 0 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="70" r="1" fill="white" opacity="0.1"/><circle cx="70" cy="10" r="1" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.hero-content {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.hero-icon {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.hero-icon:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 1rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 主要內容區域 */
+.main-content {
+  padding: 3rem 0;
+  background: #f8fafc;
+  position: relative;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* 卡片通用樣式 */
+.contact-info-card,
+.contact-form-card,
+.faq-card {
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 0.3s ease;
+}
+
+.contact-info-card:hover,
+.contact-form-card:hover,
+.faq-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.title-icon {
+  margin-right: 0.75rem;
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.section-desc {
+  color: #718096;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* 聯絡方式網格 */
+.contact-methods {
+  padding: 2rem;
+}
+
+.contact-method-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.contact-method {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background: rgba(102, 126, 234, 0.02);
+  border-radius: 15px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.3s ease;
+}
+
+.contact-method:hover {
+  background: rgba(102, 126, 234, 0.05);
+  border-color: rgba(102, 126, 234, 0.2);
+  transform: translateX(5px);
+}
+
+.method-icon {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 12px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-right: 1rem;
+  flex-shrink: 0;
 }
 
-.q-field--outlined .q-field__control:before {
-  border-color: #e0e0e0;
+.method-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 0.5rem;
 }
 
-.q-field--outlined.q-field--focused .q-field__control:before {
-  border-color: #1976d2;
-  border-width: 2px;
+.method-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #667eea;
+  margin: 0 0 0.25rem;
 }
 
-.q-btn {
-  border-radius: 8px;
+.method-desc {
+  font-size: 0.9rem;
+  color: #718096;
+  margin: 0;
 }
 
-@media (max-width: 600px) {
-  .contact-card {
-    margin: 1rem;
+/* 表單樣式 */
+.form-content {
+  padding: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-row.full-width {
+  grid-template-columns: 1fr;
+}
+
+.form-field {
+  position: relative;
+}
+
+.custom-input,
+.custom-select,
+.custom-textarea {
+  border-radius: 12px !important;
+}
+
+.custom-input .q-field__control,
+.custom-select .q-field__control,
+.custom-textarea .q-field__control {
+  border-radius: 12px !important;
+  background: rgba(248, 250, 252, 0.8) !important;
+  transition: all 0.3s ease !important;
+}
+
+.custom-input .q-field__control:hover,
+.custom-select .q-field__control:hover,
+.custom-textarea .q-field__control:hover {
+  background: rgba(248, 250, 252, 1) !important;
+  transform: translateY(-1px);
+}
+
+.input-icon {
+  color: #667eea !important;
+}
+
+.textarea-icon {
+  align-self: flex-start;
+  margin-top: 12px;
+}
+
+/* 表單動作 */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2) !important;
+  color: white !important;
+  padding: 12px 32px !important;
+  border-radius: 50px !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  text-transform: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+}
+
+.submit-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* FAQ 樣式 */
+.faq-section {
+  margin-top: 2rem;
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.faq-btn {
+  padding: 0 !important;
+  border-radius: 15px !important;
+  background: rgba(102, 126, 234, 0.02) !important;
+  border: 1px solid rgba(102, 126, 234, 0.1) !important;
+  transition: all 0.3s ease !important;
+  height: auto !important;
+}
+
+.faq-btn:hover {
+  background: rgba(102, 126, 234, 0.05) !important;
+  border-color: rgba(102, 126, 234, 0.2) !important;
+  transform: translateY(-2px) !important;
+}
+
+.faq-content {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  text-align: left;
+  width: 100%;
+}
+
+.faq-icon {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-right: 1rem;
+}
+
+.faq-title {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+}
+
+.faq-desc {
+  font-size: 0.9rem;
+  color: #718096;
+}
+
+/* 動畫 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contact-info-card,
+.contact-form-card,
+.faq-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.contact-form-card {
+  animation-delay: 0.2s;
+}
+
+.faq-card {
+  animation-delay: 0.4s;
+}
+
+/* 成功和錯誤訊息樣式 */
+.success-message {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  color: white;
+  animation: slideInUp 0.5s ease-out;
+  box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
+}
+
+.success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.success-icon {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  padding: 12px;
+  margin-bottom: 1rem;
+}
+
+.success-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.success-desc {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.error-message {
+  background: linear-gradient(135deg, #f56565, #e53e3e);
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  color: white;
+  animation: slideInUp 0.5s ease-out;
+  box-shadow: 0 10px 30px rgba(245, 101, 101, 0.3);
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.error-icon {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  padding: 12px;
+  margin-bottom: 1rem;
+}
+
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.error-desc {
+  font-size: 1rem;
+  margin: 0 0 1rem;
+  opacity: 0.9;
+}
+
+.error-dismiss {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border-radius: 25px !important;
+  font-weight: 500 !important;
+}
+
+.error-dismiss:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.success-btn {
+  background: linear-gradient(135deg, #48bb78, #38a169) !important;
+}
+
+.success-btn:hover {
+  background: linear-gradient(135deg, #38a169, #2f855a) !important;
+}
+
+/* 載入和通知樣式 */
+:deep(.success-notification) {
+  background: linear-gradient(135deg, #48bb78, #38a169) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3) !important;
+}
+
+:deep(.error-notification) {
+  background: linear-gradient(135deg, #f56565, #e53e3e) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(245, 101, 101, 0.3) !important;
+}
+
+/* 輸入框驗證樣式增強 */
+.custom-input:deep(.q-field--error .q-field__control),
+.custom-select:deep(.q-field--error .q-field__control),
+.custom-textarea:deep(.q-field--error .q-field__control) {
+  border-color: #f56565 !important;
+  background: rgba(245, 101, 101, 0.05) !important;
+}
+
+.custom-input:deep(.q-field--error .q-field__bottom),
+.custom-select:deep(.q-field--error .q-field__bottom),
+.custom-textarea:deep(.q-field--error .q-field__bottom) {
+  color: #f56565 !important;
+  font-weight: 500 !important;
+}
+
+/* 滑入動畫 */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 0 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .hero-icon {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .content-grid {
+    gap: 1.5rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-header,
+  .contact-methods,
+  .form-content {
+    padding: 1.5rem;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.8rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .contact-method,
+  .faq-content {
+    padding: 1rem;
+  }
+  
+  .method-icon,
+  .faq-icon {
+    padding: 8px;
+  }
+  
+  .success-message,
+  .error-message {
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+  
+  .success-title,
+  .error-title {
+    font-size: 1.3rem;
   }
 }
 </style>

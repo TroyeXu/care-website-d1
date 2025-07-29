@@ -16,7 +16,8 @@
       "Bash(lsof:*)",
       "Bash(curl:*)",
       "Bash(kill:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

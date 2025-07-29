@@ -30,69 +30,39 @@
 
           <div class="row q-gutter-md q-mb-md">
             <div class="col">
-              <Field name="name" v-slot="{ field, errorMessage }">
-                <q-input
-                  v-bind="field"
-                  label="姓名 *"
-                  outlined
-                  dense
-                  :error="!!errorMessage"
-                  :error-message="errorMessage"
-                  placeholder="請輸入您的姓名"
-                  aria-label="姓名輸入欄位"
-                  clearable
-                >
-                  <template #prepend>
-                    <q-icon name="person" color="primary" />
-                  </template>
-                </q-input>
-              </Field>
+              <FormInput
+                name="name"
+                label="姓名 *"
+                icon="person"
+                placeholder="請輸入您的姓名"
+                aria-label="姓名輸入欄位"
+              />
             </div>
           </div>
 
           <div class="row q-gutter-md q-mb-md">
             <div class="col">
-              <Field name="email" v-slot="{ field, errorMessage }">
-                <q-input
-                  v-bind="field"
-                  label="電子郵件 *"
-                  type="email"
-                  outlined
-                  dense
-                  :error="!!errorMessage"
-                  :error-message="errorMessage"
-                  placeholder="example@email.com"
-                  aria-label="電子郵件輸入欄位"
-                  clearable
-                >
-                  <template #prepend>
-                    <q-icon name="email" color="primary" />
-                  </template>
-                </q-input>
-              </Field>
+              <FormInput
+                name="email"
+                label="電子郵件 *"
+                type="email"
+                icon="email"
+                placeholder="example@email.com"
+                aria-label="電子郵件輸入欄位"
+              />
             </div>
           </div>
 
           <div class="row q-gutter-md q-mb-md">
             <div class="col">
-              <Field name="phone" v-slot="{ field, errorMessage }">
-                <q-input
-                  v-bind="field"
-                  label="電話號碼 *"
-                  outlined
-                  dense
-                  :error="!!errorMessage"
-                  :error-message="errorMessage"
-                  placeholder="09XXXXXXXX"
-                  mask="##########"
-                  aria-label="電話號碼輸入欄位"
-                  clearable
-                >
-                  <template #prepend>
-                    <q-icon name="phone" color="primary" />
-                  </template>
-                </q-input>
-              </Field>
+              <FormInput
+                name="phone"
+                label="電話號碼 *"
+                icon="phone"
+                placeholder="09XXXXXXXX"
+                mask="##########"
+                aria-label="電話號碼輸入欄位"
+              />
             </div>
           </div>
 
@@ -105,71 +75,27 @@
 
           <div class="row q-gutter-md q-mb-md">
             <div class="col">
-              <Field name="password" v-slot="{ field, errorMessage }">
-                <q-input
-                  v-bind="field"
-                  label="密碼 *"
-                  :type="showPassword ? 'text' : 'password'"
-                  outlined
-                  dense
-                  :error="!!errorMessage"
-                  :error-message="errorMessage"
-                  placeholder="至少8個字符，包含大小寫和數字"
-                  aria-label="密碼輸入欄位"
-                >
-                  <template #prepend>
-                    <q-icon name="lock" color="primary" />
-                  </template>
-                  <template #append>
-                    <q-btn
-                      flat
-                      round
-                      dense
-                      :icon="showPassword ? 'visibility' : 'visibility_off'"
-                      @click="showPassword = !showPassword"
-                      :aria-label="showPassword ? '隱藏密碼' : '顯示密碼'"
-                      tabindex="-1"
-                    />
-                  </template>
-                </q-input>
-              </Field>
+              <PasswordInput
+                name="password"
+                label="密碼 *"
+                placeholder="至少8個字符，包含大小寫和數字"
+                aria-label="密碼輸入欄位"
+                autocomplete="new-password"
+              />
             </div>
           </div>
 
           <div class="row q-gutter-md q-mb-md">
             <div class="col">
-              <Field name="confirmPassword" v-slot="{ field, errorMessage }">
-                <q-input
-                  v-bind="field"
-                  label="確認密碼 *"
-                  :type="showConfirmPassword ? 'text' : 'password'"
-                  outlined
-                  dense
-                  :error="!!errorMessage"
-                  :error-message="errorMessage"
-                  placeholder="請再次輸入密碼"
-                  aria-label="確認密碼輸入欄位"
-                >
-                  <template #prepend>
-                    <q-icon name="lock" color="primary" />
-                  </template>
-                  <template #append>
-                    <q-btn
-                      flat
-                      round
-                      dense
-                      :icon="
-                        showConfirmPassword ? 'visibility' : 'visibility_off'
-                      "
-                      @click="showConfirmPassword = !showConfirmPassword"
-                      :aria-label="
-                        showConfirmPassword ? '隱藏確認密碼' : '顯示確認密碼'
-                      "
-                      tabindex="-1"
-                    />
-                  </template>
-                </q-input>
-              </Field>
+              <PasswordInput
+                name="confirmPassword"
+                label="確認密碼 *"
+                placeholder="請再次輸入密碼"
+                aria-label="確認密碼輸入欄位"
+                autocomplete="new-password"
+                show-label="顯示確認密碼"
+                hide-label="隱藏確認密碼"
+              />
             </div>
           </div>
 
@@ -338,33 +264,18 @@
           <!-- 提交按鈕 -->
           <div class="row q-gutter-md">
             <div class="col">
-              <q-btn
+              <FormButton
                 type="submit"
-                color="primary"
                 size="lg"
-                class="full-width"
                 :loading="isSubmitting || loading"
                 :disable="Object.keys(errors).length > 0"
                 icon="person_add"
                 aria-label="提交註冊表單"
-                :aria-describedby="
-                  Object.keys(errors).length > 0
-                    ? 'register-form-errors'
-                    : undefined
-                "
+                :has-errors="Object.keys(errors).length > 0"
+                error-id="register-form-errors"
               >
                 {{ isSubmitting ? '註冊中...' : '建立帳號' }}
-              </q-btn>
-              <!-- 表單錯誤提示 -->
-              <div
-                v-if="Object.keys(errors).length > 0"
-                id="register-form-errors"
-                class="text-negative text-caption q-mt-sm"
-                role="alert"
-                aria-live="polite"
-              >
-                請修正表單中的錯誤後再提交
-              </div>
+              </FormButton>
             </div>
           </div>
 
@@ -431,8 +342,6 @@ const authStore = useAuthStore()
 
 // 響應式資料
 const loading = ref(false)
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
 const showErrorDialog = ref(false)
 const errorMessage = ref('')
 const medicalHistory = ref<string[]>([])
@@ -517,8 +426,7 @@ const handleSubmit = async (values: RegisterFormData) => {
       timeout: 3000,
     })
 
-    // 跳轉到儀表板
-    await router.push('/user/dashboard')
+    // 註冊成功後不進行重新定向，保持在當前頁面
   } catch (error: any) {
     console.error('註冊失敗:', error)
 

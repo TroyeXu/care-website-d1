@@ -33,34 +33,53 @@
 
       <!-- 快速操作 -->
       <div class="quick-actions">
-        <h2>快速操作</h2>
+        <div class="section-header">
+          <h2>快速操作</h2>
+          <p class="section-subtitle">選擇您需要的服務</p>
+        </div>
         <div class="action-grid">
-          <button class="action-card" @click="navigateTo('/caregivers/search')">
-            <div class="action-icon">🔍</div>
+          <button 
+            class="action-card" 
+            @click="navigateTo('/caregivers/search')"
+            aria-label="搜尋看護師服務"
+          >
+            <div class="action-icon" aria-hidden="true">🔍</div>
             <div class="action-text">
               <h3>搜尋看護</h3>
               <p>找到最適合的看護師</p>
             </div>
           </button>
           
-          <button class="action-card" @click="navigateTo('/booking/calculator')">
-            <div class="action-icon">💰</div>
+          <button 
+            class="action-card" 
+            @click="navigateTo('/booking/calculator')"
+            aria-label="計算照護服務費用"
+          >
+            <div class="action-icon" aria-hidden="true">💰</div>
             <div class="action-text">
               <h3>費用計算</h3>
               <p>估算照護服務費用</p>
             </div>
           </button>
           
-          <button class="action-card" @click="navigateTo('/booking/match')">
-            <div class="action-icon">🎯</div>
+          <button 
+            class="action-card" 
+            @click="navigateTo('/booking/match')"
+            aria-label="使用AI智能媒合推薦看護"
+          >
+            <div class="action-icon" aria-hidden="true">🎯</div>
             <div class="action-text">
               <h3>智能媒合</h3>
               <p>AI 推薦最佳看護</p>
             </div>
           </button>
           
-          <button class="action-card" @click="navigateTo('/booking/schedule')">
-            <div class="action-icon">📅</div>
+          <button 
+            class="action-card" 
+            @click="navigateTo('/booking/schedule')"
+            aria-label="管理預約排程"
+          >
+            <div class="action-icon" aria-hidden="true">📅</div>
             <div class="action-text">
               <h3>排程管理</h3>
               <p>查看預約時程</p>
@@ -71,7 +90,10 @@
 
       <!-- 個人化推薦 -->
       <div class="recommendations-section">
-        <h2>為您推薦</h2>
+        <div class="section-header">
+          <h2>為您推薦</h2>
+          <p class="section-subtitle">根據您的需求精選的專業看護師</p>
+        </div>
         <div v-if="recommendedCaregivers.length > 0" class="caregivers-grid">
           <CaregiverCard 
             v-for="caregiver in recommendedCaregivers" 
@@ -82,7 +104,11 @@
         </div>
         <div v-else class="empty-state">
           <p>暫無推薦看護師，請先完善您的個人資料和偏好設定</p>
-          <button class="btn-primary" @click="navigateTo('/profile')">
+          <button 
+            class="btn-primary" 
+            @click="navigateTo('/profile')"
+            aria-label="前往個人資料頁面完善資料"
+          >
             完善資料
           </button>
         </div>
@@ -90,7 +116,10 @@
 
       <!-- 即將到來的預約 -->
       <div class="upcoming-section">
-        <h2>即將到來的預約</h2>
+        <div class="section-header">
+          <h2>即將到來的預約</h2>
+          <p class="section-subtitle">管理您的預約時程</p>
+        </div>
         <div v-if="upcomingBookings.length > 0" class="bookings-list">
           <div 
             v-for="booking in upcomingBookings" 
@@ -111,13 +140,18 @@
               </div>
             </div>
             <div class="booking-actions">
-              <button class="btn-secondary btn-sm" @click="viewBookingDetails(booking)">
+              <button 
+                class="btn-secondary btn-sm" 
+                @click="viewBookingDetails(booking)"
+                :aria-label="`查看 ${getCaregiverName(booking.caregiver_id)} 的預約詳情`"
+              >
                 查看詳情
               </button>
               <button 
                 v-if="booking.status === 'pending'" 
                 class="btn-danger btn-sm"
                 @click="cancelBooking(booking)"
+                :aria-label="`取消與 ${getCaregiverName(booking.caregiver_id)} 的預約`"
               >
                 取消預約
               </button>
@@ -126,7 +160,11 @@
         </div>
         <div v-else class="empty-state">
           <p>目前沒有即將到來的預約</p>
-          <button class="btn-primary" @click="navigateTo('/caregivers/search')">
+          <button 
+            class="btn-primary" 
+            @click="navigateTo('/caregivers/search')"
+            aria-label="前往搜尋頁面立即預約看護"
+          >
             立即預約
           </button>
         </div>
@@ -134,7 +172,10 @@
 
       <!-- 服務歷史 -->
       <div class="history-section">
-        <h2>服務歷史</h2>
+        <div class="section-header">
+          <h2>服務歷史</h2>
+          <p class="section-subtitle">查看過往的服務記錄</p>
+        </div>
         <div v-if="recentBookings.length > 0" class="history-list">
           <div 
             v-for="booking in recentBookings.slice(0, 5)" 
@@ -152,7 +193,11 @@
               NT$ {{ booking.total_cost.toLocaleString() }}
             </div>
           </div>
-          <button class="btn-link" @click="navigateTo('/bookings')">
+          <button 
+            class="btn-link" 
+            @click="navigateTo('/bookings')"
+            aria-label="查看所有服務歷史記錄"
+          >
             查看完整歷史記錄
           </button>
         </div>
@@ -168,10 +213,18 @@
         <h2>請先登入</h2>
         <p>登入後即可查看個人儀表板、預約記錄和推薦服務</p>
         <div class="login-actions">
-          <button class="btn-primary" @click="navigateTo('/auth/login')">
+          <button 
+            class="btn-primary" 
+            @click="navigateTo('/auth/login')"
+            aria-label="前往登入頁面"
+          >
             立即登入
           </button>
-          <button class="btn-secondary" @click="navigateTo('/auth/register')">
+          <button 
+            class="btn-secondary" 
+            @click="navigateTo('/auth/register')"
+            aria-label="前往註冊頁面建立新帳號"
+          >
             註冊帳號
           </button>
         </div>
@@ -332,15 +385,16 @@ const cancelBooking = async (booking: any) => {
 .dashboard-content {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 40px;
 }
 
 /* 歡迎區塊 */
 .welcome-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 32px;
   color: white;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
 }
 
 .user-info {
@@ -412,12 +466,35 @@ const cancelBooking = async (booking: any) => {
   border-radius: 12px;
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(49, 130, 206, 0.1), transparent);
+  transition: left 0.5s;
 }
 
 .action-card:hover {
   border-color: #3182ce;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(49, 130, 206, 0.15);
+  transform: translateY(-2px);
+}
+
+.action-card:hover::before {
+  left: 100%;
+}
+
+.action-card:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.1);
 }
 
 .action-icon {
@@ -438,11 +515,30 @@ const cancelBooking = async (booking: any) => {
   font-size: 0.875rem;
 }
 
-/* 推薦和預約區塊 */
-.recommendations-section h2,
-.upcoming-section h2,
-.history-section h2 {
-  margin: 0 0 20px 0;
+/* 區塊標題 */
+.section-header {
+  margin-bottom: 24px;
+}
+
+.section-header h2 {
+  margin: 0 0 4px 0;
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.section-subtitle {
+  margin: 0;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+/* 快速操作標題 */
+.quick-actions .section-header {
+  margin-bottom: 20px;
+}
+
+.quick-actions .section-header h2 {
   color: #2d3748;
 }
 
@@ -465,7 +561,14 @@ const cancelBooking = async (booking: any) => {
   padding: 20px;
   background: white;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.booking-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #cbd5e0;
 }
 
 .booking-info {
@@ -517,7 +620,15 @@ const cancelBooking = async (booking: any) => {
   align-items: center;
   padding: 16px;
   background: #f7fafc;
-  border-radius: 8px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.history-item:hover {
+  background: #edf2f7;
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .history-info {
@@ -544,12 +655,24 @@ const cancelBooking = async (booking: any) => {
 /* 按鈕樣式 */
 .btn-primary, .btn-secondary, .btn-danger, .btn-link {
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   border: none;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  font-size: 0.875rem;
+}
+
+.btn-primary, .btn-secondary, .btn-danger {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:active, .btn-secondary:active, .btn-danger:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .btn-sm {
@@ -564,6 +687,7 @@ const cancelBooking = async (booking: any) => {
 
 .btn-primary:hover {
   background: #2c5282;
+  box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
 }
 
 .btn-secondary {
@@ -574,6 +698,8 @@ const cancelBooking = async (booking: any) => {
 
 .btn-secondary:hover {
   background: #f7fafc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #cbd5e0;
 }
 
 .btn-danger {
@@ -583,6 +709,7 @@ const cancelBooking = async (booking: any) => {
 
 .btn-danger:hover {
   background: #c53030;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
 }
 
 .btn-link {
@@ -641,21 +768,72 @@ const cancelBooking = async (booking: any) => {
 }
 
 /* 響應式設計 */
+@media (max-width: 1024px) {
+  .dashboard {
+    padding: 20px;
+  }
+  
+  .caregivers-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  
+  .action-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard {
     padding: 16px;
   }
   
+  .dashboard-content {
+    gap: 24px;
+  }
+  
+  .welcome-section {
+    padding: 24px 20px;
+  }
+  
   .user-info {
     flex-direction: column;
     text-align: center;
+    gap: 16px;
+  }
+  
+  .user-avatar {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .user-details h1 {
+    font-size: 1.5rem;
   }
   
   .user-stats {
     justify-content: center;
+    gap: 24px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
   }
   
   .action-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .action-card {
+    padding: 16px;
+  }
+  
+  .action-icon {
+    font-size: 1.5rem;
+    min-width: 48px;
+  }
+  
+  .caregivers-grid {
     grid-template-columns: 1fr;
   }
   
@@ -663,6 +841,7 @@ const cancelBooking = async (booking: any) => {
     flex-direction: column;
     gap: 16px;
     align-items: stretch;
+    padding: 16px;
   }
   
   .booking-actions {
@@ -677,15 +856,52 @@ const cancelBooking = async (booking: any) => {
     flex-direction: column;
     gap: 8px;
     align-items: stretch;
+    padding: 12px;
   }
   
   .history-info {
     flex-direction: column;
     gap: 4px;
+    align-items: flex-start;
   }
   
   .login-actions {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 12px;
+  }
+  
+  .dashboard-content {
+    gap: 20px;
+  }
+  
+  .welcome-section {
+    padding: 20px 16px;
+  }
+  
+  .user-stats {
+    gap: 16px;
+  }
+  
+  .stat-item {
+    min-width: 60px;
+  }
+  
+  .action-card {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .action-text h3 {
+    font-size: 1rem;
+  }
+  
+  .action-text p {
+    font-size: 0.8rem;
   }
 }
 </style>

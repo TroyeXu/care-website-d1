@@ -130,6 +130,7 @@ declare global {
   const updateAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']
   const updateSiteConfig: typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/updateSiteConfig')['updateSiteConfig']
   const useApiConfig: typeof import('../../composables/useApiConfig')['useApiConfig']
+  const useApiHandler: typeof import('../../composables/useApiHandler')['useApiHandler']
   const useApiRoutes: typeof import('../../composables/useApiRoutes')['useApiRoutes']
   const useApiService: typeof import('../../composables/useApiService')['useApiService']
   const useAppConfig: typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']
@@ -138,6 +139,7 @@ declare global {
   const useAsyncData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']
   const useAttrs: typeof import('vue')['useAttrs']
   const useAuthStore: typeof import('../../stores/auth')['useAuthStore']
+  const useBookingFilters: typeof import('../../composables/useBookingFilters')['useBookingFilters']
   const useBookingStore: typeof import('../../stores/bookings')['useBookingStore']
   const useBrowserLocale: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useBrowserLocale']
   const useCareActions: typeof import('../../composables/useCareActions')['default']
@@ -451,6 +453,7 @@ declare module 'vue' {
     readonly updateAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['updateAppConfig']>
     readonly updateSiteConfig: UnwrapRef<typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/updateSiteConfig')['updateSiteConfig']>
     readonly useApiConfig: UnwrapRef<typeof import('../../composables/useApiConfig')['useApiConfig']>
+    readonly useApiHandler: UnwrapRef<typeof import('../../composables/useApiHandler')['useApiHandler']>
     readonly useApiRoutes: UnwrapRef<typeof import('../../composables/useApiRoutes')['useApiRoutes']>
     readonly useApiService: UnwrapRef<typeof import('../../composables/useApiService')['useApiService']>
     readonly useAppConfig: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/config')['useAppConfig']>
@@ -459,6 +462,7 @@ declare module 'vue' {
     readonly useAsyncData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useAsyncData']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useAuthStore: UnwrapRef<typeof import('../../stores/auth')['useAuthStore']>
+    readonly useBookingFilters: UnwrapRef<typeof import('../../composables/useBookingFilters')['useBookingFilters']>
     readonly useBookingStore: UnwrapRef<typeof import('../../stores/bookings')['useBookingStore']>
     readonly useBrowserLocale: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useBrowserLocale']>
     readonly useCareActions: UnwrapRef<typeof import('../../composables/useCareActions')['default']>

@@ -505,6 +505,7 @@ const currentPageTitle = computed(() => {
 })
 
 const canGoBack = computed(() => {
+  if (typeof window === 'undefined') return false
   return window.history.length > 1 && route.path !== '/'
 })
 

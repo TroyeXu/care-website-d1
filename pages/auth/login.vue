@@ -23,60 +23,28 @@
           <!-- 電子郵件 -->
           <div class="row q-gutter-md q-mb-md">
             <div class="col">
-              <Field name="email" v-slot="{ field, errorMessage }">
-                <q-input
-                  v-bind="field"
-                  label="電子郵件"
-                  type="email"
-                  outlined
-                  dense
-                  :error="!!errorMessage"
-                  :error-message="errorMessage"
-                  placeholder="請輸入您的電子郵件"
-                  autocomplete="email"
-                  aria-label="電子郵件輸入欄位"
-                  clearable
-                >
-                  <template #prepend>
-                    <q-icon name="email" color="primary" />
-                  </template>
-                </q-input>
-              </Field>
+              <FormInput
+                name="email"
+                label="電子郵件"
+                type="email"
+                icon="email"
+                placeholder="請輸入您的電子郵件"
+                autocomplete="email"
+                aria-label="電子郵件輸入欄位"
+              />
             </div>
           </div>
 
           <!-- 密碼 -->
           <div class="row q-gutter-md q-mb-lg">
             <div class="col">
-              <Field name="password" v-slot="{ field, errorMessage }">
-                <q-input
-                  v-bind="field"
-                  label="密碼"
-                  :type="showPassword ? 'text' : 'password'"
-                  outlined
-                  dense
-                  :error="!!errorMessage"
-                  :error-message="errorMessage"
-                  placeholder="請輸入您的密碼"
-                  autocomplete="current-password"
-                  aria-label="密碼輸入欄位"
-                >
-                  <template #prepend>
-                    <q-icon name="lock" color="primary" />
-                  </template>
-                  <template #append>
-                    <q-btn
-                      flat
-                      round
-                      dense
-                      :icon="showPassword ? 'visibility' : 'visibility_off'"
-                      @click="showPassword = !showPassword"
-                      :aria-label="showPassword ? '隱藏密碼' : '顯示密碼'"
-                      tabindex="-1"
-                    />
-                  </template>
-                </q-input>
-              </Field>
+              <PasswordInput
+                name="password"
+                label="密碼"
+                placeholder="請輸入您的密碼"
+                autocomplete="current-password"
+                aria-label="密碼輸入欄位"
+              />
             </div>
           </div>
 
@@ -102,29 +70,18 @@
           <!-- 登入按鈕 -->
           <div class="row q-gutter-md q-mb-md">
             <div class="col">
-              <q-btn
+              <FormButton
                 type="submit"
-                color="primary"
                 size="lg"
-                class="full-width"
                 :loading="isSubmitting || loading"
                 :disable="Object.keys(errors).length > 0"
                 icon="login"
                 aria-label="提交登入表單"
-                :aria-describedby="Object.keys(errors).length > 0 ? 'form-errors' : undefined"
+                :has-errors="Object.keys(errors).length > 0"
+                error-id="login-form-errors"
               >
                 {{ isSubmitting ? '登入中...' : '登入' }}
-              </q-btn>
-              <!-- 表單錯誤提示 -->
-              <div
-                v-if="Object.keys(errors).length > 0"
-                id="form-errors"
-                class="text-negative text-caption q-mt-sm"
-                role="alert"
-                aria-live="polite"
-              >
-                請修正表單中的錯誤後再提交
-              </div>
+              </FormButton>
             </div>
           </div>
 
@@ -197,18 +154,13 @@
             @submit="handleForgotPassword"
             v-slot="{ errors: resetErrors, isSubmitting: isResetting }"
           >
-            <Field name="email" v-slot="{ field, errorMessage }">
-              <q-input
-                v-bind="field"
-                label="電子郵件"
-                type="email"
-                outlined
-                dense
-                :error="!!errorMessage"
-                :error-message="errorMessage"
-                placeholder="請輸入您的電子郵件"
-              />
-            </Field>
+            <FormInput
+              name="email"
+              label="電子郵件"
+              type="email"
+              icon="email"
+              placeholder="請輸入您的電子郵件"
+            />
 
             <div class="row q-gutter-sm q-mt-md">
               <q-btn
@@ -275,7 +227,6 @@ const authStore = useAuthStore()
 
 // 響應式資料
 const loading = ref(false)
-const showPassword = ref(false)
 const rememberMe = ref(false)
 const showForgotPasswordDialog = ref(false)
 const showErrorDialog = ref(false)
@@ -336,13 +287,7 @@ const handleSubmit = async (values: LoginFormData) => {
       timeout: 3000,
     })
 
-    // 根據用戶角色跳轉到相應頁面
-    const user = authStore.currentUser
-    if (user?.role === 'caregiver') {
-      await router.push('/caregivers')
-    } else {
-      await router.push('/user/dashboard')
-    }
+    // 登入成功後不進行重新定向，保持在當前頁面
   } catch (error: any) {
     console.error('登入失敗:', error)
 
