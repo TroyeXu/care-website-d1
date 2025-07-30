@@ -355,7 +355,7 @@ onMounted(() => {
 })
 
 // 頁面結構化資料
-const { $route } = useNuxtApp()
+const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
 
@@ -367,7 +367,7 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'SearchResultsPage',
         name: '搜尋看護師 - 護理服務平台',
-        url: baseUrl + $route.fullPath,
+        url: baseUrl + (route?.fullPath || '/caregivers/search'),
         description: '快速搜尋專業看護師，找到最適合的照護服務',
         provider: {
           '@type': 'Organization',

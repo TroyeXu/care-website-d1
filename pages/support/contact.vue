@@ -393,7 +393,7 @@ const handleSubmit = async (values: ContactFormData) => {
 }
 
 // 頁面結構化資料
-const { $route } = useNuxtApp()
+const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
 
@@ -405,7 +405,7 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'ContactPage',
         name: '聯繫我們 - 護理服務平台',
-        url: baseUrl + $route.fullPath,
+        url: baseUrl + (route?.fullPath || '/support/contact'),
         description: '歡迎透過電話或電子郵件與我們聯絡，我們很樂意為您提供協助',
         provider: {
           '@type': 'Organization',

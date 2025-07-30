@@ -712,7 +712,7 @@ onMounted(() => {
 })
 
 // 頁面結構化資料
-const { $route } = useNuxtApp()
+const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
 
@@ -724,7 +724,7 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'WebPage',
         name: '排程管理 - 護理服務平台',
-        url: baseUrl + $route.fullPath,
+        url: baseUrl + (route?.fullPath || '/booking/schedule'),
         description: '查看並管理您的照護排程和預約',
         provider: {
           '@type': 'Organization',

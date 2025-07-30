@@ -901,7 +901,7 @@ onMounted(async () => {
 })
 
 // 頁面結構化資料
-const { $route } = useNuxtApp()
+const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
 
@@ -916,7 +916,7 @@ watch([reviews, averageRating], ([newReviews, newAverage]) => {
             '@context': 'https://schema.org',
             '@type': 'Service',
             name: '護理服務平台',
-            url: baseUrl + $route.fullPath,
+            url: baseUrl + (route?.fullPath || '/support/reviews'),
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: newAverage,

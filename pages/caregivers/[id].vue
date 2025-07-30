@@ -507,7 +507,7 @@ onMounted(() => {
 })
 
 // 頁面結構化資料
-const { $route } = useNuxtApp()
+const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
 
@@ -535,7 +535,7 @@ watch(caregiver, (newCaregiver) => {
               bestRating: 5,
               worstRating: 1
             },
-            url: baseUrl + $route.fullPath
+            url: baseUrl + (route?.fullPath || `/caregivers/${newCaregiver.id}`)
           })
         }
       ]

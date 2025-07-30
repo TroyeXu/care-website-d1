@@ -550,7 +550,7 @@ onMounted(() => {
 })
 
 // 頁面結構化資料
-const { $route } = useNuxtApp()
+const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
 
@@ -562,7 +562,7 @@ useHead({
         '@context': 'https://schema.org',
         '@type': 'SearchResultsPage',
         name: '智能媒合 - 護理服務平台',
-        url: baseUrl + $route.fullPath,
+        url: baseUrl + (route?.fullPath || '/booking/match'),
         description: '根據您的需求智能推薦最適合的看護師',
         provider: {
           '@type': 'Organization',
