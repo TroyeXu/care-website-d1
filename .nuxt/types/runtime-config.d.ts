@@ -85,10 +85,6 @@ import { RuntimeConfig as UserRuntimeConfig, PublicRuntimeConfig as UserPublicRu
   interface SharedPublicRuntimeConfig {
    baseUrl: string,
 
-   supabaseUrl: string,
-
-   supabaseAnonKey: string,
-
    i18n: {
       baseUrl: string,
 

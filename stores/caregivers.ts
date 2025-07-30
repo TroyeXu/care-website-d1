@@ -146,16 +146,10 @@ export const useCaregiverStore = defineStore('caregivers', {
       this.error = null
       
       try {
-        const { supabase } = useSupabase()
-        const { data, error } = await supabase
-          .from('caregivers')
-          .select('*')
-          .order('rating', { ascending: false })
-        
-        if (error) throw error
-        this.caregivers = data || mockCaregivers
+        const { caregivers } = await $fetch('/api/caregivers')
+        this.caregivers = caregivers || mockCaregivers
       } catch (err: any) {
-        this.error = err.message
+        this.error = err.data?.message || err.message || '載入照護員資料失敗'
         console.error('Error fetching caregivers:', err)
         this.caregivers = mockCaregivers
       } finally {
@@ -163,84 +157,50 @@ export const useCaregiverStore = defineStore('caregivers', {
       }
     },
 
-    async fetchCaregiverById(id: number) {
+    async fetchCaregiverById(id: string) {
       try {
-        const { supabase } = useSupabase()
-        const { data, error } = await supabase
-          .from('caregivers')
-          .select('*')
-          .eq('id', id)
-          .single()
-        
-        if (error) throw error
-        return data
+        const caregiver = await $fetch(`/api/caregivers/${id}`)
+        return caregiver
       } catch (err: any) {
-        this.error = err.message
+        this.error = err.data?.message || err.message || '載入照護員資料失敗'
         console.error('Error fetching caregiver:', err)
-        return this.getCaregiverById(id)
+        return this.getCaregiverById(Number(id))
       }
     },
 
     async createCaregiver(caregiverData: Omit<Caregiver, 'id' | 'created_at' | 'updated_at'>) {
       try {
-        const { supabase } = useSupabase()
-        const { data, error } = await supabase
-          .from('caregivers')
-          .insert([caregiverData])
-          .select()
-          .single()
+        const newCaregiver = await $fetch('/api/caregivers', {
+          method: 'POST',
+          body: caregiverData
+        })
         
-        if (error) throw error
-        
-        this.caregivers.push(data)
-        return data
-      } catch (err: any) {
-        this.error = err.message
-        console.error('Error creating caregiver:', err)
-        
-        const newCaregiver = {
-          ...caregiverData,
-          id: Math.max(...this.caregivers.map(c => c.id)) + 1,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
         this.caregivers.push(newCaregiver)
         return newCaregiver
+      } catch (err: any) {
+        this.error = err.data?.message || err.message || '建立照護員資料失敗'
+        console.error('Error creating caregiver:', err)
+        throw new Error(this.error)
       }
     },
 
-    async updateCaregiver(id: number, updates: Partial<Caregiver>) {
+    async updateCaregiver(id: string, updates: Partial<Caregiver>) {
       try {
-        const { supabase } = useSupabase()
-        const { data, error } = await supabase
-          .from('caregivers')
-          .update(updates)
-          .eq('id', id)
-          .select()
-          .single()
+        const updatedCaregiver = await $fetch(`/api/caregivers/${id}`, {
+          method: 'PUT',
+          body: updates
+        })
         
-        if (error) throw error
-        
-        const index = this.caregivers.findIndex(c => c.id === id)
+        const index = this.caregivers.findIndex(c => c.id === Number(id))
         if (index !== -1) {
-          this.caregivers[index] = data
+          this.caregivers[index] = updatedCaregiver
         }
         
-        return data
+        return updatedCaregiver
       } catch (err: any) {
-        this.error = err.message
+        this.error = err.data?.message || err.message || '更新照護員資料失敗'
         console.error('Error updating caregiver:', err)
-        
-        const index = this.caregivers.findIndex(c => c.id === id)
-        if (index !== -1) {
-          this.caregivers[index] = {
-            ...this.caregivers[index],
-            ...updates,
-            updated_at: new Date().toISOString()
-          }
-          return this.caregivers[index]
-        }
-        throw err
+        throw new Error(this.error)
       }
     },
 

@@ -3,6 +3,46 @@ import type { Serialize, Simplify } from "nitropack/types";
 declare module "nitropack/types" {
   type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
   interface InternalApi {
+    '/api/auth/login': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/login.post').default>>>>
+    }
+    '/api/auth/logout': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/logout.post').default>>>>
+    }
+    '/api/auth/register': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/register.post').default>>>>
+    }
+    '/api/bookings/:id': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/bookings/[id].get').default>>>>
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/bookings/[id].put').default>>>>
+    }
+    '/api/bookings': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/bookings/index.get').default>>>>
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/bookings/index.post').default>>>>
+    }
+    '/api/caregivers/:id': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/caregivers/[id].get').default>>>>
+    }
+    '/api/caregivers': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/caregivers/index.get').default>>>>
+    }
+    '/api/payments/:id': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/payments/[id].get').default>>>>
+    }
+    '/api/payments': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/payments/index.post').default>>>>
+    }
+    '/api/reviews': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/reviews/index.get').default>>>>
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/reviews/index.post').default>>>>
+    }
+    '/api/users/:id': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/[id].get').default>>>>
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/[id].put').default>>>>
+    }
+    '/api/users': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/index.get').default>>>>
+    }
     '/__nuxt_error': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/nuxt/dist/core/runtime/nitro/handlers/renderer').default>>>>
     }

@@ -1,4 +1,0 @@
-const login_vue_vue_type_style_index_0_scoped_173742c4_lang = ".login-card[data-v-173742c4]{border-radius:12px;box-shadow:0 4px 12px #0000001a}.q-field--outlined .q-field__control[data-v-173742c4]:before{border-color:#e0e0e0}.q-field--outlined.q-field--focused .q-field__control[data-v-173742c4]:before{border-color:#1976d2;border-width:2px}.q-btn[data-v-173742c4]{border-radius:8px}.q-expansion-item[data-v-173742c4]{border:1px solid #e3f2fd;border-radius:8px}.text-decoration-none[data-v-173742c4]{text-decoration:none}.text-decoration-none[data-v-173742c4]:hover{text-decoration:underline}@media (max-width:600px){.login-card[data-v-173742c4]{margin:1rem;min-width:300px}}";
-
-export { login_vue_vue_type_style_index_0_scoped_173742c4_lang as l };
-//# sourceMappingURL=login-styles-1.mjs-rS1Nvai8.mjs.map

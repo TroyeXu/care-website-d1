@@ -259,7 +259,6 @@ declare global {
   const useState: typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']
   const useSubmitCount: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useSubmitCount']
   const useSubmitForm: typeof import('../../node_modules/vee-validate/dist/vee-validate')['useSubmitForm']
-  const useSupabase: typeof import('../../composables/useSupabase')['useSupabase']
   const useSwitchLocalePath: typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useSwitchLocalePath']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTick: typeof import('quasar')['useTick']
@@ -582,7 +581,6 @@ declare module 'vue' {
     readonly useState: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/state')['useState']>
     readonly useSubmitCount: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useSubmitCount']>
     readonly useSubmitForm: UnwrapRef<typeof import('../../node_modules/vee-validate/dist/vee-validate')['useSubmitForm']>
-    readonly useSupabase: UnwrapRef<typeof import('../../composables/useSupabase')['useSupabase']>
     readonly useSwitchLocalePath: UnwrapRef<typeof import('../../node_modules/@nuxtjs/i18n/dist/runtime/composables/index')['useSwitchLocalePath']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTick: UnwrapRef<typeof import('quasar')['useTick']>

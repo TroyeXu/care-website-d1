@@ -1,7 +1,7 @@
 import { getCurrentInstance, ref, computed, onBeforeUpdate, h } from 'vue';
-import { t as createComponent, a2 as useFormProps, a0 as useSizeProps, a1 as useSize, a3 as useFormAttrs, E as hMergeSlot, g as __nuxt_component_1$1, a4 as useFormInject, W as between, a5 as stopAndPrevent } from '../build/server.mjs';
+import { s as createComponent, T as useFormProps, y as useSizeProps, B as useSize, aM as useFormAttrs, L as hMergeSlot, b as __nuxt_component_1, U as useFormInject, aN as between, F as stopAndPrevent } from '../build/server.mjs';
 
-const __nuxt_component_8$1 = createComponent({
+const __nuxt_component_8 = createComponent({
   name: 'QRating',
 
   props: {
@@ -247,7 +247,7 @@ const __nuxt_component_8$1 = createComponent({
             onKeyup (e) { onKeyup(e, i); }
           }, hMergeSlot(
             slots[ `tip-${ i }` ],
-            [ h(__nuxt_component_1$1, { class: iconClass, name }) ]
+            [ h(__nuxt_component_1, { class: iconClass, name }) ]
           ))
         );
       });
@@ -265,5 +265,5 @@ const __nuxt_component_8$1 = createComponent({
   }
 });
 
-export { __nuxt_component_8$1 as _ };
+export { __nuxt_component_8 as _ };
 //# sourceMappingURL=QRating.mjs.map

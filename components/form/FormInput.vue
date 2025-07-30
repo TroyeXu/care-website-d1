@@ -1,7 +1,7 @@
 <template>
   <Field :name="name" v-slot="{ field, errorMessage }">
     <q-input
-      v-bind="field"
+      v-bind="{ ...field, ...$attrs }"
       :label="label"
       :type="type"
       :placeholder="placeholder"
@@ -16,7 +16,6 @@
       dense
       :error="!!errorMessage"
       :error-message="errorMessage"
-      v-bind="$attrs"
     >
       <template v-if="icon" #prepend>
         <q-icon :name="icon" color="primary" />

@@ -1,5 +1,5 @@
 import { getCurrentInstance, computed, h } from 'vue';
-import { t as createComponent, a0 as useSizeProps, v as useDarkProps, w as useDark, a1 as useSize, aI as hDir, g as __nuxt_component_1$1, aJ as hMergeSlotSafely, a5 as stopAndPrevent, aK as __q_directive_0 } from '../build/server.mjs';
+import { s as createComponent, y as useSizeProps, z as useDarkProps, A as useDark, B as useSize, C as hDir, D as __q_directive_0, b as __nuxt_component_1, E as hMergeSlotSafely, F as stopAndPrevent } from '../build/server.mjs';
 
 const defaultSizes = {
   xs: 8,
@@ -136,7 +136,7 @@ const __nuxt_component_9 = createComponent({
       );
 
       hasLeftIcon.value === true && child.push(
-        h(__nuxt_component_1$1, {
+        h(__nuxt_component_1, {
           class: 'q-chip__icon q-chip__icon--left',
           name: leftIcon.value
         })
@@ -153,14 +153,14 @@ const __nuxt_component_9 = createComponent({
       );
 
       props.iconRight && child.push(
-        h(__nuxt_component_1$1, {
+        h(__nuxt_component_1, {
           class: 'q-chip__icon q-chip__icon--right',
           name: props.iconRight
         })
       );
 
       props.removable === true && child.push(
-        h(__nuxt_component_1$1, {
+        h(__nuxt_component_1, {
           class: 'q-chip__icon q-chip__icon--remove cursor-pointer',
           name: removeIcon.value,
           ...attributes.value.remove,

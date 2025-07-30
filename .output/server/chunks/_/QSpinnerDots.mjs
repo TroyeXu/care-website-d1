@@ -1,9 +1,9 @@
 import { h } from 'vue';
-import { t as createComponent, M as useSpinnerProps, N as useSpinner } from '../build/server.mjs';
+import { s as createComponent, aK as useSpinnerProps, aL as useSpinner } from '../build/server.mjs';
 
 const innerHTML = '<circle cx="15" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="60" cy="15" r="9" fill-opacity=".3"><animate attributeName="r" from="9" to="9" begin="0s" dur="0.8s" values="9;15;9" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from=".5" to=".5" begin="0s" dur="0.8s" values=".5;1;.5" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="105" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle>';
 
-const __nuxt_component_9 = createComponent({
+const __nuxt_component_10 = createComponent({
   name: 'QSpinnerDots',
 
   props: useSpinnerProps,
@@ -22,5 +22,5 @@ const __nuxt_component_9 = createComponent({
   }
 });
 
-export { __nuxt_component_9 as _ };
+export { __nuxt_component_10 as _ };
 //# sourceMappingURL=QSpinnerDots.mjs.map

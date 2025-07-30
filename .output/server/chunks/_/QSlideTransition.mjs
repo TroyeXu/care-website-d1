@@ -1,7 +1,7 @@
 import { onBeforeUnmount, h, Transition } from 'vue';
-import { t as createComponent } from '../build/server.mjs';
+import { s as createComponent } from '../build/server.mjs';
 
-const __nuxt_component_3$1 = createComponent({
+const __nuxt_component_7 = createComponent({
   name: 'QSlideTransition',
 
   props: {
@@ -132,5 +132,5 @@ const __nuxt_component_3$1 = createComponent({
   }
 });
 
-export { __nuxt_component_3$1 as _ };
+export { __nuxt_component_7 as _ };
 //# sourceMappingURL=QSlideTransition.mjs.map

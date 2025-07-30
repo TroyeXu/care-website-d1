@@ -1,5 +1,5 @@
 import { getCurrentInstance, computed, h } from 'vue';
-import { t as createComponent, a0 as useSizeProps, v as useDarkProps, w as useDark, a1 as useSize, E as hMergeSlot } from '../build/server.mjs';
+import { s as createComponent, y as useSizeProps, z as useDarkProps, A as useDark, B as useSize, L as hMergeSlot } from '../build/server.mjs';
 
 const defaultSizes = {
   xs: 2,
@@ -17,7 +17,7 @@ function width (val, reverse, $q) {
   }
 }
 
-const __nuxt_component_8$2 = createComponent({
+const __nuxt_component_8$1 = createComponent({
   name: 'QLinearProgress',
 
   props: {
@@ -123,5 +123,5 @@ const __nuxt_component_8$2 = createComponent({
   }
 });
 
-export { __nuxt_component_8$2 as _ };
+export { __nuxt_component_8$1 as _ };
 //# sourceMappingURL=QLinearProgress.mjs.map

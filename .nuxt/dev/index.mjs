@@ -938,8 +938,6 @@ const _inlineRuntimeConfig = {
   },
   "public": {
     "baseUrl": "http://localhost:3333",
-    "supabaseUrl": "https://irjeyglrspwqlvgwtvka.supabase.co",
-    "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyamV5Z2xyc3B3cWx2Z3d0dmthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0NTg4MjAsImV4cCI6MjA2ODAzNDgyMH0.sTo24SfDnUbIezHtT_3CYC2ev_VWgExak6qmIbxtGrY",
     "i18n": {
       "baseUrl": "",
       "defaultLocale": "zh",
@@ -1778,6 +1776,219 @@ function createSitePathResolver(e, options = {}) {
     });
   };
 }
+
+let users = [
+  {
+    id: "user-1",
+    name: "\u738B\u5C0F\u660E",
+    email: "patient1@example.com",
+    phone: "0912-345-678",
+    role: "patient",
+    avatar: "/images/users/patient1.jpg",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z",
+    profile: {
+      age: 75,
+      gender: "\u7537",
+      address: "\u53F0\u5317\u5E02\u5927\u5B89\u5340\u548C\u5E73\u6771\u8DEF123\u865F",
+      emergencyContact: "\u738B\u5927\u660E (\u5152\u5B50) - 0923-456-789",
+      medicalHistory: ["\u9AD8\u8840\u58D3", "\u7CD6\u5C3F\u75C5"],
+      preferences: ["\u9700\u8981\u966A\u4F34\u804A\u5929", "\u559C\u6B61\u6236\u5916\u6D3B\u52D5"]
+    }
+  },
+  {
+    id: "user-2",
+    name: "\u5F35\u7F8E\u9E97",
+    email: "caregiver1@example.com",
+    phone: "0923-456-789",
+    role: "caregiver",
+    avatar: "/images/users/caregiver1.jpg",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z"
+  }
+];
+let caregivers = [
+  {
+    id: "caregiver-1",
+    user_id: "user-2",
+    name: "\u5F35\u7F8E\u9E97",
+    avatar: "/images/users/caregiver1.jpg",
+    rating: 4.8,
+    reviews_count: 124,
+    hourly_rate: 350,
+    experience_years: 5,
+    certifications: ["\u7167\u9867\u670D\u52D9\u54E1", "\u6025\u6551\u8B49\u7167"],
+    languages: ["\u4E2D\u6587", "\u53F0\u8A9E"],
+    specialties: ["\u5931\u667A\u75C7\u7167\u8B77", "\u5FA9\u5065\u5354\u52A9"],
+    service_areas: ["\u53F0\u5317\u5E02", "\u65B0\u5317\u5E02"],
+    availability: {
+      monday: ["08:00", "18:00"],
+      tuesday: ["08:00", "18:00"],
+      wednesday: ["08:00", "18:00"],
+      thursday: ["08:00", "18:00"],
+      friday: ["08:00", "18:00"],
+      saturday: ["09:00", "15:00"],
+      sunday: null
+    },
+    bio: "\u5C08\u696D\u7167\u8B77\u670D\u52D9\u54E1\uFF0C\u64C1\u67095\u5E74\u4EE5\u4E0A\u7167\u8B77\u7D93\u9A57",
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-01-01T00:00:00Z"
+  }
+];
+let bookings = [
+  {
+    id: "booking-1",
+    patient_id: "user-1",
+    caregiver_id: "caregiver-1",
+    start_time: "2024-01-15T09:00:00Z",
+    end_time: "2024-01-15T12:00:00Z",
+    status: "completed",
+    total_amount: 1050,
+    location: "\u53F0\u5317\u5E02\u5927\u5B89\u5340\u548C\u5E73\u6771\u8DEF123\u865F",
+    notes: "\u5354\u52A9\u65E5\u5E38\u6D3B\u52D5\u548C\u966A\u4F34",
+    rating: 5,
+    review: "\u670D\u52D9\u5F88\u597D\uFF0C\u7167\u9867\u54E1\u5F88\u5C08\u696D",
+    created_at: "2024-01-10T00:00:00Z",
+    updated_at: "2024-01-15T13:00:00Z"
+  }
+];
+let payments = [
+  {
+    id: "payment-1",
+    booking_id: "booking-1",
+    amount: 1050,
+    status: "completed",
+    payment_method: "credit_card",
+    transaction_id: "txn_123456",
+    paid_at: "2024-01-15T12:30:00Z",
+    created_at: "2024-01-15T12:30:00Z",
+    updated_at: "2024-01-15T12:30:00Z"
+  }
+];
+let reviews = [
+  {
+    id: "review-1",
+    booking_id: "booking-1",
+    patient_id: "user-1",
+    caregiver_id: "caregiver-1",
+    rating: 5,
+    comment: "\u670D\u52D9\u5F88\u597D\uFF0C\u7167\u9867\u54E1\u5F88\u5C08\u696D",
+    created_at: "2024-01-15T13:00:00Z",
+    updated_at: "2024-01-15T13:00:00Z"
+  }
+];
+const mockStore = {
+  users: {
+    getAll: () => users,
+    getById: (id) => users.find((u) => u.id === id),
+    getByEmail: (email) => users.find((u) => u.email === email),
+    create: (user) => {
+      users.push(user);
+      return user;
+    },
+    update: (id, updates) => {
+      const index = users.findIndex((u) => u.id === id);
+      if (index !== -1) {
+        users[index] = { ...users[index], ...updates, updated_at: (/* @__PURE__ */ new Date()).toISOString() };
+        return users[index];
+      }
+      return null;
+    },
+    delete: (id) => {
+      const index = users.findIndex((u) => u.id === id);
+      if (index !== -1) {
+        users.splice(index, 1);
+        return true;
+      }
+      return false;
+    }
+  },
+  caregivers: {
+    getAll: () => caregivers,
+    getById: (id) => caregivers.find((c) => c.id === id),
+    getByUserId: (userId) => caregivers.find((c) => c.user_id === userId),
+    create: (caregiver) => {
+      caregivers.push(caregiver);
+      return caregiver;
+    },
+    update: (id, updates) => {
+      const index = caregivers.findIndex((c) => c.id === id);
+      if (index !== -1) {
+        caregivers[index] = { ...caregivers[index], ...updates, updated_at: (/* @__PURE__ */ new Date()).toISOString() };
+        return caregivers[index];
+      }
+      return null;
+    },
+    delete: (id) => {
+      const index = caregivers.findIndex((c) => c.id === id);
+      if (index !== -1) {
+        caregivers.splice(index, 1);
+        return true;
+      }
+      return false;
+    }
+  },
+  bookings: {
+    getAll: () => bookings,
+    getById: (id) => bookings.find((b) => b.id === id),
+    getByPatientId: (patientId) => bookings.filter((b) => b.patient_id === patientId),
+    getByCaregiverId: (caregiverId) => bookings.filter((b) => b.caregiver_id === caregiverId),
+    create: (booking) => {
+      bookings.push(booking);
+      return booking;
+    },
+    update: (id, updates) => {
+      const index = bookings.findIndex((b) => b.id === id);
+      if (index !== -1) {
+        bookings[index] = { ...bookings[index], ...updates, updated_at: (/* @__PURE__ */ new Date()).toISOString() };
+        return bookings[index];
+      }
+      return null;
+    },
+    delete: (id) => {
+      const index = bookings.findIndex((b) => b.id === id);
+      if (index !== -1) {
+        bookings.splice(index, 1);
+        return true;
+      }
+      return false;
+    }
+  },
+  payments: {
+    getAll: () => payments,
+    getById: (id) => payments.find((p) => p.id === id),
+    getByBookingId: (bookingId) => payments.find((p) => p.booking_id === bookingId),
+    create: (payment) => {
+      payments.push(payment);
+      return payment;
+    },
+    update: (id, updates) => {
+      const index = payments.findIndex((p) => p.id === id);
+      if (index !== -1) {
+        payments[index] = { ...payments[index], ...updates, updated_at: (/* @__PURE__ */ new Date()).toISOString() };
+        return payments[index];
+      }
+      return null;
+    }
+  },
+  reviews: {
+    getAll: () => reviews,
+    getById: (id) => reviews.find((r) => r.id === id),
+    getByCaregiverId: (caregiverId) => reviews.filter((r) => r.caregiver_id === caregiverId),
+    create: (review) => {
+      reviews.push(review);
+      return review;
+    },
+    update: (id, updates) => {
+      const index = reviews.findIndex((r) => r.id === id);
+      if (index !== -1) {
+        reviews[index] = { ...reviews[index], ...updates, updated_at: (/* @__PURE__ */ new Date()).toISOString() };
+        return reviews[index];
+      }
+      return null;
+    }
+  }
+};
 
 const _qRFKX_eKqgWEZqdWBV9cl99tAgY3vRnSQmL4aWtrwbs = defineNitroPlugin(async (nitroApp) => {
   nitroApp.hooks.hook("render:html", async (ctx, { event }) => {
@@ -3772,10 +3983,42 @@ async function getIslandContext(event) {
   return ctx;
 }
 
+const _lazy_RsSkFO = () => Promise.resolve().then(function () { return login_post$1; });
+const _lazy_FShdWr = () => Promise.resolve().then(function () { return logout_post$1; });
+const _lazy_Woq_Yh = () => Promise.resolve().then(function () { return register_post$1; });
+const _lazy_M0LddJ = () => Promise.resolve().then(function () { return _id__get$7; });
+const _lazy_KHCHk2 = () => Promise.resolve().then(function () { return _id__put$3; });
+const _lazy_BkNQPK = () => Promise.resolve().then(function () { return index_get$7; });
+const _lazy_PUk7r_ = () => Promise.resolve().then(function () { return index_post$5; });
+const _lazy_96c9te = () => Promise.resolve().then(function () { return _id__get$5; });
+const _lazy_vJdPPA = () => Promise.resolve().then(function () { return index_get$5; });
+const _lazy_QhZ53_ = () => Promise.resolve().then(function () { return _id__get$3; });
+const _lazy_h2z_pG = () => Promise.resolve().then(function () { return index_post$3; });
+const _lazy_5c2WKw = () => Promise.resolve().then(function () { return index_get$3; });
+const _lazy_QdmqS4 = () => Promise.resolve().then(function () { return index_post$1; });
+const _lazy_2AMaKi = () => Promise.resolve().then(function () { return _id__get$1; });
+const _lazy_kGu93i = () => Promise.resolve().then(function () { return _id__put$1; });
+const _lazy_S54ezp = () => Promise.resolve().then(function () { return index_get$1; });
 const _lazy_UeLGXd = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
   { route: '', handler: _T8VRTa, lazy: false, middleware: true, method: undefined },
+  { route: '/api/auth/login', handler: _lazy_RsSkFO, lazy: true, middleware: false, method: "post" },
+  { route: '/api/auth/logout', handler: _lazy_FShdWr, lazy: true, middleware: false, method: "post" },
+  { route: '/api/auth/register', handler: _lazy_Woq_Yh, lazy: true, middleware: false, method: "post" },
+  { route: '/api/bookings/:id', handler: _lazy_M0LddJ, lazy: true, middleware: false, method: "get" },
+  { route: '/api/bookings/:id', handler: _lazy_KHCHk2, lazy: true, middleware: false, method: "put" },
+  { route: '/api/bookings', handler: _lazy_BkNQPK, lazy: true, middleware: false, method: "get" },
+  { route: '/api/bookings', handler: _lazy_PUk7r_, lazy: true, middleware: false, method: "post" },
+  { route: '/api/caregivers/:id', handler: _lazy_96c9te, lazy: true, middleware: false, method: "get" },
+  { route: '/api/caregivers', handler: _lazy_vJdPPA, lazy: true, middleware: false, method: "get" },
+  { route: '/api/payments/:id', handler: _lazy_QhZ53_, lazy: true, middleware: false, method: "get" },
+  { route: '/api/payments', handler: _lazy_h2z_pG, lazy: true, middleware: false, method: "post" },
+  { route: '/api/reviews', handler: _lazy_5c2WKw, lazy: true, middleware: false, method: "get" },
+  { route: '/api/reviews', handler: _lazy_QdmqS4, lazy: true, middleware: false, method: "post" },
+  { route: '/api/users/:id', handler: _lazy_2AMaKi, lazy: true, middleware: false, method: "get" },
+  { route: '/api/users/:id', handler: _lazy_kGu93i, lazy: true, middleware: false, method: "put" },
+  { route: '/api/users', handler: _lazy_S54ezp, lazy: true, middleware: false, method: "get" },
   { route: '/__nuxt_error', handler: _lazy_UeLGXd, lazy: true, middleware: false, method: undefined },
   { route: '', handler: _17soEJ, lazy: false, middleware: true, method: undefined },
   { route: '/__site-config__/debug.json', handler: _P9Eq12, lazy: false, middleware: false, method: undefined },
@@ -4146,9 +4389,6 @@ const sources$1 = [
                 "loc": "/support/reviews"
             },
             {
-                "loc": "/booking/payments"
-            },
-            {
                 "loc": "/booking/schedule"
             },
             {
@@ -4192,6 +4432,389 @@ const styles = {};
 const styles$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   default: styles
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const login_post = defineEventHandler(async (event) => {
+  const body = await readBody(event);
+  const { email, password } = body;
+  const user = mockStore.users.getByEmail(email);
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "\u7121\u6548\u7684\u767B\u5165\u6191\u8B49"
+    });
+  }
+  if (password.length < 6) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "\u5BC6\u78BC\u932F\u8AA4"
+    });
+  }
+  return {
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      avatar: user.avatar,
+      profile: user.profile
+    },
+    token: `mock-token-${user.id}-${Date.now()}`
+  };
+});
+
+const login_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: login_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const logout_post = defineEventHandler(async (event) => {
+  return {
+    success: true,
+    message: "\u767B\u51FA\u6210\u529F"
+  };
+});
+
+const logout_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: logout_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const register_post = defineEventHandler(async (event) => {
+  const body = await readBody(event);
+  const { name, email, password, phone, role, profile } = body;
+  const existingUser = mockStore.users.getByEmail(email);
+  if (existingUser) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u6B64\u96FB\u5B50\u90F5\u4EF6\u5DF2\u88AB\u8A3B\u518A"
+    });
+  }
+  const newUser = {
+    id: `user-${Date.now()}`,
+    name,
+    email,
+    phone,
+    role: role || "patient",
+    avatar: `/images/users/default-${role || "patient"}.jpg`,
+    created_at: (/* @__PURE__ */ new Date()).toISOString(),
+    updated_at: (/* @__PURE__ */ new Date()).toISOString(),
+    profile: profile || {}
+  };
+  const createdUser = mockStore.users.create(newUser);
+  if (role === "caregiver") {
+    const newCaregiver = {
+      id: `caregiver-${Date.now()}`,
+      user_id: createdUser.id,
+      name: createdUser.name,
+      avatar: createdUser.avatar,
+      rating: 0,
+      reviews_count: 0,
+      hourly_rate: 300,
+      experience_years: 0,
+      certifications: [],
+      languages: ["\u4E2D\u6587"],
+      specialties: [],
+      service_areas: [],
+      availability: {},
+      bio: "",
+      created_at: (/* @__PURE__ */ new Date()).toISOString(),
+      updated_at: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    mockStore.caregivers.create(newCaregiver);
+  }
+  return {
+    user: {
+      id: createdUser.id,
+      name: createdUser.name,
+      email: createdUser.email,
+      phone: createdUser.phone,
+      role: createdUser.role,
+      avatar: createdUser.avatar,
+      profile: createdUser.profile
+    },
+    token: `mock-token-${createdUser.id}-${Date.now()}`
+  };
+});
+
+const register_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: register_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__get$6 = defineEventHandler(async (event) => {
+  const id = getRouterParam(event, "id");
+  const booking = mockStore.bookings.getById(id);
+  if (!booking) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "\u9810\u7D04\u4E0D\u5B58\u5728"
+    });
+  }
+  return booking;
+});
+
+const _id__get$7 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__get$6
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__put$2 = defineEventHandler(async (event) => {
+  const id = getRouterParam(event, "id");
+  const body = await readBody(event);
+  const updatedBooking = mockStore.bookings.update(id, body);
+  if (!updatedBooking) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "\u9810\u7D04\u4E0D\u5B58\u5728"
+    });
+  }
+  return updatedBooking;
+});
+
+const _id__put$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__put$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const index_get$6 = defineEventHandler(async (event) => {
+  const query = getQuery$1(event);
+  const { patient_id, caregiver_id, status } = query;
+  let bookings = mockStore.bookings.getAll();
+  if (patient_id) {
+    bookings = bookings.filter((b) => b.patient_id === patient_id);
+  }
+  if (caregiver_id) {
+    bookings = bookings.filter((b) => b.caregiver_id === caregiver_id);
+  }
+  if (status) {
+    bookings = bookings.filter((b) => b.status === status);
+  }
+  return {
+    bookings,
+    total: bookings.length
+  };
+});
+
+const index_get$7 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: index_get$6
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const index_post$4 = defineEventHandler(async (event) => {
+  const body = await readBody(event);
+  const newBooking = {
+    id: `booking-${Date.now()}`,
+    ...body,
+    status: "pending",
+    created_at: (/* @__PURE__ */ new Date()).toISOString(),
+    updated_at: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  const createdBooking = mockStore.bookings.create(newBooking);
+  return createdBooking;
+});
+
+const index_post$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: index_post$4
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__get$4 = defineEventHandler(async (event) => {
+  const id = getRouterParam(event, "id");
+  const caregiver = mockStore.caregivers.getById(id);
+  if (!caregiver) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "\u7167\u8B77\u54E1\u4E0D\u5B58\u5728"
+    });
+  }
+  return caregiver;
+});
+
+const _id__get$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__get$4
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const index_get$4 = defineEventHandler(async (event) => {
+  const query = getQuery$1(event);
+  const { area, specialty, minRate, maxRate } = query;
+  let caregivers = mockStore.caregivers.getAll();
+  if (area) {
+    caregivers = caregivers.filter(
+      (c) => c.service_areas.includes(area)
+    );
+  }
+  if (specialty) {
+    caregivers = caregivers.filter(
+      (c) => c.specialties.includes(specialty)
+    );
+  }
+  if (minRate) {
+    caregivers = caregivers.filter(
+      (c) => c.hourly_rate >= Number(minRate)
+    );
+  }
+  if (maxRate) {
+    caregivers = caregivers.filter(
+      (c) => c.hourly_rate <= Number(maxRate)
+    );
+  }
+  return {
+    caregivers,
+    total: caregivers.length
+  };
+});
+
+const index_get$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: index_get$4
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__get$2 = defineEventHandler(async (event) => {
+  const id = getRouterParam(event, "id");
+  const payment = mockStore.payments.getById(id);
+  if (!payment) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "\u4ED8\u6B3E\u8A18\u9304\u4E0D\u5B58\u5728"
+    });
+  }
+  return payment;
+});
+
+const _id__get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__get$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const index_post$2 = defineEventHandler(async (event) => {
+  const body = await readBody(event);
+  const newPayment = {
+    id: `payment-${Date.now()}`,
+    ...body,
+    status: "pending",
+    transaction_id: `txn_${Date.now()}`,
+    created_at: (/* @__PURE__ */ new Date()).toISOString(),
+    updated_at: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  const createdPayment = mockStore.payments.create(newPayment);
+  setTimeout(() => {
+    mockStore.payments.update(createdPayment.id, {
+      status: "completed",
+      paid_at: (/* @__PURE__ */ new Date()).toISOString()
+    });
+    if (body.booking_id) {
+      mockStore.bookings.update(body.booking_id, {
+        status: "confirmed"
+      });
+    }
+  }, 2e3);
+  return createdPayment;
+});
+
+const index_post$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: index_post$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const index_get$2 = defineEventHandler(async (event) => {
+  const query = getQuery$1(event);
+  const { caregiver_id } = query;
+  let reviews = mockStore.reviews.getAll();
+  if (caregiver_id) {
+    reviews = reviews.filter((r) => r.caregiver_id === caregiver_id);
+  }
+  return {
+    reviews,
+    total: reviews.length
+  };
+});
+
+const index_get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: index_get$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const index_post = defineEventHandler(async (event) => {
+  const body = await readBody(event);
+  const newReview = {
+    id: `review-${Date.now()}`,
+    ...body,
+    created_at: (/* @__PURE__ */ new Date()).toISOString(),
+    updated_at: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  const createdReview = mockStore.reviews.create(newReview);
+  const caregiver = mockStore.caregivers.getById(body.caregiver_id);
+  if (caregiver) {
+    const allReviews = mockStore.reviews.getByCaregiverId(body.caregiver_id);
+    const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
+    const avgRating = totalRating / allReviews.length;
+    mockStore.caregivers.update(body.caregiver_id, {
+      rating: Math.round(avgRating * 10) / 10,
+      reviews_count: allReviews.length
+    });
+  }
+  return createdReview;
+});
+
+const index_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: index_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__get = defineEventHandler(async (event) => {
+  const id = getRouterParam(event, "id");
+  const user = mockStore.users.getById(id);
+  if (!user) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "\u7528\u6236\u4E0D\u5B58\u5728"
+    });
+  }
+  return user;
+});
+
+const _id__get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__put = defineEventHandler(async (event) => {
+  const id = getRouterParam(event, "id");
+  const body = await readBody(event);
+  const updatedUser = mockStore.users.update(id, body);
+  if (!updatedUser) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "\u7528\u6236\u4E0D\u5B58\u5728"
+    });
+  }
+  return updatedUser;
+});
+
+const _id__put$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__put
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const index_get = defineEventHandler(async (event) => {
+  const query = getQuery$1(event);
+  const { role } = query;
+  let users = mockStore.users.getAll();
+  if (role) {
+    users = users.filter((user) => user.role === role);
+  }
+  return {
+    users,
+    total: users.length
+  };
+});
+
+const index_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: index_get
 }, Symbol.toStringTag, { value: 'Module' }));
 
 function renderPayloadResponse(ssrContext) {

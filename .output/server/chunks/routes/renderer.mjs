@@ -1,5 +1,5 @@
 import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'vue-bundle-renderer/runtime';
-import { b as buildAssetsURL, a as appRootTag, c as appRootAttrs, d as appSpaLoaderTag, e as appSpaLoaderAttrs, u as useRuntimeConfig, g as getResponseStatusText, f as getResponseStatus, h as appId, i as defineRenderHandler, p as publicAssetsURL, j as appTeleportTag, k as appTeleportAttrs, l as getQuery, m as createError, n as appHead, o as destr, q as getRouteRules, r as useNitroApp } from '../nitro/nitro.mjs';
+import { b as buildAssetsURL, e as appRootTag, f as appRootAttrs, h as appSpaLoaderTag, i as appSpaLoaderAttrs, u as useRuntimeConfig, j as getResponseStatusText, k as getResponseStatus, l as appId, n as defineRenderHandler, p as publicAssetsURL, o as appTeleportTag, q as appTeleportAttrs, a as getQuery, c as createError, s as appHead, t as destr, v as getRouteRules, w as useNitroApp } from '../nitro/nitro.mjs';
 import { renderToString } from 'vue/server-renderer';
 import { createHead as createHead$1, propsToString, renderSSRHead } from 'unhead/server';
 import { stringify, uneval } from 'devalue';
@@ -84,7 +84,7 @@ function createHead(options = {}) {
 
 const APP_ROOT_OPEN_TAG = `<${appRootTag}${propsToString(appRootAttrs)}>`;
 const APP_ROOT_CLOSE_TAG = `</${appRootTag}>`;
-const getServerEntry = () => import('../build/server.mjs').then(function (n) { return n.b4; }).then((r) => r.default || r);
+const getServerEntry = () => import('../build/server.mjs').then(function (n) { return n.b0; }).then((r) => r.default || r);
 const getClientManifest = () => import('../build/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
 const getSSRRenderer = lazyCachedFunction(async () => {
   const manifest = await getClientManifest();

@@ -1,8 +1,8 @@
 import { computed, h } from 'vue';
-import { t as createComponent, g as __nuxt_component_1$1 } from '../build/server.mjs';
+import { s as createComponent, b as __nuxt_component_1 } from '../build/server.mjs';
 import { u as useCheckboxEmits, a as useCheckboxProps, b as useCheckbox } from './use-checkbox.mjs';
 
-const __nuxt_component_3$3 = createComponent({
+const __nuxt_component_12$1 = createComponent({
   name: 'QToggle',
 
   props: {
@@ -32,7 +32,7 @@ const __nuxt_component_3$3 = createComponent({
           class: 'q-toggle__thumb absolute flex flex-center no-wrap'
         }, icon.value !== void 0
           ? [
-              h(__nuxt_component_1$1, {
+              h(__nuxt_component_1, {
                 name: icon.value,
                 color: color.value
               })
@@ -46,5 +46,5 @@ const __nuxt_component_3$3 = createComponent({
   }
 });
 
-export { __nuxt_component_3$3 as _ };
+export { __nuxt_component_12$1 as _ };
 //# sourceMappingURL=QToggle.mjs.map

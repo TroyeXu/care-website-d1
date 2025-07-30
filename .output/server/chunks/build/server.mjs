@@ -1,9 +1,8 @@
 import { computed, markRaw, defineComponent, h, unref, onBeforeUnmount, getCurrentInstance, onDeactivated, nextTick, watch, onMounted, ref, withDirectives, Transition, onBeforeUpdate, inject, onActivated, reactive, provide, hasInjectionContext, effectScope, isRef, isReactive, toRaw, getCurrentScope, onScopeDispose, toRefs, createElementBlock, shallowRef, cloneVNode, Suspense, Fragment, useSSRContext, createApp, shallowReactive, mergeProps, withCtx, createTextVNode, toDisplayString as toDisplayString$1, createBlock, createCommentVNode, openBlock, createVNode, renderList, toRef, onErrorCaptured, onServerPrefetch, resolveDynamicComponent, isReadonly, isShallow, Text } from 'vue';
-import { m as createError$1, s as sanitizeStatusCode, t as getContext, $ as $fetch$1, v as baseURL, w as createHooks, x as executeAsync, y as defuFn, z as toRouteMatcher, A as createRouter$1, B as defu, C as klona, D as getRequestURL, E as getRequestHeader, F as parse$1, o as destr, G as isEqual, H as setCookie, I as getCookie, J as deleteCookie } from '../nitro/nitro.mjs';
+import { c as createError$1, x as sanitizeStatusCode, y as getContext, $ as $fetch$1, z as baseURL, A as createHooks, B as executeAsync, C as defuFn, D as toRouteMatcher, E as createRouter$1, F as defu, G as klona, H as getRequestURL, I as getRequestHeader, J as parse$1, t as destr, K as isEqual, L as setCookie, M as getCookie, N as deleteCookie } from '../nitro/nitro.mjs';
 import { RouterView, useRoute as useRoute$1, useRouter as useRouter$1, createMemoryHistory, createRouter, START_LOCATION } from 'vue-router';
 import { createPathIndexLanguageParser, parseAcceptLanguage } from '@intlify/utils';
 import { ssrRenderComponent, ssrInterpolate, ssrRenderAttr, ssrRenderList, ssrGetDirectiveProps, ssrRenderAttrs, ssrRenderSuspense, ssrRenderVNode } from 'vue/server-renderer';
-import { createClient } from '@supabase/supabase-js';
 import { u as useHead$1, h as headSymbol, a as useSeoMeta$1 } from '../routes/renderer.mjs';
 
 const lang = {
@@ -309,7 +308,7 @@ const createReactivePlugin = (state, plugin) => {
     }
   ;
 
-const QSpinner = createComponent({
+const __nuxt_component_7 = createComponent({
   name: 'QSpinner',
 
   props: {
@@ -1113,7 +1112,7 @@ const Plugin$1 = createReactivePlugin({
 });
 
 const quasarKey = '_q_';
-const timelineKey = '_q_t_';
+const stepperKey = '_q_s_';
 const layoutKey = '_q_l_';
 const pageContainerKey = '_q_pc_';
 const formKey = '_q_fo_';
@@ -2698,7 +2697,7 @@ const svgUseRE = /^svguse:/;
 const ionRE = /^ion-/;
 const faRE = /^(fa-(classic|sharp|solid|regular|light|brands|duotone|thin)|[lf]a[srlbdk]?) /;
 
-const __nuxt_component_1$1$1 = createComponent({
+const __nuxt_component_1$2 = createComponent({
   name: 'QIcon',
 
   props: {
@@ -3256,6 +3255,13 @@ function getBtnDesign (props, defaultValue) {
   return defaultValue
 }
 
+function getBtnDesignAttr (props) {
+  const design = getBtnDesign(props);
+  return design !== void 0
+    ? { [ design ]: true }
+    : {}
+}
+
 const nonRoundBtnProps = {
   ...useSizeProps,
   ...useRouterLinkNonMatchingProps,
@@ -3446,7 +3452,7 @@ let
   keyboardTarget = null,
   mouseTarget = null;
 
-const __nuxt_component_3 = createComponent({
+const __nuxt_component_2$1$1 = createComponent({
   name: 'QBtn',
 
   props: {
@@ -3727,7 +3733,7 @@ const __nuxt_component_3 = createComponent({
       let inner = [];
 
       props.icon !== void 0 && inner.push(
-        h(__nuxt_component_1$1$1, {
+        h(__nuxt_component_1$2, {
           name: props.icon,
           left: props.stack !== true && hasLabel.value === true,
           role: 'img'
@@ -3742,7 +3748,7 @@ const __nuxt_component_3 = createComponent({
 
       if (props.iconRight !== void 0 && props.round === false) {
         inner.push(
-          h(__nuxt_component_1$1$1, {
+          h(__nuxt_component_1$2, {
             name: props.iconRight,
             right: props.stack !== true && hasLabel.value === true,
             role: 'img'
@@ -3785,7 +3791,7 @@ const __nuxt_component_3 = createComponent({
                 h('span', {
                   key: 'loading',
                   class: 'absolute-full flex flex-center'
-                }, slots.loading !== void 0 ? slots.loading() : [ h(QSpinner) ])
+                }, slots.loading !== void 0 ? slots.loading() : [ h(__nuxt_component_7) ])
               ]
             : null
         ))
@@ -3856,7 +3862,7 @@ const __nuxt_component_1$1 = createComponent({
   }
 });
 
-const __nuxt_component_2$1 = createComponent({
+const __nuxt_component_2 = createComponent({
   name: 'QCardSection',
 
   props: {
@@ -3878,7 +3884,7 @@ const __nuxt_component_2$1 = createComponent({
   }
 });
 
-const __nuxt_component_9$1 = createComponent({
+const __nuxt_component_10 = createComponent({
   name: 'QCardActions',
 
   props: {
@@ -3912,7 +3918,7 @@ const margins = {
   xl: 24
 };
 
-const __nuxt_component_5$2 = createComponent({
+const __nuxt_component_15 = createComponent({
   name: 'QSeparator',
 
   props: {
@@ -4781,7 +4787,7 @@ function useField (state) {
 
     hasError.value === true && props.noErrorIcon === false && node.push(
       getInnerAppendNode('error', [
-        h(__nuxt_component_1$1$1, { name: $q.iconSet.field.error, color: 'negative' })
+        h(__nuxt_component_1$2, { name: $q.iconSet.field.error, color: 'negative' })
       ])
     );
 
@@ -4791,14 +4797,14 @@ function useField (state) {
           'inner-loading-append',
           slots.loading !== void 0
             ? slots.loading()
-            : [ h(QSpinner, { color: props.color }) ]
+            : [ h(__nuxt_component_7, { color: props.color }) ]
         )
       );
     }
     else if (props.clearable === true && state.hasValue.value === true && state.editable.value === true) {
       node.push(
         getInnerAppendNode('inner-clearable-append', [
-          h(__nuxt_component_1$1$1, {
+          h(__nuxt_component_1$2, {
             class: 'q-field__focusable-action',
             name: props.clearIcon || $q.iconSet.field.clear,
             tabindex: 0,
@@ -5679,7 +5685,7 @@ function useKeyComposition (onInput) {
   }
 }
 
-const __nuxt_component_4$1 = createComponent({
+const __nuxt_component_4 = createComponent({
   name: 'QInput',
 
   inheritAttrs: false,
@@ -6142,7 +6148,7 @@ const Dialog = {
   }
 };
 
-const __nuxt_component_6$1 = createComponent({
+const __nuxt_component_6 = createComponent({
   name: 'QAvatar',
 
   props: {
@@ -6180,7 +6186,7 @@ const __nuxt_component_6$1 = createComponent({
 
     return () => {
       const icon = props.icon !== void 0
-        ? [ h(__nuxt_component_1$1$1, { name: props.icon }) ]
+        ? [ h(__nuxt_component_1$2, { name: props.icon }) ]
         : void 0;
 
       return h('div', {
@@ -6763,7 +6769,7 @@ const __nuxt_component_1 = createComponent({
   }
 });
 
-const __nuxt_component_2 = createComponent({
+const __nuxt_component_2$1 = createComponent({
   name: 'QToolbar',
 
   props: {
@@ -6780,7 +6786,7 @@ const __nuxt_component_2 = createComponent({
   }
 });
 
-const __nuxt_component_4 = createComponent({
+const __nuxt_component_4$1 = createComponent({
   name: 'QToolbarTitle',
 
   props: {
@@ -6799,7 +6805,7 @@ const __nuxt_component_4 = createComponent({
 
 const alignValues$1 = [ 'top', 'middle', 'bottom' ];
 
-const __nuxt_component_5$1 = createComponent({
+const __nuxt_component_5 = createComponent({
   name: 'QBadge',
 
   props: {
@@ -6891,7 +6897,7 @@ function pad (v, length = 2, char = '0') {
 
 const duration = 150;
 
-const __nuxt_component_8$1 = createComponent({
+const __nuxt_component_8 = createComponent({
   name: 'QDrawer',
 
   inheritAttrs: false,
@@ -8130,7 +8136,7 @@ const __nuxt_component_9 = createComponent({
 
 const roleAttrExceptions = [ 'ul', 'ol' ];
 
-const __nuxt_component_3$2 = createComponent({
+const __nuxt_component_11 = createComponent({
   name: 'QList',
 
   props: {
@@ -8168,7 +8174,7 @@ const __nuxt_component_3$2 = createComponent({
   }
 });
 
-const __nuxt_component_8 = createComponent({
+const __nuxt_component_12 = createComponent({
   name: 'QItemLabel',
 
   props: {
@@ -8207,7 +8213,7 @@ const __nuxt_component_8 = createComponent({
   }
 });
 
-const __nuxt_component_5 = createComponent({
+const __nuxt_component_13 = createComponent({
   name: 'QItem',
 
   props: {
@@ -8357,7 +8363,7 @@ const __nuxt_component_5 = createComponent({
   }
 });
 
-const __nuxt_component_6 = createComponent({
+const __nuxt_component_14 = createComponent({
   name: 'QItemSection',
 
   props: {
@@ -8382,7 +8388,7 @@ const __nuxt_component_6 = createComponent({
   }
 });
 
-const __nuxt_component_15 = createComponent({
+const __nuxt_component_15$1 = createComponent({
   name: 'QPageContainer',
 
   setup (_, { slots }) {
@@ -9275,7 +9281,7 @@ const __nuxt_component_18 = createComponent({
           onScroll: updateArrows
         }, hSlot(slots.default)),
 
-        h(__nuxt_component_1$1$1, {
+        h(__nuxt_component_1$2, {
           class: 'q-tabs__arrow q-tabs__arrow--left absolute q-tab__icon'
             + (leftArrow.value === true ? '' : ' q-tabs__arrow--faded'),
           name: props.leftIcon || $q.iconSet.tabs[ props.vertical === true ? 'up' : 'left' ],
@@ -9286,7 +9292,7 @@ const __nuxt_component_18 = createComponent({
           onTouchendPassive: stopAnimScroll
         }),
 
-        h(__nuxt_component_1$1$1, {
+        h(__nuxt_component_1$2, {
           class: 'q-tabs__arrow q-tabs__arrow--right absolute q-tab__icon'
             + (rightArrow.value === true ? '' : ' q-tabs__arrow--faded'),
           name: props.rightIcon || $q.iconSet.tabs[ props.vertical === true ? 'down' : 'right' ],
@@ -9435,7 +9441,7 @@ function useTab (props, slots, emit, routeData) {
       });
 
     props.icon !== void 0 && content.push(
-      h(__nuxt_component_1$1$1, {
+      h(__nuxt_component_1$2, {
         class: 'q-tab__icon',
         name: props.icon
       })
@@ -9447,7 +9453,7 @@ function useTab (props, slots, emit, routeData) {
 
     props.alert !== false && content.push(
       props.alertIcon !== void 0
-        ? h(__nuxt_component_1$1$1, {
+        ? h(__nuxt_component_1$2, {
           class: 'q-tab__alert-icon',
           color: props.alert !== true
             ? props.alert
@@ -10084,165 +10090,136 @@ async function getRouteRules(arg) {
   }
 }
 const __nuxt_page_meta$2 = {
+  title: "成為照護員",
+  layout: "default"
+};
+const __nuxt_page_meta$1 = {
   title: "登入",
   layout: "auth"
 };
-const __nuxt_page_meta$1 = {
+const __nuxt_page_meta = {
   title: "註冊帳號",
   layout: "auth"
 };
-const __nuxt_page_meta = {
-  title: "表單驗證測試"
-};
 const _routes = [
-  {
-    name: "app",
-    path: "/app",
-    component: () => import('./app-BR90X5Vl.mjs')
-  },
   {
     name: "join",
     path: "/join",
-    component: () => import('./join-BnyeMg_H.mjs')
+    meta: __nuxt_page_meta$2 || {},
+    component: () => import('./join-BNM5HFMc.mjs')
   },
   {
     name: "index",
     path: "/",
-    component: () => import('./index-COihJBlq.mjs')
+    component: () => import('./index-pEpYddhD.mjs')
   },
   {
-    name: "login",
-    path: "/login",
-    component: () => import('./login-BZ_m6Ih3.mjs')
-  },
-  {
-    name: "register",
-    path: "/register",
-    component: () => import('./register-koc_ZmXL.mjs')
+    name: "info-app",
+    path: "/info/app",
+    component: () => import('./app-DygdwbXc.mjs')
   },
   {
     name: "auth-login",
     path: "/auth/login",
-    meta: __nuxt_page_meta$2 || {},
-    component: () => import('./login-BfrQnbO9.mjs')
+    meta: __nuxt_page_meta$1 || {},
+    component: () => import('./login-CWtKIJbK.mjs')
   },
   {
     name: "info-about",
     path: "/info/about",
-    component: () => import('./about-pb29NxIL.mjs')
+    component: () => import('./about-OICxLRY9.mjs')
   },
   {
     name: "info-guide",
     path: "/info/guide",
-    component: () => import('./guide-a9T8HuD8.mjs')
+    component: () => import('./guide-BhE7lB4H.mjs')
   },
   {
     name: "info-safety",
     path: "/info/safety",
-    component: () => import('./safety-CfD6_qb-.mjs')
+    component: () => import('./safety-Dl_ER5HT.mjs')
   },
   {
     name: "content-blog",
     path: "/content/blog",
-    component: () => import('./blog-CCiHgA0A.mjs')
+    component: () => import('./blog-DpPO8lw9.mjs')
   },
   {
     name: "info-pricing",
     path: "/info/pricing",
-    component: () => import('./pricing-Bfd-IxeZ.mjs')
+    component: () => import('./pricing-BsW-q1AM.mjs')
   },
   {
     name: "info-subsidy",
     path: "/info/subsidy",
-    component: () => import('./subsidy-DPbebMeR.mjs')
+    component: () => import('./subsidy-Di-GJEfk.mjs')
   },
   {
     name: "auth-register",
     path: "/auth/register",
-    meta: __nuxt_page_meta$1 || {},
-    component: () => import('./register-DiyoBo0f.mjs')
+    meta: __nuxt_page_meta || {},
+    component: () => import('./register-BC23GRHG.mjs')
   },
   {
     name: "booking-match",
     path: "/booking/match",
-    component: () => import('./match-nRYqmw7n.mjs')
-  },
-  {
-    name: "demo-api-demo",
-    path: "/demo/api-demo",
-    component: () => import('./api-demo-s-SJgUt5.mjs')
+    component: () => import('./match-DJ2XEHoL.mjs')
   },
   {
     name: "info-services",
     path: "/info/services",
-    component: () => import('./services-DHoOeF9X.mjs')
+    component: () => import('./services-DY9jY34D.mjs')
   },
   {
     name: "user-dashboard",
     path: "/user/dashboard",
     meta: { "middleware": "auth" },
-    component: () => import('./dashboard-DbGBw-ab.mjs')
+    component: () => import('./dashboard-BbW4eHoU.mjs')
   },
   {
     name: "caregivers-id",
     path: "/caregivers/:id()",
-    component: () => import('./_id_-KP0Rlb9g.mjs')
+    component: () => import('./_id_-CHevF_-q.mjs')
   },
   {
     name: "info-advantages",
     path: "/info/advantages",
-    component: () => import('./advantages-MGcE-jqa.mjs')
+    component: () => import('./advantages-B6cZk0sj.mjs')
   },
   {
     name: "support-contact",
     path: "/support/contact",
-    component: () => import('./contact-B2-RJInm.mjs')
+    component: () => import('./contact-CUccfXWz.mjs')
   },
   {
     name: "support-reviews",
     path: "/support/reviews",
-    component: () => import('./reviews-BVXCjHu1.mjs')
-  },
-  {
-    name: "booking-payments",
-    path: "/booking/payments",
-    component: () => import('./payments-Cjvs84ig.mjs')
+    component: () => import('./reviews-x7mBUk--.mjs')
   },
   {
     name: "booking-schedule",
     path: "/booking/schedule",
-    component: () => import('./schedule-ByuWCJAi.mjs')
+    component: () => import('./schedule-BMZGf4WM.mjs')
   },
   {
     name: "caregivers",
     path: "/caregivers",
-    component: () => import('./index-3WDe5_HN.mjs')
+    component: () => import('./index-LPSZdrb3.mjs')
   },
   {
     name: "caregivers-search",
     path: "/caregivers/search",
-    component: () => import('./search-DSwdYJvE.mjs')
+    component: () => import('./search-CH0WRkyQ.mjs')
   },
   {
     name: "content-resources",
     path: "/content/resources",
-    component: () => import('./resources-CqnBXEy8.mjs')
+    component: () => import('./resources-DxYEl5fy.mjs')
   },
   {
     name: "booking-calculator",
     path: "/booking/calculator",
-    component: () => import('./calculator-8oNAkVgO.mjs')
-  },
-  {
-    name: "demo-form-validation",
-    path: "/demo/form-validation",
-    meta: __nuxt_page_meta || {},
-    component: () => import('./form-validation-CjKqGVVg.mjs')
-  },
-  {
-    name: "demo-responsive-test",
-    path: "/demo/responsive-test",
-    component: () => import('./responsive-test-20B5x1qX.mjs')
+    component: () => import('./calculator-DWy3-x6P.mjs')
   }
 ];
 const ROUTE_KEY_PARENTHESES_RE = /(:\w+)\([^)]+\)/g;
@@ -10360,9 +10337,9 @@ const globalMiddleware = [
   manifest_45route_45rule
 ];
 const namedMiddleware = {
-  auth: () => import('./auth-DL5PxFsA.mjs'),
-  caregiver: () => import('./caregiver-BgtyEwuC.mjs'),
-  patient: () => import('./patient-Bdr08n39.mjs')
+  auth: () => import('./auth-DjFWyx4Y.mjs'),
+  caregiver: () => import('./caregiver-CSJiJ4Zk.mjs'),
+  patient: () => import('./patient-Sf5PWf-A.mjs')
 };
 const plugin$1 = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:router",
@@ -11171,7 +11148,7 @@ const i18n_server_kXMsyxD0I5ArdLQ73Kb_ZqlgxXisaFw4mZSmiieMDUA = /* @__PURE__ */ 
     });
   }
 });
-const componentsWithDefaults = { QBtn: __nuxt_component_3, QInput: __nuxt_component_4$1 };
+const componentsWithDefaults = { QBtn: __nuxt_component_2$1$1, QInput: __nuxt_component_4 };
 const appConfigKey = "nuxtQuasar";
 const quasarNuxtConfig = {
   lang,
@@ -15999,7 +15976,7 @@ const i18n_EI7LsD1KYQADczz5hrChviGQCdVM8yUkvFEZLJpmnvM = /* @__PURE__ */ defineN
   parallel: false,
   async setup(_nuxt) {
     let __temp, __restore;
-    Object.defineProperty(_nuxt.versions, "nuxtI18n", { get: () => "10.0.2" });
+    Object.defineProperty(_nuxt.versions, "nuxtI18n", { get: () => "10.0.3" });
     const nuxt = useNuxtApp(_nuxt._id);
     const runtimeI18n = useRuntimeI18n(nuxt);
     const preloadedOptions = nuxt.ssrContext?.event?.context?.nuxtI18n?.vueI18nOptions;
@@ -16513,14 +16490,6 @@ const mockPayments = [
     updated_at: "2024-07-14T09:20:00Z"
   }
 ];
-const useSupabase = () => {
-  const config = /* @__PURE__ */ useRuntimeConfig();
-  const supabase = createClient(
-    config.public.supabaseUrl,
-    config.public.supabaseAnonKey
-  );
-  return { supabase };
-};
 const useAuthStore = /* @__PURE__ */ defineStore("auth", {
   state: () => ({
     currentUser: null,
@@ -16550,29 +16519,22 @@ const useAuthStore = /* @__PURE__ */ defineStore("auth", {
       this.loading = true;
       this.error = null;
       try {
-        const { supabase } = useSupabase();
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: credentials.email,
-          password: credentials.password
+        const { data } = await $fetch("/api/auth/login", {
+          method: "POST",
+          body: credentials
         });
-        if (error) throw error;
-        const user = this.users.find((u) => u.email === credentials.email);
-        if (user) {
-          this.currentUser = user;
-          this.isAuthenticated = true;
+        this.currentUser = data.user;
+        this.isAuthenticated = true;
+        const userIndex = this.users.findIndex((u) => u.id === data.user.id);
+        if (userIndex !== -1) {
+          this.users[userIndex] = data.user;
         } else {
-          throw new Error("用戶資料不存在");
+          this.users.push(data.user);
         }
       } catch (err) {
-        this.error = err.message;
+        this.error = err.data?.message || err.message || "登入失敗";
         console.error("Login error:", err);
-        const user = this.users.find((u) => u.email === credentials.email);
-        if (user) {
-          this.currentUser = user;
-          this.isAuthenticated = true;
-        } else {
-          throw new Error("無效的登入憑證");
-        }
+        throw new Error(this.error);
       } finally {
         this.loading = false;
       }
@@ -16581,41 +16543,18 @@ const useAuthStore = /* @__PURE__ */ defineStore("auth", {
       this.loading = true;
       this.error = null;
       try {
-        if (this.users.find((u) => u.email === userData.email)) {
-          throw new Error("此電子郵件已被註冊");
-        }
-        const { supabase } = useSupabase();
-        const { data, error } = await supabase.auth.signUp({
-          email: userData.email,
-          password: userData.password,
-          options: {
-            data: {
-              name: userData.name,
-              phone: userData.phone,
-              role: userData.role
-            }
-          }
+        const { data } = await $fetch("/api/auth/register", {
+          method: "POST",
+          body: userData
         });
-        if (error) throw error;
-        const newUser = {
-          id: `user-${Date.now()}`,
-          name: userData.name,
-          email: userData.email,
-          phone: userData.phone,
-          role: userData.role,
-          avatar: `/images/users/default-${userData.role}.jpg`,
-          created_at: (/* @__PURE__ */ new Date()).toISOString(),
-          updated_at: (/* @__PURE__ */ new Date()).toISOString(),
-          profile: userData.profile
-        };
-        this.users.push(newUser);
-        this.currentUser = newUser;
+        this.currentUser = data.user;
         this.isAuthenticated = true;
-        return newUser;
+        this.users.push(data.user);
+        return data.user;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.data?.message || err.message || "註冊失敗";
         console.error("Registration error:", err);
-        throw err;
+        throw new Error(this.error);
       } finally {
         this.loading = false;
       }
@@ -16623,9 +16562,9 @@ const useAuthStore = /* @__PURE__ */ defineStore("auth", {
     async logout() {
       this.loading = true;
       try {
-        const { supabase } = useSupabase();
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        await $fetch("/api/auth/logout", {
+          method: "POST"
+        });
       } catch (err) {
         console.error("Logout error:", err);
       } finally {
@@ -16640,41 +16579,26 @@ const useAuthStore = /* @__PURE__ */ defineStore("auth", {
         throw new Error("用戶未登入");
       }
       try {
-        const { supabase } = useSupabase();
-        const { data, error } = await supabase.from("profiles").update(updates).eq("id", this.currentUser.id).select().single();
-        if (error) throw error;
-        this.currentUser.profile = {
-          ...this.currentUser.profile,
-          ...updates
-        };
-        this.currentUser.updated_at = (/* @__PURE__ */ new Date()).toISOString();
+        const updatedUser = await $fetch(`/api/users/${this.currentUser.id}`, {
+          method: "PUT",
+          body: { profile: updates }
+        });
+        this.currentUser = updatedUser;
         const userIndex = this.users.findIndex((u) => u.id === this.currentUser.id);
         if (userIndex !== -1) {
           this.users[userIndex] = { ...this.currentUser };
         }
         return this.currentUser;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.data?.message || err.message || "更新失敗";
         console.error("Profile update error:", err);
-        this.currentUser.profile = {
-          ...this.currentUser.profile,
-          ...updates
-        };
-        this.currentUser.updated_at = (/* @__PURE__ */ new Date()).toISOString();
-        const userIndex = this.users.findIndex((u) => u.id === this.currentUser.id);
-        if (userIndex !== -1) {
-          this.users[userIndex] = { ...this.currentUser };
-        }
-        return this.currentUser;
+        throw new Error(this.error);
       }
     },
     async resetPassword(email) {
       this.loading = true;
       this.error = null;
       try {
-        const { supabase } = useSupabase();
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
-        if (error) throw error;
         return { message: "密碼重設信件已寄出" };
       } catch (err) {
         this.error = err.message;
@@ -16686,18 +16610,11 @@ const useAuthStore = /* @__PURE__ */ defineStore("auth", {
     },
     async checkAuthStatus() {
       try {
-        const { supabase } = useSupabase();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const localUser = this.users.find((u) => u.email === user.email);
-          if (localUser) {
-            this.currentUser = localUser;
-            this.isAuthenticated = true;
-          }
-        } else {
-          this.currentUser = null;
-          this.isAuthenticated = false;
+        if (this.currentUser && this.isAuthenticated) {
+          return;
         }
+        this.currentUser = null;
+        this.isAuthenticated = false;
       } catch (err) {
         console.error("Auth status check error:", err);
         this.currentUser = null;
@@ -16839,7 +16756,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       return pageTitles[route.path] || "護理服務平台";
     });
     const canGoBack = computed(() => {
-      return (void 0).history.length > 1 && route.path !== "/";
+      return false;
     });
     const goBack = () => {
       if (canGoBack.value) {
@@ -16896,29 +16813,29 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     return (_ctx, _push, _parent, _attrs) => {
       const _component_q_layout = __nuxt_component_0;
       const _component_q_header = __nuxt_component_1;
-      const _component_q_toolbar = __nuxt_component_2;
-      const _component_q_btn = __nuxt_component_3;
-      const _component_q_toolbar_title = __nuxt_component_4;
-      const _component_q_badge = __nuxt_component_5$1;
-      const _component_q_avatar = __nuxt_component_6$1;
-      const _component_q_icon = __nuxt_component_1$1$1;
-      const _component_q_drawer = __nuxt_component_8$1;
+      const _component_q_toolbar = __nuxt_component_2$1;
+      const _component_q_btn = __nuxt_component_2$1$1;
+      const _component_q_toolbar_title = __nuxt_component_4$1;
+      const _component_q_badge = __nuxt_component_5;
+      const _component_q_avatar = __nuxt_component_6;
+      const _component_q_icon = __nuxt_component_1$2;
+      const _component_q_drawer = __nuxt_component_8;
       const _component_q_scroll_area = __nuxt_component_9;
-      const _component_q_separator = __nuxt_component_5$2;
-      const _component_q_list = __nuxt_component_3$2;
-      const _component_q_item_label = __nuxt_component_8;
-      const _component_q_item = __nuxt_component_5;
-      const _component_q_item_section = __nuxt_component_6;
-      const _component_q_page_container = __nuxt_component_15;
+      const _component_q_separator = __nuxt_component_15;
+      const _component_q_list = __nuxt_component_11;
+      const _component_q_item_label = __nuxt_component_12;
+      const _component_q_item = __nuxt_component_13;
+      const _component_q_item_section = __nuxt_component_14;
+      const _component_q_page_container = __nuxt_component_15$1;
       const _component_NuxtPage = __nuxt_component_16;
       const _component_q_footer = __nuxt_component_17;
       const _component_q_tabs = __nuxt_component_18;
       const _component_q_tab = __nuxt_component_19;
       const _component_q_dialog = __nuxt_component_20;
       const _component_q_card = __nuxt_component_1$1;
-      const _component_q_card_section = __nuxt_component_2$1;
+      const _component_q_card_section = __nuxt_component_2;
       const _component_q_space = __nuxt_component_23;
-      const _component_q_card_actions = __nuxt_component_9$1;
+      const _component_q_card_actions = __nuxt_component_10;
       const _directive_ripple = __q_directive_0;
       _push(ssrRenderComponent(_component_q_layout, mergeProps({ view: "hHh Lpr lFf" }, _attrs), {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
@@ -16965,7 +16882,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           }),
                           _: 1
                         }, _parent4, _scopeId3));
-                        _push4(`<div class="row q-gutter-xs" data-v-b03fcb27${_scopeId3}>`);
+                        _push4(`<div class="row q-gutter-xs" data-v-ac400102${_scopeId3}>`);
                         if (unref(authStore).currentUser) {
                           _push4(ssrRenderComponent(_component_q_btn, {
                             flat: "",
@@ -17030,7 +16947,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                                   default: withCtx((_5, _push6, _parent6, _scopeId5) => {
                                     if (_push6) {
                                       if (unref(authStore).currentUser.avatar) {
-                                        _push6(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-b03fcb27${_scopeId5}>`);
+                                        _push6(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-ac400102${_scopeId5}>`);
                                       } else {
                                         _push6(ssrRenderComponent(_component_q_icon, { name: "person" }, null, _parent6, _scopeId5));
                                       }
@@ -17276,12 +17193,12 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                     default: withCtx((_3, _push4, _parent4, _scopeId3) => {
                       if (_push4) {
                         if (unref(authStore).currentUser) {
-                          _push4(`<div class="bg-primary text-white q-pa-md" data-v-b03fcb27${_scopeId3}><div class="row items-center q-gutter-md" data-v-b03fcb27${_scopeId3}>`);
+                          _push4(`<div class="bg-primary text-white q-pa-md" data-v-ac400102${_scopeId3}><div class="row items-center q-gutter-md" data-v-ac400102${_scopeId3}>`);
                           _push4(ssrRenderComponent(_component_q_avatar, { size: "50px" }, {
                             default: withCtx((_4, _push5, _parent5, _scopeId4) => {
                               if (_push5) {
                                 if (unref(authStore).currentUser.avatar) {
-                                  _push5(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-b03fcb27${_scopeId4}>`);
+                                  _push5(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-ac400102${_scopeId4}>`);
                                 } else {
                                   _push5(ssrRenderComponent(_component_q_icon, { name: "person" }, null, _parent5, _scopeId4));
                                 }
@@ -17300,15 +17217,15 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                             }),
                             _: 1
                           }, _parent4, _scopeId3));
-                          _push4(`<div data-v-b03fcb27${_scopeId3}><div class="text-subtitle1 text-weight-medium" data-v-b03fcb27${_scopeId3}>${ssrInterpolate(unref(authStore).currentUser.name)}</div><div class="text-caption opacity-80" data-v-b03fcb27${_scopeId3}>${ssrInterpolate(unref(authStore).currentUser.email)}</div></div></div></div>`);
+                          _push4(`<div data-v-ac400102${_scopeId3}><div class="text-subtitle1 text-weight-medium" data-v-ac400102${_scopeId3}>${ssrInterpolate(unref(authStore).currentUser.name)}</div><div class="text-caption opacity-80" data-v-ac400102${_scopeId3}>${ssrInterpolate(unref(authStore).currentUser.email)}</div></div></div></div>`);
                         } else {
-                          _push4(`<div class="bg-grey-1 q-pa-md text-center" data-v-b03fcb27${_scopeId3}>`);
+                          _push4(`<div class="bg-grey-1 q-pa-md text-center" data-v-ac400102${_scopeId3}>`);
                           _push4(ssrRenderComponent(_component_q_icon, {
                             name: "person_outline",
                             size: "40px",
                             color: "grey-6"
                           }, null, _parent4, _scopeId3));
-                          _push4(`<div class="text-body2 text-grey-7 q-mt-sm q-mb-md" data-v-b03fcb27${_scopeId3}> 登入以享受完整功能 </div>`);
+                          _push4(`<div class="text-body2 text-grey-7 q-mt-sm q-mb-md" data-v-ac400102${_scopeId3}> 登入以享受完整功能 </div>`);
                           _push4(ssrRenderComponent(_component_q_btn, {
                             color: "primary",
                             size: "sm",
@@ -18767,7 +18684,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                         _push4(ssrRenderComponent(_component_q_card_section, { class: "row items-center" }, {
                           default: withCtx((_4, _push5, _parent5, _scopeId4) => {
                             if (_push5) {
-                              _push5(`<div class="text-h6" data-v-b03fcb27${_scopeId4}>通知</div>`);
+                              _push5(`<div class="text-h6" data-v-ac400102${_scopeId4}>通知</div>`);
                               _push5(ssrRenderComponent(_component_q_space, null, null, _parent5, _scopeId4));
                               _push5(ssrRenderComponent(_component_q_btn, {
                                 flat: "",
@@ -19322,7 +19239,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           _push4(ssrRenderComponent(_component_q_card_section, null, {
                             default: withCtx((_4, _push5, _parent5, _scopeId4) => {
                               if (_push5) {
-                                _push5(`<div class="text-center" data-v-b03fcb27${_scopeId4}>`);
+                                _push5(`<div class="text-center" data-v-ac400102${_scopeId4}>`);
                                 _push5(ssrRenderComponent(_component_q_avatar, {
                                   size: "60px",
                                   class: "q-mb-md"
@@ -19330,7 +19247,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                                   default: withCtx((_5, _push6, _parent6, _scopeId5) => {
                                     if (_push6) {
                                       if (unref(authStore).currentUser.avatar) {
-                                        _push6(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-b03fcb27${_scopeId5}>`);
+                                        _push6(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-ac400102${_scopeId5}>`);
                                       } else {
                                         _push6(ssrRenderComponent(_component_q_icon, { name: "person" }, null, _parent6, _scopeId5));
                                       }
@@ -19349,7 +19266,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                                   }),
                                   _: 1
                                 }, _parent5, _scopeId4));
-                                _push5(`<div class="text-h6" data-v-b03fcb27${_scopeId4}>${ssrInterpolate(unref(authStore).currentUser.name)}</div><div class="text-caption text-grey-6" data-v-b03fcb27${_scopeId4}>${ssrInterpolate(unref(authStore).currentUser.email)}</div></div>`);
+                                _push5(`<div class="text-h6" data-v-ac400102${_scopeId4}>${ssrInterpolate(unref(authStore).currentUser.name)}</div><div class="text-caption text-grey-6" data-v-ac400102${_scopeId4}>${ssrInterpolate(unref(authStore).currentUser.email)}</div></div>`);
                               } else {
                                 return [
                                   createVNode("div", { class: "text-center" }, [
@@ -20514,11 +20431,11 @@ _sfc_main$2.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("app.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
-const AppComponent = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-b03fcb27"]]);
+const AppComponent = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-ac400102"]]);
 function usePageSeo(title, description, image = "/vite.svg") {
   const route = useRoute();
   const config = /* @__PURE__ */ useRuntimeConfig();
-  const baseUrl = config.public.baseUrl || "http://localhost:3001";
+  const baseUrl = config.public.baseUrl || "http://localhost:3333";
   useHead({
     link: [
       { rel: "canonical", href: baseUrl + route.fullPath }
@@ -20665,22 +20582,21 @@ const server = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   _: _export_sfc,
   a: useHead,
-  b: useRuntimeConfig,
-  c: createError,
-  d: useAuthStore,
+  b: useAuthStore,
+  c: useRoute,
+  d: useRuntimeConfig,
   default: entry$1,
-  e: useRoute,
-  f: useNuxtApp,
-  g: mockPayments,
-  h: mockCaregivers,
-  i: mockReviews,
-  j: mockUsers,
-  k: useSupabase,
-  l: defineNuxtRouteMiddleware,
+  e: useNuxtApp,
+  f: mockPayments,
+  g: mockCaregivers,
+  h: mockReviews,
+  i: mockUsers,
+  j: defineNuxtRouteMiddleware,
+  k: createError,
   m: mockBookings,
   n: navigateTo,
   u: usePageSeo
 }, Symbol.toStringTag, { value: 'Module' }));
 
-export { __nuxt_component_23 as $, hUniqueSlot as A, scrollTargetProp as B, getScrollTarget as C, listenOpts as D, hMergeSlot as E, vmHasRouter as F, isNumber$1 as G, History as H, isDate$1 as I, isObject$1 as J, injectMultipleProps as K, injectProp as L, useSpinnerProps as M, useSpinner as N, useNuxtApp as O, navigateTo as P, useAlignProps as Q, useAlign as R, getNormalizedVNodes as S, useRouterLinkProps as T, useRouterLink as U, btnDesignOptions as V, between as W, btnPadding as X, getBtnDesign as Y, isKeyCode as Z, _export_sfc as _, __nuxt_component_1$1 as a, __nuxt_component_4 as a$, useSizeProps as a0, useSize as a1, useFormProps as a2, useFormAttrs as a3, useFormInject as a4, stopAndPrevent as a5, layoutKey as a6, pageContainerKey as a7, useModelToggleEmits as a8, useModelToggleProps as a9, childHasFocus as aA, useFormInputNameAttr as aB, fieldValueIsFilled as aC, useKeyComposition as aD, isDeepEqual as aE, shouldIgnoreKey as aF, normalizeToInterval as aG, stop as aH, hDir as aI, hMergeSlotSafely as aJ, __q_directive_0 as aK, mockBookings as aL, mockPayments as aM, mockCaregivers as aN, mockReviews as aO, mockUsers as aP, useSupabase as aQ, formKey as aR, vmIsDestroyed as aS, pad as aT, Plugin$2 as aU, defaultLang as aV, createDirective as aW, getSSRProps as aX, __nuxt_component_0 as aY, __nuxt_component_1 as aZ, __nuxt_component_2 as a_, useId as aa, useModelToggle as ab, uid as ac, getParentProxy as ad, Platform as ae, debounce as af, useFieldEmits as ag, useFieldProps as ah, useField as ai, useFieldState as aj, prevent as ak, addEvt as al, cleanEvt as am, client as an, getScrollbarWidth as ao, useTransitionProps as ap, useTick as aq, useTimeout as ar, useTransition as as, usePortal as at, addEscapeKey as au, removeEscapeKey as av, addFocusout as aw, position as ax, removeFocusout as ay, addFocusFn as az, __nuxt_component_2$1 as b, __nuxt_component_15 as b0, __nuxt_component_17 as b1, QSpinner as b2, defineNuxtRouteMiddleware as b3, server as b4, __nuxt_component_3 as c, __nuxt_component_3$2 as d, __nuxt_component_5 as e, __nuxt_component_6 as f, __nuxt_component_1$1$1 as g, __nuxt_component_8 as h, __nuxt_component_5$2 as i, __nuxt_component_9$1 as j, useHead as k, useRuntimeConfig as l, __nuxt_component_5$1 as m, createError as n, useQuasar as o, useAuthStore as p, __nuxt_component_4$1 as q, __nuxt_component_20 as r, useRoute as s, createComponent as t, usePageSeo as u, useDarkProps as v, useDark as w, timelineKey as x, hSlot as y, emptyRenderFn as z };
+export { History as $, useDark as A, useSize as B, hDir as C, __q_directive_0 as D, hMergeSlotSafely as E, stopAndPrevent as F, createDirective as G, getSSRProps as H, useTimeout as I, getNormalizedVNodes as J, stepperKey as K, hMergeSlot as L, useModelToggleEmits as M, useModelToggleProps as N, useRouterLinkProps as O, useId as P, useModelToggle as Q, uid as R, __nuxt_component_4 as S, useFormProps as T, useFormInject as U, hUniqueSlot as V, scrollTargetProp as W, getScrollTarget as X, listenOpts as Y, vmHasRouter as Z, _export_sfc as _, __nuxt_component_2$1$1 as a, createError as a$, isNumber$1 as a0, isDate$1 as a1, isObject$1 as a2, injectMultipleProps as a3, injectProp as a4, getParentProxy as a5, Platform as a6, debounce as a7, useFieldEmits as a8, useFieldProps as a9, useNuxtApp as aA, navigateTo as aB, mockBookings as aC, mockPayments as aD, mockCaregivers as aE, mockReviews as aF, mockUsers as aG, useAlignProps as aH, useAlign as aI, useRouterLink as aJ, useSpinnerProps as aK, useSpinner as aL, useFormAttrs as aM, between as aN, __nuxt_component_7 as aO, btnDesignOptions as aP, btnPadding as aQ, getBtnDesign as aR, formKey as aS, vmIsDestroyed as aT, pad as aU, Plugin$2 as aV, defaultLang as aW, getBtnDesignAttr as aX, TouchPan as aY, __nuxt_component_23 as aZ, defineNuxtRouteMiddleware as a_, useField as aa, useFieldState as ab, prevent as ac, addEvt as ad, isKeyCode as ae, cleanEvt as af, client as ag, getScrollbarWidth as ah, useTransitionProps as ai, useTick as aj, useTransition as ak, usePortal as al, addEscapeKey as am, removeEscapeKey as an, addFocusout as ao, position as ap, removeFocusout as aq, childHasFocus as ar, addFocusFn as as, useFormInputNameAttr as at, fieldValueIsFilled as au, useKeyComposition as av, isDeepEqual as aw, shouldIgnoreKey as ax, normalizeToInterval as ay, stop as az, __nuxt_component_1$2 as b, server as b0, __nuxt_component_1$1 as c, __nuxt_component_2 as d, __nuxt_component_6 as e, __nuxt_component_11 as f, __nuxt_component_13 as g, __nuxt_component_14 as h, __nuxt_component_12 as i, __nuxt_component_5 as j, __nuxt_component_15 as k, __nuxt_component_20 as l, __nuxt_component_10 as m, useHead as n, useQuasar as o, useAuthStore as p, useRoute as q, useRuntimeConfig as r, createComponent as s, layoutKey as t, usePageSeo as u, emptyRenderFn as v, pageContainerKey as w, hSlot as x, useSizeProps as y, useDarkProps as z };
 //# sourceMappingURL=server.mjs.map

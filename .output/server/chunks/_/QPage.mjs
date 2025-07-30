@@ -1,5 +1,5 @@
 import { getCurrentInstance, inject, computed, h } from 'vue';
-import { t as createComponent, a6 as layoutKey, z as emptyRenderFn, a7 as pageContainerKey, y as hSlot } from '../build/server.mjs';
+import { s as createComponent, t as layoutKey, v as emptyRenderFn, w as pageContainerKey, x as hSlot } from '../build/server.mjs';
 
 const __nuxt_component_0 = createComponent({
   name: 'QPage',

@@ -68,16 +68,10 @@ export const useBookingStore = defineStore('bookings', {
       this.error = null
       
       try {
-        const { supabase } = useSupabase()
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('*')
-          .order('created_at', { ascending: false })
-        
-        if (error) throw error
-        this.bookings = data || []
+        const { bookings } = await $fetch('/api/bookings')
+        this.bookings = bookings || []
       } catch (err: any) {
-        this.error = err.message
+        this.error = err.data?.message || err.message || '載入預約資料失敗'
         console.error('Error fetching bookings:', err)
         this.loadMockData()
       } finally {
@@ -87,48 +81,39 @@ export const useBookingStore = defineStore('bookings', {
 
     async createBooking(bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>) {
       try {
-        const { supabase } = useSupabase()
-        const { data, error } = await supabase
-          .from('bookings')
-          .insert([bookingData])
-          .select()
-          .single()
+        const newBooking = await $fetch('/api/bookings', {
+          method: 'POST',
+          body: bookingData
+        })
         
-        if (error) throw error
+        this.bookings.unshift(newBooking)
+        this.currentBooking = newBooking
         
-        this.bookings.unshift(data)
-        this.currentBooking = data
-        
-        return data
+        return newBooking
       } catch (err: any) {
-        this.error = err.message
+        this.error = err.data?.message || err.message || '建立預約失敗'
         console.error('Error creating booking:', err)
-        throw err
+        throw new Error(this.error)
       }
     },
 
     async updateBookingStatus(bookingId: string, status: Booking['status']) {
       try {
-        const { supabase } = useSupabase()
-        const { data, error } = await supabase
-          .from('bookings')
-          .update({ status })
-          .eq('id', bookingId)
-          .select()
-          .single()
-        
-        if (error) throw error
+        const updatedBooking = await $fetch(`/api/bookings/${bookingId}`, {
+          method: 'PUT',
+          body: { status }
+        })
         
         const index = this.bookings.findIndex(b => b.id === bookingId)
         if (index !== -1) {
-          this.bookings[index] = data
+          this.bookings[index] = updatedBooking
         }
         
-        return data
+        return updatedBooking
       } catch (err: any) {
-        this.error = err.message
+        this.error = err.data?.message || err.message || '更新預約狀態失敗'
         console.error('Error updating booking status:', err)
-        throw err
+        throw new Error(this.error)
       }
     },
 
@@ -142,17 +127,10 @@ export const useBookingStore = defineStore('bookings', {
 
     async fetchBookingsByUser(userId: string) {
       try {
-        const { supabase } = useSupabase()
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('*')
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false })
-        
-        if (error) throw error
-        return data || []
+        const { bookings } = await $fetch(`/api/bookings?patient_id=${userId}`)
+        return bookings || []
       } catch (err: any) {
-        this.error = err.message
+        this.error = err.data?.message || err.message || '載入用戶預約失敗'
         console.error('Error fetching user bookings:', err)
         return []
       }

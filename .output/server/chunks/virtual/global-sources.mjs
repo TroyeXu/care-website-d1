@@ -17,19 +17,13 @@ const sources = [
         },
         "urls": [
             {
-                "loc": "/app"
-            },
-            {
                 "loc": "/join"
             },
             {
                 "loc": "/"
             },
             {
-                "loc": "/login"
-            },
-            {
-                "loc": "/register"
+                "loc": "/info/app"
             },
             {
                 "loc": "/auth/login"
@@ -59,9 +53,6 @@ const sources = [
                 "loc": "/booking/match"
             },
             {
-                "loc": "/demo/api-demo"
-            },
-            {
                 "loc": "/info/services"
             },
             {
@@ -77,9 +68,6 @@ const sources = [
                 "loc": "/support/reviews"
             },
             {
-                "loc": "/booking/payments"
-            },
-            {
                 "loc": "/booking/schedule"
             },
             {
@@ -93,12 +81,6 @@ const sources = [
             },
             {
                 "loc": "/booking/calculator"
-            },
-            {
-                "loc": "/demo/form-validation"
-            },
-            {
-                "loc": "/demo/responsive-test"
             }
         ],
         "sourceType": "app"

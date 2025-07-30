@@ -1,11 +1,11 @@
 import { getCurrentInstance, ref, computed, watch, shallowReactive, onBeforeUnmount, h, withDirectives, vShow } from 'vue';
-import { t as createComponent, a8 as useModelToggleEmits, v as useDarkProps, a9 as useModelToggleProps, T as useRouterLinkProps, w as useDark, aa as useId, ab as useModelToggle, ac as uid, i as __nuxt_component_5$2, e as __nuxt_component_5, y as hSlot, f as __nuxt_component_6, h as __nuxt_component_8, g as __nuxt_component_1$1, a5 as stopAndPrevent } from '../build/server.mjs';
-import { _ as __nuxt_component_3$1 } from './QSlideTransition.mjs';
+import { s as createComponent, M as useModelToggleEmits, z as useDarkProps, N as useModelToggleProps, O as useRouterLinkProps, A as useDark, P as useId, Q as useModelToggle, R as uid, k as __nuxt_component_15, g as __nuxt_component_13, x as hSlot, h as __nuxt_component_14, i as __nuxt_component_12, b as __nuxt_component_1, F as stopAndPrevent } from '../build/server.mjs';
+import { _ as __nuxt_component_7$1 } from './QSlideTransition.mjs';
 
 const itemGroups = shallowReactive({});
 const LINK_PROPS = Object.keys(useRouterLinkProps);
 
-const __nuxt_component_4$1 = createComponent({
+const __nuxt_component_7 = createComponent({
   name: 'QExpansionItem',
 
   props: {
@@ -216,7 +216,7 @@ const __nuxt_component_4$1 = createComponent({
       };
 
       const child = [
-        h(__nuxt_component_1$1, {
+        h(__nuxt_component_1, {
           class: 'q-expansion-item__toggle-icon'
             + (props.expandedIcon === void 0 && showing.value === true
               ? ' q-expansion-item__toggle-icon--rotated'
@@ -242,7 +242,7 @@ const __nuxt_component_4$1 = createComponent({
         );
       }
 
-      return h(__nuxt_component_6, data, () => child)
+      return h(__nuxt_component_14, data, () => child)
     }
 
     function getHeaderChild () {
@@ -253,20 +253,20 @@ const __nuxt_component_4$1 = createComponent({
       }
       else {
         child = [
-          h(__nuxt_component_6, () => [
-            h(__nuxt_component_8, { lines: props.labelLines }, () => props.label || ''),
+          h(__nuxt_component_14, () => [
+            h(__nuxt_component_12, { lines: props.labelLines }, () => props.label || ''),
 
             props.caption
-              ? h(__nuxt_component_8, { lines: props.captionLines, caption: true }, () => props.caption)
+              ? h(__nuxt_component_12, { lines: props.captionLines, caption: true }, () => props.caption)
               : null
           ])
         ];
 
         props.icon && child[ props.switchToggleSide === true ? 'push' : 'unshift' ](
-          h(__nuxt_component_6, {
+          h(__nuxt_component_14, {
             side: props.switchToggleSide === true,
             avatar: props.switchToggleSide !== true
-          }, () => h(__nuxt_component_1$1, { name: props.icon }))
+          }, () => h(__nuxt_component_1, { name: props.icon }))
         );
       }
 
@@ -300,7 +300,7 @@ const __nuxt_component_4$1 = createComponent({
         );
       }
 
-      return h(__nuxt_component_5, data, getHeaderChild)
+      return h(__nuxt_component_13, data, getHeaderChild)
     }
 
     function getTransitionChild () {
@@ -322,7 +322,7 @@ const __nuxt_component_4$1 = createComponent({
       const node = [
         getHeader(),
 
-        h(__nuxt_component_3$1, {
+        h(__nuxt_component_7$1, {
           duration: props.duration,
           onShow,
           onHide
@@ -331,11 +331,11 @@ const __nuxt_component_4$1 = createComponent({
 
       if (props.expandSeparator === true) {
         node.push(
-          h(__nuxt_component_5$2, {
+          h(__nuxt_component_15, {
             class: 'q-expansion-item__border q-expansion-item__border--top absolute-top',
             dark: isDark.value
           }),
-          h(__nuxt_component_5$2, {
+          h(__nuxt_component_15, {
             class: 'q-expansion-item__border q-expansion-item__border--bottom absolute-bottom',
             dark: isDark.value
           })
@@ -357,5 +357,5 @@ const __nuxt_component_4$1 = createComponent({
   }
 });
 
-export { __nuxt_component_4$1 as _ };
+export { __nuxt_component_7 as _ };
 //# sourceMappingURL=QExpansionItem.mjs.map

@@ -46,7 +46,6 @@ export { useMatchingAlgorithm, MatchingCriteria, MatchResult } from '../composab
 export { useMockApi, ApiResponse, PaginatedResponse } from '../composables/useMockApi';
 export { default as usePageSeo } from '../composables/usePageSeo';
 export { default as useParticleEffects } from '../composables/useParticleEffects';
-export { useSupabase } from '../composables/useSupabase';
 export { mockCaregivers, mockUsers, mockBookings, mockReviews, mockPayments, mockServiceTypes, mockCostModifiers, getMockDataForStore, User, Review, Payment, ServiceType, CostModifier } from '../utils/mockData';
 export { testMockApiSetup, printTestResults } from '../utils/testMockApi';
 export { commonValidations, loginSchema, registerSchema, profileUpdateSchema, passwordResetSchema, passwordChangeSchema, contactSchema, bookingSchema, paymentSchema, reviewSchema, LoginFormData, RegisterFormData, ProfileUpdateFormData, PasswordResetFormData, PasswordChangeFormData, ContactFormData, BookingFormData, PaymentFormData, ReviewFormData } from '../utils/validationSchemas';

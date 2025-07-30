@@ -94,6 +94,7 @@ declare global {
   const isStream: typeof import('../../node_modules/h3')['isStream']
   const isWebResponse: typeof import('../../node_modules/h3')['isWebResponse']
   const lazyEventHandler: typeof import('../../node_modules/h3')['lazyEventHandler']
+  const mockStore: typeof import('../../server/utils/mockStore')['mockStore']
   const nitroPlugin: typeof import('../../node_modules/nitropack/dist/runtime/internal/plugin')['nitroPlugin']
   const parseCookies: typeof import('../../node_modules/h3')['parseCookies']
   const promisifyNodeListener: typeof import('../../node_modules/h3')['promisifyNodeListener']
@@ -178,3 +179,4 @@ export { updateSiteConfig } from '/Users/troye/code/troye/new-care/node_modules/
 export { useNitroOrigin } from '/Users/troye/code/troye/new-care/node_modules/nuxt-site-config/dist/runtime/nitro/composables/useNitroOrigin';
 export { useSiteConfig } from '/Users/troye/code/troye/new-care/node_modules/nuxt-site-config/dist/runtime/nitro/composables/useSiteConfig';
 export { createSitePathResolver, withSiteTrailingSlash, withSiteUrl } from '/Users/troye/code/troye/new-care/node_modules/nuxt-site-config/dist/runtime/nitro/composables/utils';
+export { mockStore } from '/Users/troye/code/troye/new-care/server/utils/mockStore';

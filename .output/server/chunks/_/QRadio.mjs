@@ -1,5 +1,5 @@
 import { getCurrentInstance, ref, computed, toRaw, h } from 'vue';
-import { t as createComponent, a2 as useFormProps, a0 as useSizeProps, v as useDarkProps, w as useDark, a1 as useSize, g as __nuxt_component_1$1, a4 as useFormInject, E as hMergeSlot, y as hSlot, a5 as stopAndPrevent } from '../build/server.mjs';
+import { s as createComponent, T as useFormProps, y as useSizeProps, z as useDarkProps, A as useDark, B as useSize, b as __nuxt_component_1, U as useFormInject, L as hMergeSlot, x as hSlot, F as stopAndPrevent } from '../build/server.mjs';
 import { o as optionSizes, c as useRefocusTarget } from './use-checkbox.mjs';
 
 const createSvg = () => h('svg', {
@@ -17,7 +17,7 @@ const createSvg = () => h('svg', {
   })
 ]);
 
-const __nuxt_component_13 = createComponent({
+const __nuxt_component_7$1 = createComponent({
   name: 'QRadio',
 
   props: {
@@ -137,7 +137,7 @@ const __nuxt_component_13 = createComponent({
               key: 'icon',
               class: 'q-radio__icon-container absolute-full flex flex-center no-wrap'
             }, [
-              h(__nuxt_component_1$1, {
+              h(__nuxt_component_1, {
                 class: 'q-radio__icon',
                 name: icon.value
               })
@@ -189,5 +189,5 @@ const __nuxt_component_13 = createComponent({
   }
 });
 
-export { __nuxt_component_13 as _ };
+export { __nuxt_component_7$1 as _ };
 //# sourceMappingURL=QRadio.mjs.map

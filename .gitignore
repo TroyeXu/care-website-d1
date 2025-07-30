@@ -9,10 +9,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Nuxt build outputs
 node_modules
 dist
 dist-ssr
 *.local
+
+# Nuxt 4 specific
+.nitro
+.cache
 
 # Editor directories and files
 .vscode/*

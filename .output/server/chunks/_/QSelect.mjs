@@ -1,5 +1,5 @@
 import { getCurrentInstance, ref, computed, watch, nextTick, onBeforeMount, onDeactivated, onActivated, h, onMounted, onBeforeUnmount, onBeforeUpdate, onUpdated } from 'vue';
-import { ad as getParentProxy, ae as Platform, af as debounce, t as createComponent, ag as useFieldEmits, ah as useFieldProps, ai as useField, aj as useFieldState, ak as prevent, al as addEvt, Z as isKeyCode, am as cleanEvt, D as listenOpts, an as client, ao as getScrollbarWidth, a8 as useModelToggleEmits, B as scrollTargetProp, ap as useTransitionProps, v as useDarkProps, a9 as useModelToggleProps, w as useDark, aq as useTick, ar as useTimeout, as as useTransition, ab as useModelToggle, at as usePortal, au as addEscapeKey, av as removeEscapeKey, aw as addFocusout, ax as position, ay as removeFocusout, C as getScrollTarget, az as addFocusFn, aA as childHasFocus, a5 as stopAndPrevent, a2 as useFormProps, aB as useFormInputNameAttr, aC as fieldValueIsFilled, aD as useKeyComposition, aE as isDeepEqual, aF as shouldIgnoreKey, aG as normalizeToInterval, g as __nuxt_component_1$1, aH as stop, r as __nuxt_component_20, e as __nuxt_component_5, f as __nuxt_component_6, h as __nuxt_component_8$1, E as hMergeSlot } from '../build/server.mjs';
+import { a5 as getParentProxy, a6 as Platform, a7 as debounce, s as createComponent, a8 as useFieldEmits, a9 as useFieldProps, aa as useField, ab as useFieldState, ac as prevent, ad as addEvt, ae as isKeyCode, af as cleanEvt, Y as listenOpts, ag as client, ah as getScrollbarWidth, M as useModelToggleEmits, W as scrollTargetProp, ai as useTransitionProps, z as useDarkProps, N as useModelToggleProps, A as useDark, aj as useTick, I as useTimeout, ak as useTransition, Q as useModelToggle, al as usePortal, am as addEscapeKey, an as removeEscapeKey, ao as addFocusout, ap as position, aq as removeFocusout, X as getScrollTarget, ar as childHasFocus, as as addFocusFn, F as stopAndPrevent, T as useFormProps, at as useFormInputNameAttr, au as fieldValueIsFilled, av as useKeyComposition, aw as isDeepEqual, ax as shouldIgnoreKey, ay as normalizeToInterval, b as __nuxt_component_1, az as stop, l as __nuxt_component_20, g as __nuxt_component_13, h as __nuxt_component_14, i as __nuxt_component_12, L as hMergeSlot } from '../build/server.mjs';
 import { _ as __nuxt_component_9 } from './QChip.mjs';
 
 const portalProxyList = [];
@@ -1788,7 +1788,7 @@ function getPropValueFn (userPropName, defaultPropName) {
   return opt => ((opt !== null && typeof opt === 'object' && propName in opt) ? opt[ propName ] : opt)
 }
 
-const __nuxt_component_8 = createComponent({
+const __nuxt_component_3 = createComponent({
   name: 'QSelect',
 
   inheritAttrs: false,
@@ -2729,14 +2729,14 @@ const __nuxt_component_8 = createComponent({
       const fn = slots.option !== void 0
         ? slots.option
         : scope => {
-          return h(__nuxt_component_5, {
+          return h(__nuxt_component_13, {
             key: scope.index,
             ...scope.itemProps
           }, () => {
             return h(
-              __nuxt_component_6,
+              __nuxt_component_14,
               () => h(
-                __nuxt_component_8$1,
+                __nuxt_component_12,
                 () => h('span', {
                   [ scope.html === true ? 'innerHTML' : 'textContent' ]: scope.label
                 })
@@ -3336,7 +3336,7 @@ const __nuxt_component_8 = createComponent({
       getInnerAppend: () => (
         props.loading !== true && innerLoadingIndicator.value !== true && props.hideDropdownIcon !== true
           ? [
-              h(__nuxt_component_1$1, {
+              h(__nuxt_component_1, {
                 class: 'q-select__dropdown-icon' + (menu.value === true ? ' rotate-180' : ''),
                 name: dropdownArrowIcon.value
               })
@@ -3349,5 +3349,5 @@ const __nuxt_component_8 = createComponent({
   }
 });
 
-export { __nuxt_component_8 as _, useVirtualScroll as a, validatePosition as b, commonVirtScrollPropsList as c, useAnchorStaticProps as d, useScrollTarget as e, useAnchor as f, addClickOutside as g, clearSelection as h, parsePosition as p, removeClickOutside as r, setPosition as s, useVirtualScrollProps as u, validateOffset as v };
+export { __nuxt_component_3 as _, useVirtualScroll as a, validatePosition as b, commonVirtScrollPropsList as c, useAnchorStaticProps as d, useScrollTarget as e, useAnchor as f, addClickOutside as g, clearSelection as h, parsePosition as p, removeClickOutside as r, setPosition as s, useVirtualScrollProps as u, validateOffset as v };
 //# sourceMappingURL=QSelect.mjs.map
