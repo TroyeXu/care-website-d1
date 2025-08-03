@@ -1,3 +1,5 @@
+import { defineAppConfig } from '#imports'
+
 export default defineAppConfig({
   // 應用程式配置
   title: 'DogFriend 專業看護媒合平台',

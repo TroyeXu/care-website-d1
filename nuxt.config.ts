@@ -15,7 +15,10 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'cloudflare-module',
     // 不預渲染，使用完整 SSR
-    prerender: false,
+    prerender: {
+      crawlLinks: false,
+      routes: []
+    },
     // 設定公共資源路徑
     publicAssets: [
       {
