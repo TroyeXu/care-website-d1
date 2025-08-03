@@ -1,6 +1,6 @@
 // Mock 資料儲存
 import { type User, type Booking, type Payment, type Review } from '~/utils/mockData'
-import type { ServerCaregiver } from '~/server/types'
+import type { ServerCaregiver } from '../types'
 
 // 初始化 mock 資料
 let users: User[] = [

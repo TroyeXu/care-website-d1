@@ -5,6 +5,11 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   // 添加相容性日期
   compatibilityDate: '2025-06-14',
+  
+  // Nuxt 4 新配置：啟用新的目錄結構
+  future: {
+    compatibilityVersion: 4,
+  },
 
   // Cloudflare Workers 配置（支援 SSR）
   nitro: {
@@ -93,6 +98,8 @@ export default defineNuxtConfig({
       cookieKey: 'i18n_redirected',
       redirectOn: 'root',
     },
+    // Nuxt 4：更新 i18n 檔案路徑
+    langDir: 'locales/',
   },
 
   quasar: {

@@ -1,4 +1,4 @@
-import { mockStore } from '~/server/utils/mockStore'
+import { mockStore } from '../../utils/mockStore'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
