@@ -1,9 +1,6 @@
 import type { Caregiver } from '~/stores/caregivers'
 import type { Booking } from '~/stores/bookings'
 
-// Re-export types
-export type { Caregiver, Booking }
-
 export interface User {
   id: string
   name: string

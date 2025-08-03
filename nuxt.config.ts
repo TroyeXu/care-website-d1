@@ -5,7 +5,7 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   // 添加相容性日期
   compatibilityDate: '2025-06-14',
-  
+
   // Nuxt 4 新配置：啟用新的目錄結構
   future: {
     compatibilityVersion: 4,
@@ -17,17 +17,19 @@ export default defineNuxtConfig({
     // 不預渲染，使用完整 SSR
     prerender: false,
     // 設定公共資源路徑
-    publicAssets: [{
-      baseURL: '/',
-      dir: '.output/public',
-      maxAge: 31536000 // 1 年快取
-    }],
+    publicAssets: [
+      {
+        baseURL: '/',
+        dir: '.output/public',
+        maxAge: 31536000, // 1 年快取
+      },
+    ],
     // Workers 額外配置
     cloudflare: {
       wrangler: {
-        configPath: './wrangler.toml'
-      }
-    }
+        configPath: './wrangler.toml',
+      },
+    },
   },
 
   // SSR 設定
@@ -98,7 +100,7 @@ export default defineNuxtConfig({
       cookieKey: 'i18n_redirected',
       redirectOn: 'root',
     },
-    // Nuxt 4：更新 i18n 檔案路徑
+    // Nuxt 4：更新 i18n 檔案路徑（相對於 app 目錄）
     langDir: 'locales/',
   },
 
