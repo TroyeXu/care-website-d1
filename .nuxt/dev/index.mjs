@@ -2636,22 +2636,7 @@ _qRFKX_eKqgWEZqdWBV9cl99tAgY3vRnSQmL4aWtrwbs,
 _ZNn7ngSYDr6w4vvDvtdcjgvKlCqr3OH_KO64cTS3k
 ];
 
-const assets = {
-  "/index.mjs": {
-    "type": "text/javascript; charset=utf-8",
-    "etag": "\"2cbe3-tKrnOkynjlJE7ubzVfjy5HLDGT4\"",
-    "mtime": "2025-08-02T23:06:20.276Z",
-    "size": 183267,
-    "path": "index.mjs"
-  },
-  "/index.mjs.map": {
-    "type": "application/json",
-    "etag": "\"ab25a-7HujoAODZ4oSBBg9mGkZNJvxe/k\"",
-    "mtime": "2025-08-02T23:06:20.278Z",
-    "size": 701018,
-    "path": "index.mjs.map"
-  }
-};
+const assets = {};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));
@@ -4157,9 +4142,6 @@ async function getIslandContext(event) {
   return ctx;
 }
 
-const _lazy_RsSkFO = () => Promise.resolve().then(function () { return login_post$1; });
-const _lazy_FShdWr = () => Promise.resolve().then(function () { return logout_post$1; });
-const _lazy_Woq_Yh = () => Promise.resolve().then(function () { return register_post$1; });
 const _lazy_M0LddJ = () => Promise.resolve().then(function () { return _id__get$7; });
 const _lazy_KHCHk2 = () => Promise.resolve().then(function () { return _id__put$3; });
 const _lazy_BkNQPK = () => Promise.resolve().then(function () { return index_get$7; });
@@ -4177,9 +4159,6 @@ const _lazy_UeLGXd = () => Promise.resolve().then(function () { return renderer$
 
 const handlers = [
   { route: '', handler: _T8VRTa, lazy: false, middleware: true, method: undefined },
-  { route: '/api/auth/login', handler: _lazy_RsSkFO, lazy: true, middleware: false, method: "post" },
-  { route: '/api/auth/logout', handler: _lazy_FShdWr, lazy: true, middleware: false, method: "post" },
-  { route: '/api/auth/register', handler: _lazy_Woq_Yh, lazy: true, middleware: false, method: "post" },
   { route: '/api/bookings/:id', handler: _lazy_M0LddJ, lazy: true, middleware: false, method: "get" },
   { route: '/api/bookings/:id', handler: _lazy_KHCHk2, lazy: true, middleware: false, method: "put" },
   { route: '/api/bookings', handler: _lazy_BkNQPK, lazy: true, middleware: false, method: "get" },
@@ -4608,119 +4587,6 @@ const styles$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   default: styles
 }, Symbol.toStringTag, { value: 'Module' }));
 
-const login_post = defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { email, password } = body;
-  const user = mockStore.users.getByEmail(email);
-  if (!user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "\u7121\u6548\u7684\u767B\u5165\u6191\u8B49"
-    });
-  }
-  if (password.length < 6) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "\u5BC6\u78BC\u932F\u8AA4"
-    });
-  }
-  return {
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      avatar: user.avatar,
-      profile: user.profile,
-      created_at: user.created_at,
-      updated_at: user.updated_at
-    },
-    token: `mock-token-${user.id}-${Date.now()}`
-  };
-});
-
-const login_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
-  __proto__: null,
-  default: login_post
-}, Symbol.toStringTag, { value: 'Module' }));
-
-const logout_post = defineEventHandler(async (event) => {
-  return {
-    success: true,
-    message: "\u767B\u51FA\u6210\u529F"
-  };
-});
-
-const logout_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
-  __proto__: null,
-  default: logout_post
-}, Symbol.toStringTag, { value: 'Module' }));
-
-const register_post = defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { name, email, password, phone, role, profile } = body;
-  const existingUser = mockStore.users.getByEmail(email);
-  if (existingUser) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "\u6B64\u96FB\u5B50\u90F5\u4EF6\u5DF2\u88AB\u8A3B\u518A"
-    });
-  }
-  const newUser = {
-    id: `user-${Date.now()}`,
-    name,
-    email,
-    phone,
-    role: role || "patient",
-    avatar: `/images/users/default-${role || "patient"}.jpg`,
-    created_at: (/* @__PURE__ */ new Date()).toISOString(),
-    updated_at: (/* @__PURE__ */ new Date()).toISOString(),
-    profile: profile || {}
-  };
-  const createdUser = mockStore.users.create(newUser);
-  if (role === "caregiver") {
-    const newCaregiver = {
-      id: `caregiver-${Date.now()}`,
-      user_id: createdUser.id,
-      name: createdUser.name,
-      avatar: createdUser.avatar || "",
-      rating: 0,
-      reviews_count: 0,
-      hourly_rate: 300,
-      experience_years: 0,
-      certifications: [],
-      languages: ["\u4E2D\u6587"],
-      specialties: [],
-      service_areas: [],
-      availability: {},
-      bio: "",
-      created_at: (/* @__PURE__ */ new Date()).toISOString(),
-      updated_at: (/* @__PURE__ */ new Date()).toISOString()
-    };
-    mockStore.caregivers.create(newCaregiver);
-  }
-  return {
-    user: {
-      id: createdUser.id,
-      name: createdUser.name,
-      email: createdUser.email,
-      phone: createdUser.phone,
-      role: createdUser.role,
-      avatar: createdUser.avatar,
-      profile: createdUser.profile,
-      created_at: createdUser.created_at,
-      updated_at: createdUser.updated_at
-    },
-    token: `mock-token-${createdUser.id}-${Date.now()}`
-  };
-});
-
-const register_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
-  __proto__: null,
-  default: register_post
-}, Symbol.toStringTag, { value: 'Module' }));
-
 const _id__get$6 = defineEventHandler(async (event) => {
   const id = getRouterParam(event, "id");
   const booking = mockStore.bookings.getById(id);
@@ -4781,16 +4647,69 @@ const index_get$7 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.definePropert
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const index_post$4 = defineEventHandler(async (event) => {
+  var _a;
   const body = await readBody(event);
-  const newBooking = {
-    id: `booking-${Date.now()}`,
-    ...body,
-    status: "pending",
-    created_at: (/* @__PURE__ */ new Date()).toISOString(),
-    updated_at: (/* @__PURE__ */ new Date()).toISOString()
-  };
-  const createdBooking = mockStore.bookings.create(newBooking);
-  return createdBooking;
+  const { cloudflare } = event.context;
+  const db = (_a = cloudflare == null ? void 0 : cloudflare.env) == null ? void 0 : _a.DB;
+  if (!db) {
+    return {
+      id: "bk-test-" + Date.now(),
+      ...body,
+      status: "pending",
+      created_at: (/* @__PURE__ */ new Date()).toISOString()
+    };
+  }
+  try {
+    const {
+      patient_name,
+      patient_phone,
+      patient_email,
+      caregiver_id,
+      service_type,
+      service_date,
+      start_time,
+      end_time,
+      total_cost,
+      notes
+    } = body;
+    if (!patient_name || !patient_phone || !caregiver_id || !service_date || !start_time || !end_time) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "\u7F3A\u5C11\u5FC5\u8981\u8CC7\u6599"
+      });
+    }
+    const bookingId = "bk-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
+    await db.prepare(`
+      INSERT INTO bookings (
+        id, patient_name, patient_phone, patient_email, 
+        caregiver_id, service_type, service_date, 
+        start_time, end_time, status, total_cost, notes
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
+    `).bind(
+      bookingId,
+      patient_name,
+      patient_phone,
+      patient_email || null,
+      caregiver_id,
+      service_type,
+      service_date,
+      start_time,
+      end_time,
+      total_cost,
+      notes || null
+    ).run();
+    const newBooking = await db.prepare("SELECT * FROM bookings WHERE id = ?").bind(bookingId).first();
+    return newBooking;
+  } catch (error) {
+    if (error.statusCode === 400) {
+      throw error;
+    }
+    console.error("Database error:", error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: "\u5EFA\u7ACB\u9810\u7D04\u5931\u6557"
+    });
+  }
 });
 
 const index_post$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
@@ -4799,15 +4718,64 @@ const index_post$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProper
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const _id__get$4 = defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id");
-  const caregiver = mockStore.caregivers.getById(id);
-  if (!caregiver) {
+  var _a;
+  const caregiverId = getRouterParam(event, "id");
+  const { cloudflare } = event.context;
+  const db = (_a = cloudflare == null ? void 0 : cloudflare.env) == null ? void 0 : _a.DB;
+  if (!db) {
+    return {
+      id: caregiverId,
+      name: "\u5F35\u7F8E\u9E97",
+      avatar: "https://i.pravatar.cc/150?img=1",
+      rating: 4.8,
+      reviews_count: 124,
+      hourly_rate: 350,
+      experience_years: 5,
+      bio: "\u5C08\u696D\u7167\u8B77\u670D\u52D9\u54E1\uFF0C\u64C1\u67095\u5E74\u4EE5\u4E0A\u7167\u8B77\u7D93\u9A57",
+      certifications: ["\u7167\u9867\u670D\u52D9\u54E1", "\u6025\u6551\u8B49\u7167"],
+      languages: ["\u4E2D\u6587", "\u53F0\u8A9E"],
+      specialties: ["\u5931\u667A\u75C7\u7167\u8B77", "\u5FA9\u5065\u5354\u52A9"],
+      service_areas: ["\u53F0\u5317\u5E02", "\u65B0\u5317\u5E02"]
+    };
+  }
+  try {
+    const caregiver = await db.prepare("SELECT * FROM caregivers WHERE id = ?").bind(caregiverId).first();
+    if (!caregiver) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: "\u627E\u4E0D\u5230\u8A72\u7167\u8B77\u54E1"
+      });
+    }
+    const certifications = await db.prepare("SELECT certification FROM caregiver_certifications WHERE caregiver_id = ?").bind(caregiverId).all();
+    const languages = await db.prepare("SELECT language FROM caregiver_languages WHERE caregiver_id = ?").bind(caregiverId).all();
+    const specialties = await db.prepare("SELECT specialty FROM caregiver_specialties WHERE caregiver_id = ?").bind(caregiverId).all();
+    const service_areas = await db.prepare("SELECT area FROM caregiver_service_areas WHERE caregiver_id = ?").bind(caregiverId).all();
+    const reviews = await db.prepare(`
+        SELECT r.*, b.patient_name 
+        FROM reviews r
+        JOIN bookings b ON r.booking_id = b.id
+        WHERE r.caregiver_id = ?
+        ORDER BY r.created_at DESC
+        LIMIT 10
+      `).bind(caregiverId).all();
+    return {
+      ...caregiver,
+      certifications: certifications.results.map((c) => c.certification),
+      languages: languages.results.map((l) => l.language),
+      specialties: specialties.results.map((s) => s.specialty),
+      service_areas: service_areas.results.map((a) => a.area),
+      reviews: reviews.results
+    };
+  } catch (error) {
+    if (error.statusCode === 404) {
+      throw error;
+    }
+    console.error("Database error:", error);
     throw createError({
-      statusCode: 404,
-      statusMessage: "\u7167\u8B77\u54E1\u4E0D\u5B58\u5728"
+      statusCode: 500,
+      statusMessage: "\u8CC7\u6599\u5EAB\u67E5\u8A62\u932F\u8AA4"
     });
   }
-  return caregiver;
 });
 
 const _id__get$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
@@ -4816,33 +4784,83 @@ const _id__get$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty
 }, Symbol.toStringTag, { value: 'Module' }));
 
 const index_get$4 = defineEventHandler(async (event) => {
+  var _a;
   const query = getQuery$1(event);
   const { area, specialty, minRate, maxRate } = query;
-  let caregivers = mockStore.caregivers.getAll();
-  if (area) {
-    caregivers = caregivers.filter(
-      (c) => c.service_areas.includes(area)
-    );
+  const { cloudflare } = event.context;
+  const db = (_a = cloudflare == null ? void 0 : cloudflare.env) == null ? void 0 : _a.DB;
+  if (!db) {
+    return {
+      caregivers: [
+        {
+          id: "cg-001",
+          name: "\u5F35\u7F8E\u9E97",
+          avatar: "https://i.pravatar.cc/150?img=1",
+          rating: 4.8,
+          reviews_count: 124,
+          hourly_rate: 350,
+          experience_years: 5,
+          bio: "\u5C08\u696D\u7167\u8B77\u670D\u52D9\u54E1\uFF0C\u64C1\u67095\u5E74\u4EE5\u4E0A\u7167\u8B77\u7D93\u9A57",
+          certifications: ["\u7167\u9867\u670D\u52D9\u54E1", "\u6025\u6551\u8B49\u7167"],
+          languages: ["\u4E2D\u6587", "\u53F0\u8A9E"],
+          specialties: ["\u5931\u667A\u75C7\u7167\u8B77", "\u5FA9\u5065\u5354\u52A9"],
+          service_areas: ["\u53F0\u5317\u5E02", "\u65B0\u5317\u5E02"]
+        }
+      ],
+      total: 1
+    };
   }
-  if (specialty) {
-    caregivers = caregivers.filter(
-      (c) => c.specialties.includes(specialty)
+  try {
+    let sql = "SELECT * FROM caregivers WHERE 1=1";
+    const params = [];
+    if (minRate) {
+      sql += " AND hourly_rate >= ?";
+      params.push(Number(minRate));
+    }
+    if (maxRate) {
+      sql += " AND hourly_rate <= ?";
+      params.push(Number(maxRate));
+    }
+    sql += " ORDER BY rating DESC, reviews_count DESC";
+    const stmt = db.prepare(sql);
+    params.forEach((param, index) => stmt.bind(index + 1, param));
+    const caregivers = await stmt.all();
+    let caregiversWithDetails = await Promise.all(
+      caregivers.results.map(async (caregiver) => {
+        const certifications = await db.prepare("SELECT certification FROM caregiver_certifications WHERE caregiver_id = ?").bind(caregiver.id).all();
+        const languages = await db.prepare("SELECT language FROM caregiver_languages WHERE caregiver_id = ?").bind(caregiver.id).all();
+        const specialties = await db.prepare("SELECT specialty FROM caregiver_specialties WHERE caregiver_id = ?").bind(caregiver.id).all();
+        const service_areas = await db.prepare("SELECT area FROM caregiver_service_areas WHERE caregiver_id = ?").bind(caregiver.id).all();
+        return {
+          ...caregiver,
+          certifications: certifications.results.map((c) => c.certification),
+          languages: languages.results.map((l) => l.language),
+          specialties: specialties.results.map((s) => s.specialty),
+          service_areas: service_areas.results.map((a) => a.area)
+        };
+      })
     );
+    if (area) {
+      caregiversWithDetails = caregiversWithDetails.filter(
+        (c) => c.service_areas.includes(area)
+      );
+    }
+    if (specialty) {
+      caregiversWithDetails = caregiversWithDetails.filter(
+        (c) => c.specialties.includes(specialty)
+      );
+    }
+    return {
+      caregivers: caregiversWithDetails,
+      total: caregiversWithDetails.length
+    };
+  } catch (error) {
+    console.error("Database error:", error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: "\u8CC7\u6599\u5EAB\u67E5\u8A62\u932F\u8AA4"
+    });
   }
-  if (minRate) {
-    caregivers = caregivers.filter(
-      (c) => c.hourly_rate >= Number(minRate)
-    );
-  }
-  if (maxRate) {
-    caregivers = caregivers.filter(
-      (c) => c.hourly_rate <= Number(maxRate)
-    );
-  }
-  return {
-    caregivers,
-    total: caregivers.length
-  };
 });
 
 const index_get$5 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({

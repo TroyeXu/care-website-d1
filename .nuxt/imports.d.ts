@@ -47,7 +47,6 @@ export { useMockApi, ApiResponse, PaginatedResponse } from '../composables/useMo
 export { default as usePageSeo } from '../composables/usePageSeo';
 export { default as useParticleEffects } from '../composables/useParticleEffects';
 export { mockCaregivers, mockUsers, mockBookings, mockReviews, mockPayments, mockServiceTypes, mockCostModifiers, getMockDataForStore, User, Review, Payment, ServiceType, CostModifier } from '../utils/mockData';
-export { testMockApiSetup, printTestResults } from '../utils/testMockApi';
 export { commonValidations, loginSchema, registerSchema, profileUpdateSchema, passwordResetSchema, passwordChangeSchema, contactSchema, bookingSchema, paymentSchema, reviewSchema, LoginFormData, RegisterFormData, ProfileUpdateFormData, PasswordResetFormData, PasswordChangeFormData, ContactFormData, BookingFormData, PaymentFormData, ReviewFormData } from '../utils/validationSchemas';
 export { useAuthStore, AuthState, LoginCredentials, RegisterData } from '../stores/auth';
 export { useBookingStore, Booking } from '../stores/bookings';
@@ -66,4 +65,5 @@ export { useRouteBaseName, useLocalePath, useLocaleRoute, useSwitchLocalePath, u
 export { useDialogPluginComponent, useFormChild, useInterval, useMeta, useQuasar, useRenderCache, useSplitAttrs, useTick, useTimeout, Notify, Dialog, Loading } from 'quasar';
 export { useField, useFieldArray, useFieldError, useFieldValue, useForm, useFormContext, useFormErrors, useFormValues, useIsFieldDirty, useIsFieldTouched, useIsFieldValid, useIsFormDirty, useIsFormTouched, useIsFormValid, useIsSubmitting, useIsValidating, useResetForm, useSubmitCount, useSubmitForm, useValidateField, useValidateForm } from 'vee-validate';
 export { toTypedSchema } from '@vee-validate/yup';
+export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';

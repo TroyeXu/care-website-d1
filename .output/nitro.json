@@ -1,6 +1,6 @@
 {
-  "date": "2025-08-03T02:32:48.925Z",
-  "preset": "node-server",
+  "date": "2025-08-03T06:07:04.829Z",
+  "preset": "cloudflare-module",
   "framework": {
     "name": "nuxt",
     "version": "4.0.1"
@@ -9,7 +9,15 @@
     "nitro": "2.12.4"
   },
   "commands": {
-    "preview": "node server/index.mjs"
+    "preview": "npx wrangler dev server/index.mjs --assets public",
+    "deploy": "npx wrangler deploy server/index.mjs --assets public"
   },
-  "config": {}
+  "config": {
+    "cloudflare": {
+      "pages": false,
+      "wrangler": {
+        "configPath": "./wrangler.toml"
+      }
+    }
+  }
 }

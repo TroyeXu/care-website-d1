@@ -1,14 +1,2 @@
-import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import 'node:http';
-import 'node:https';
-export { P as default } from './chunks/nitro/nitro.mjs';
-import 'node:events';
-import 'node:buffer';
-import 'node:fs';
-import 'node:path';
-import 'node:crypto';
-import 'vue';
-import '@intlify/utils';
-import 'vue-router';
-import 'node:url';
-import 'consola';
+globalThis._importMeta_={url:"file:///_entry.js",env:{}};export{bl as default}from"./chunks/nitro/nitro.mjs";
 //# sourceMappingURL=index.mjs.map

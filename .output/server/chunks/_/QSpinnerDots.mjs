@@ -1,26 +1,2 @@
-import { h } from 'vue';
-import { n as createComponent, aj as useSpinnerProps, ak as useSpinner } from '../build/server.mjs';
-
-const innerHTML = '<circle cx="15" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="60" cy="15" r="9" fill-opacity=".3"><animate attributeName="r" from="9" to="9" begin="0s" dur="0.8s" values="9;15;9" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from=".5" to=".5" begin="0s" dur="0.8s" values=".5;1;.5" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="105" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle>';
-
-const __nuxt_component_8 = createComponent({
-  name: 'QSpinnerDots',
-
-  props: useSpinnerProps,
-
-  setup (props) {
-    const { cSize, classes } = useSpinner(props);
-    return () => h('svg', {
-      class: classes.value,
-      fill: 'currentColor',
-      width: cSize.value,
-      height: cSize.value,
-      viewBox: '0 0 120 30',
-      xmlns: 'http://www.w3.org/2000/svg',
-      innerHTML
-    })
-  }
-});
-
-export { __nuxt_component_8 as _ };
+import{n as e,ak as a,al as i}from"../build/server.mjs";import{aC as t}from"../nitro/nitro.mjs";const r=e({name:"QSpinnerDots",props:a,setup(e){const{cSize:a,classes:r}=i(e);return()=>t("svg",{class:r.value,fill:"currentColor",width:a.value,height:a.value,viewBox:"0 0 120 30",xmlns:"http://www.w3.org/2000/svg",innerHTML:'<circle cx="15" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="60" cy="15" r="9" fill-opacity=".3"><animate attributeName="r" from="9" to="9" begin="0s" dur="0.8s" values="9;15;9" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from=".5" to=".5" begin="0s" dur="0.8s" values=".5;1;.5" calcMode="linear" repeatCount="indefinite"></animate></circle><circle cx="105" cy="15" r="15"><animate attributeName="r" from="15" to="15" begin="0s" dur="0.8s" values="15;9;15" calcMode="linear" repeatCount="indefinite"></animate><animate attributeName="fill-opacity" from="1" to="1" begin="0s" dur="0.8s" values="1;.5;1" calcMode="linear" repeatCount="indefinite"></animate></circle>'})}});export{r as _};
 //# sourceMappingURL=QSpinnerDots.mjs.map

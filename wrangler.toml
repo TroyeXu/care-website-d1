@@ -1,6 +1,7 @@
-name = "care-platform"
+name = "care-platform-worker"
+main = "./.output/server/index.mjs"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = ".output/public"
+assets = { directory = "./.output/public" }
 
 # D1 資料庫配置
 [[d1_databases]]

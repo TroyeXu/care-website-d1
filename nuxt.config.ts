@@ -5,7 +5,29 @@ import { defineNuxtConfig } from 'nuxt/config'
 export default defineNuxtConfig({
   // 添加相容性日期
   compatibilityDate: '2025-06-14',
-  // Nuxt 4 不再需要 future.compatibilityVersion 設定
+
+  // Cloudflare Workers 配置（支援 SSR）
+  nitro: {
+    preset: 'cloudflare-module',
+    // 不預渲染，使用完整 SSR
+    prerender: false,
+    // 設定公共資源路徑
+    publicAssets: [{
+      baseURL: '/',
+      dir: '.output/public',
+      maxAge: 31536000 // 1 年快取
+    }],
+    // Workers 額外配置
+    cloudflare: {
+      wrangler: {
+        configPath: './wrangler.toml'
+      }
+    }
+  },
+
+  // SSR 設定
+  ssr: true,
+
   site: {
     url: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3333',
   },

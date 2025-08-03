@@ -1,0 +1,74 @@
+name: Deploy to Cloudflare
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Nuxt application
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: care-platform
+          directory: .output/public
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: '3'
+
+  setup-d1:
+    runs-on: ubuntu-latest
+    name: Setup D1 Database
+    needs: deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Initialize D1 Database
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # 檢查資料庫是否存在
+          if ! wrangler d1 list | grep -q "care-platform-db"; then
+            echo "Creating D1 database..."
+            wrangler d1 create care-platform-db
+          fi
+          
+          # 執行 schema
+          echo "Applying database schema..."
+          wrangler d1 execute care-platform-db --file=./database/schema.sql
+          
+          # 執行 seed（僅在需要時）
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Seeding database..."
+            wrangler d1 execute care-platform-db --file=./database/seed.sql
+          fi

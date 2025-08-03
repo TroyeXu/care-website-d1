@@ -2,7 +2,7 @@
   <q-page class="flex flex-center auth-page">
     <!-- 動態背景元素 -->
     <div class="auth-bg-pattern"></div>
-    
+
     <div class="auth-container animate-fade-in">
       <!-- Logo and Title -->
       <div class="text-center q-mb-lg">
@@ -10,7 +10,9 @@
           <q-icon name="medical_services" size="80px" color="white" />
           <div class="logo-pulse"></div>
         </div>
-        <h1 class="text-h3 text-weight-bold text-white q-mb-sm animate-slide-down">
+        <h1
+          class="text-h3 text-weight-bold text-white q-mb-sm animate-slide-down"
+        >
           歡迎回來
         </h1>
         <p class="text-subtitle1 text-white opacity-90 animate-slide-up">
@@ -21,12 +23,14 @@
       <!-- Login Card -->
       <q-card flat class="auth-card">
         <q-card-section class="q-pa-xl">
-          <q-form @submit="handleSubmit" class="q-gutter-lg">
+          <q-form class="q-gutter-lg" @submit="handleSubmit">
             <!-- Form Title -->
-            <div class="text-h5 text-center text-weight-medium text-grey-8 q-mb-lg">
+            <div
+              class="text-h5 text-center text-weight-medium text-grey-8 q-mb-lg"
+            >
               登入帳號
             </div>
-            
+
             <!-- Email Field -->
             <div class="input-wrapper">
               <q-input
@@ -34,15 +38,15 @@
                 type="email"
                 label="電子郵件"
                 :rules="[
-                  val => !!val || '請輸入電子郵件',
-                  val => /.+@.+\..+/.test(val) || '請輸入有效的電子郵件'
+                  (val) => !!val || '請輸入電子郵件',
+                  (val) => /.+@.+\..+/.test(val) || '請輸入有效的電子郵件',
                 ]"
                 lazy-rules
                 outlined
                 rounded
                 class="custom-input"
               >
-                <template v-slot:prepend>
+                <template #prepend>
                   <q-icon name="email" class="input-icon" />
                 </template>
               </q-input>
@@ -55,25 +59,25 @@
                 :type="showPassword ? 'text' : 'password'"
                 label="密碼"
                 :rules="[
-                  val => !!val || '請輸入密碼',
-                  val => val.length >= 6 || '密碼至少需要 6 個字元'
+                  (val) => !!val || '請輸入密碼',
+                  (val) => val.length >= 6 || '密碼至少需要 6 個字元',
                 ]"
                 lazy-rules
                 outlined
                 rounded
                 class="custom-input"
               >
-                <template v-slot:prepend>
+                <template #prepend>
                   <q-icon name="lock" class="input-icon" />
                 </template>
-                <template v-slot:append>
+                <template #append>
                   <q-btn
                     :icon="showPassword ? 'visibility_off' : 'visibility'"
                     flat
                     round
                     dense
-                    @click="showPassword = !showPassword"
                     class="visibility-toggle"
+                    @click="showPassword = !showPassword"
                   />
                 </template>
               </q-input>
@@ -81,11 +85,7 @@
 
             <!-- Remember Me & Forgot Password -->
             <div class="row justify-between items-center q-mb-lg">
-              <q-checkbox
-                v-model="rememberMe"
-                label="記住我"
-                color="primary"
-              />
+              <q-checkbox v-model="rememberMe" label="記住我" color="primary" />
               <q-btn
                 flat
                 no-caps
@@ -106,7 +106,7 @@
               :loading="loading"
               :disable="!form.email || !form.password"
             >
-              <template v-slot:loading>
+              <template #loading>
                 <q-spinner-dots />
               </template>
             </q-btn>
@@ -128,7 +128,10 @@
                 rounded
                 @click="handleSocialLogin('google')"
               >
-                <q-icon name="img:https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" class="q-mr-sm" />
+                <q-icon
+                  name="img:https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+                  class="q-mr-sm"
+                />
               </q-btn>
               <q-btn
                 outline
@@ -138,7 +141,10 @@
                 rounded
                 @click="handleSocialLogin('facebook')"
               >
-                <q-icon name="img:https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg" class="q-mr-sm" />
+                <q-icon
+                  name="img:https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg"
+                  class="q-mr-sm"
+                />
               </q-btn>
             </div>
 
@@ -159,7 +165,9 @@
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>患者帳號</q-item-label>
-                        <q-item-label caption>zhiming.lin@email.com / password123</q-item-label>
+                        <q-item-label caption
+                          >zhiming.lin@email.com / password123</q-item-label
+                        >
                       </q-item-section>
                     </q-item>
                     <q-separator />
@@ -169,7 +177,9 @@
                       </q-item-section>
                       <q-item-section>
                         <q-item-label>照護員帳號</q-item-label>
-                        <q-item-label caption>meiling.chen@email.com / password123</q-item-label>
+                        <q-item-label caption
+                          >meiling.chen@email.com / password123</q-item-label
+                        >
                       </q-item-section>
                     </q-item>
                   </q-list>
@@ -199,7 +209,7 @@
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">重設密碼</div>
           <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
+          <q-btn v-close-popup icon="close" flat round dense />
         </q-card-section>
 
         <q-card-section>
@@ -213,29 +223,28 @@
             outlined
             rounded
             :rules="[
-              val => !!val || '請輸入電子郵件',
-              val => /.+@.+\..+/.test(val) || '請輸入有效的電子郵件'
+              (val) => !!val || '請輸入電子郵件',
+              (val) => /.+@.+\..+/.test(val) || '請輸入有效的電子郵件',
             ]"
           >
-            <template v-slot:prepend>
+            <template #prepend>
               <q-icon name="email" />
             </template>
           </q-input>
         </q-card-section>
 
         <q-card-actions align="right" class="q-px-md q-pb-md">
-          <q-btn flat label="取消" color="grey" v-close-popup />
+          <q-btn v-close-popup flat label="取消" color="grey" />
           <q-btn
             unelevated
             label="發送重設郵件"
             color="primary"
-            @click="handleForgotPassword"
             :loading="resetLoading"
+            @click="handleForgotPassword"
           />
         </q-card-actions>
       </q-card>
     </q-dialog>
-
   </q-page>
 </template>
 
@@ -253,7 +262,7 @@ const authStore = useAuthStore()
 // Form data
 const form = ref({
   email: '',
-  password: ''
+  password: '',
 })
 
 // State
@@ -271,12 +280,12 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 const testAccounts = {
   patient: {
     email: 'zhiming.lin@email.com',
-    password: 'password123'
+    password: 'password123',
   },
   caregiver: {
     email: 'meiling.chen@email.com',
-    password: 'password123'
-  }
+    password: 'password123',
+  },
 }
 
 // Fill test account
@@ -284,11 +293,11 @@ const fillTestAccount = (type: 'patient' | 'caregiver') => {
   const account = testAccounts[type]
   form.value.email = account.email
   form.value.password = account.password
-  
+
   $q.notify({
     type: 'info',
     message: `已填入${type === 'patient' ? '患者' : '照護員'}測試帳號`,
-    position: 'top'
+    position: 'top',
   })
 }
 
@@ -298,12 +307,12 @@ const handleSubmit = async () => {
 
   try {
     await authStore.login(form.value)
-    
+
     $q.notify({
       type: 'positive',
       message: '登入成功！',
       icon: 'check_circle',
-      position: 'top'
+      position: 'top',
     })
 
     // Redirect based on user role
@@ -318,7 +327,7 @@ const handleSubmit = async () => {
     $q.notify({
       type: 'negative',
       message: error.message || '登入失敗，請檢查您的帳號密碼',
-      position: 'top'
+      position: 'top',
     })
   } finally {
     loading.value = false
@@ -331,7 +340,7 @@ const handleForgotPassword = async () => {
     $q.notify({
       type: 'warning',
       message: '請輸入有效的電子郵件地址',
-      position: 'top'
+      position: 'top',
     })
     return
   }
@@ -340,21 +349,21 @@ const handleForgotPassword = async () => {
 
   try {
     await authStore.resetPassword(resetEmail.value)
-    
+
     $q.notify({
       type: 'positive',
       message: '密碼重設郵件已發送，請檢查您的信箱',
       icon: 'email',
-      position: 'top'
+      position: 'top',
     })
-    
+
     showForgotPasswordDialog.value = false
     resetEmail.value = ''
   } catch (error: any) {
     $q.notify({
       type: 'negative',
       message: error.message || '發送失敗，請稍後再試',
-      position: 'top'
+      position: 'top',
     })
   } finally {
     resetLoading.value = false
@@ -366,7 +375,7 @@ const handleSocialLogin = (provider: string) => {
   $q.notify({
     type: 'info',
     message: `${provider} 登入功能即將推出`,
-    position: 'top'
+    position: 'top',
   })
 }
 
@@ -374,12 +383,12 @@ const handleSocialLogin = (provider: string) => {
 useHead({
   title: '登入 - 專業護理服務平台',
   meta: [
-    { name: 'description', content: '登入您的護理服務平台帳號，管理照護服務' }
-  ]
+    { name: 'description', content: '登入您的護理服務平台帳號，管理照護服務' },
+  ],
 })
 
 definePageMeta({
-  layout: 'auth'
+  layout: 'auth',
 })
 </script>
 
@@ -395,10 +404,22 @@ definePageMeta({
 .auth-bg-pattern {
   position: absolute;
   inset: 0;
-  background-image: 
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(255, 255, 255, 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 20%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 50%
+    );
   animation: bgMove 20s ease-in-out infinite;
 }
 
@@ -420,13 +441,22 @@ definePageMeta({
 }
 
 @keyframes bgMove {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.1) rotate(5deg); }
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
 }
 
 @keyframes bgSlide {
-  from { transform: translateX(0); }
-  to { transform: translateX(100px); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100px);
+  }
 }
 
 /* Logo 樣式 */
@@ -448,13 +478,24 @@ definePageMeta({
   position: absolute;
   inset: -20px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 70%
+  );
   animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.2); opacity: 0; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
 }
 
 /* 容器樣式 */
@@ -473,7 +514,7 @@ definePageMeta({
   border-radius: 24px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
+  box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.1),
     0 0 0 1px rgba(255, 255, 255, 0.2) inset;
 }
@@ -545,7 +586,9 @@ definePageMeta({
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition:
+    width 0.6s,
+    height 0.6s;
 }
 
 .submit-btn:hover::before {
@@ -641,24 +684,24 @@ definePageMeta({
   .auth-container {
     padding: 16px;
   }
-  
+
   .auth-card {
     border-radius: 20px;
   }
-  
+
   .q-card-section {
     padding: 24px !important;
   }
-  
+
   .logo-wrapper {
     width: 100px;
     height: 100px;
   }
-  
+
   .text-h3 {
     font-size: 1.75rem !important;
   }
-  
+
   .submit-btn,
   .social-btn {
     height: 42px;
@@ -670,15 +713,15 @@ definePageMeta({
   .auth-container {
     padding: 12px;
   }
-  
+
   .q-card-section {
     padding: 20px !important;
   }
-  
+
   .text-h3 {
     font-size: 1.5rem !important;
   }
-  
+
   .text-subtitle1 {
     font-size: 0.9rem !important;
   }
@@ -690,16 +733,16 @@ definePageMeta({
     background: rgba(30, 30, 30, 0.95);
     color: white;
   }
-  
+
   .custom-input :deep(.q-field__control) {
     background: rgba(255, 255, 255, 0.05);
     color: white;
   }
-  
+
   .custom-input :deep(.q-field__label) {
     color: rgba(255, 255, 255, 0.7);
   }
-  
+
   .social-btn {
     background: rgba(255, 255, 255, 0.05);
     border-color: rgba(255, 255, 255, 0.1);
