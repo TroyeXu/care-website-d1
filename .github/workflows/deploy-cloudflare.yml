@@ -34,7 +34,6 @@ jobs:
           projectName: care-platform
           directory: .output/public
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          wranglerVersion: '3'
 
   setup-d1:
     runs-on: ubuntu-latest
