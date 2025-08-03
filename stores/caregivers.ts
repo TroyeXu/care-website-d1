@@ -1,38 +1,35 @@
 import { defineStore } from 'pinia'
-import { mockCaregivers } from '~/utils/mockData'
 
 export interface Caregiver {
-  id: number
+  id: string
   name: string
-  experience: string
-  skills: string
-  licenses: string[]
+  avatar: string
   rating: number
-  photo: string
-  available: string
+  reviews_count: number
   hourly_rate: number
-  shift_rate: number
-  location?: string
-  description?: string
-  review_count?: number
-  created_at: string
-  updated_at: string
+  experience_years: number
+  bio: string
+  certifications: string[]
+  languages: string[]
+  specialties: string[]
+  service_areas: string[]
+  created_at?: string
+  updated_at?: string
+  reviews?: any[]
 }
 
 export interface CaregiverFilter {
-  location?: string
+  area?: string
+  specialty?: string
   minRating?: number
-  maxHourlyRate?: number
-  maxShiftRate?: number
-  licenses?: string[]
-  availability?: string
-  skills?: string[]
+  minRate?: number
+  maxRate?: number
 }
 
 export const useCaregiverStore = defineStore('caregivers', {
   state: () => ({
-    caregivers: mockCaregivers as Caregiver[],
-    filteredCaregivers: [] as Caregiver[],
+    caregivers: [] as Caregiver[],
+    selectedCaregiver: null as Caregiver | null,
     currentFilter: null as CaregiverFilter | null,
     loading: false,
     error: null as string | null,
@@ -40,26 +37,26 @@ export const useCaregiverStore = defineStore('caregivers', {
   }),
 
   getters: {
-    getCaregiverById: (state) => (id: number) => 
+    getCaregiverById: (state) => (id: string) => 
       state.caregivers.find(c => c.id === id),
     
-    availableCaregivers: (state) => 
-      state.caregivers.filter(c => c.available),
+    featuredCaregivers: (state) => 
+      state.caregivers.filter(c => c.rating >= 4.5),
     
     topRatedCaregivers: (state) => 
       state.caregivers.sort((a, b) => b.rating - a.rating).slice(0, 5),
 
-    caregiversByLocation: (state) => (location: string) =>
-      state.caregivers.filter(c => c.location?.includes(location)),
+    caregiversByArea: (state) => (area: string) =>
+      state.caregivers.filter(c => c.service_areas.includes(area)),
 
     caregiversByRating: (state) => (minRating: number) =>
       state.caregivers.filter(c => c.rating >= minRating),
 
-    caregiversByPriceRange: (state) => (maxHourlyRate?: number, maxShiftRate?: number) =>
+    caregiversByPriceRange: (state) => (minRate?: number, maxRate?: number) =>
       state.caregivers.filter(c => {
-        const hourlyOk = !maxHourlyRate || c.hourly_rate <= maxHourlyRate
-        const shiftOk = !maxShiftRate || c.shift_rate <= maxShiftRate
-        return hourlyOk && shiftOk
+        const minOk = !minRate || c.hourly_rate >= minRate
+        const maxOk = !maxRate || c.hourly_rate <= maxRate
+        return minOk && maxOk
       }),
 
     searchResults: (state) => {
@@ -67,10 +64,10 @@ export const useCaregiverStore = defineStore('caregivers', {
       const query = state.searchQuery.toLowerCase()
       return state.caregivers.filter(c => 
         c.name.toLowerCase().includes(query) ||
-        c.skills.toLowerCase().includes(query) ||
-        c.experience.toLowerCase().includes(query) ||
-        c.location?.toLowerCase().includes(query) ||
-        c.licenses.some(license => license.toLowerCase().includes(query))
+        c.bio.toLowerCase().includes(query) ||
+        c.specialties.some(s => s.toLowerCase().includes(query)) ||
+        c.service_areas.some(a => a.toLowerCase().includes(query)) ||
+        c.certifications.some(cert => cert.toLowerCase().includes(query))
       )
     },
 
@@ -80,32 +77,22 @@ export const useCaregiverStore = defineStore('caregivers', {
       if (state.currentFilter) {
         const filter = state.currentFilter
 
-        if (filter.location) {
-          result = result.filter(c => c.location?.includes(filter.location!))
+        if (filter.area) {
+          result = result.filter(c => c.service_areas.includes(filter.area!))
         }
         if (filter.minRating) {
           result = result.filter(c => c.rating >= filter.minRating!)
         }
-        if (filter.maxHourlyRate) {
-          result = result.filter(c => c.hourly_rate <= filter.maxHourlyRate!)
+        if (filter.minRate) {
+          result = result.filter(c => c.hourly_rate >= filter.minRate!)
         }
-        if (filter.maxShiftRate) {
-          result = result.filter(c => c.shift_rate <= filter.maxShiftRate!)
+        if (filter.maxRate) {
+          result = result.filter(c => c.hourly_rate <= filter.maxRate!)
         }
-        if (filter.licenses && filter.licenses.length > 0) {
+        if (filter.specialty) {
           result = result.filter(c => 
-            filter.licenses!.some(license => c.licenses.includes(license))
+            c.specialties.includes(filter.specialty!)
           )
-        }
-        if (filter.skills && filter.skills.length > 0) {
-          result = result.filter(c =>
-            filter.skills!.some(skill => 
-              c.skills.toLowerCase().includes(skill.toLowerCase())
-            )
-          )
-        }
-        if (filter.availability) {
-          result = result.filter(c => c.available.includes(filter.availability!))
         }
       }
 
@@ -113,10 +100,10 @@ export const useCaregiverStore = defineStore('caregivers', {
         const query = state.searchQuery.toLowerCase()
         result = result.filter(c => 
           c.name.toLowerCase().includes(query) ||
-          c.skills.toLowerCase().includes(query) ||
-          c.experience.toLowerCase().includes(query) ||
-          c.location?.toLowerCase().includes(query) ||
-          c.licenses.some(license => license.toLowerCase().includes(query))
+          c.bio.toLowerCase().includes(query) ||
+          c.specialties.some(s => s.toLowerCase().includes(query)) ||
+          c.service_areas.some(a => a.toLowerCase().includes(query)) ||
+          c.certifications.some(cert => cert.toLowerCase().includes(query))
         )
       }
 
@@ -125,9 +112,6 @@ export const useCaregiverStore = defineStore('caregivers', {
   },
 
   actions: {
-    loadMockData() {
-      this.caregivers = mockCaregivers
-    },
 
     setSearchQuery(query: string) {
       this.searchQuery = query
@@ -142,104 +126,80 @@ export const useCaregiverStore = defineStore('caregivers', {
       this.searchQuery = ''
     },
 
-    async fetchCaregivers() {
+    async fetchCaregivers(filter?: CaregiverFilter) {
       this.loading = true
       this.error = null
       
       try {
-        const { caregivers } = await $fetch('/api/caregivers')
-        this.caregivers = caregivers || mockCaregivers
+        const query = new URLSearchParams()
+        if (filter?.area) query.append('area', filter.area)
+        if (filter?.specialty) query.append('specialty', filter.specialty)
+        if (filter?.minRate) query.append('minRate', filter.minRate.toString())
+        if (filter?.maxRate) query.append('maxRate', filter.maxRate.toString())
+        
+        const { caregivers } = await $fetch(`/api/caregivers?${query}`)
+        this.caregivers = caregivers || []
       } catch (err: any) {
         this.error = err.data?.message || err.message || '載入照護員資料失敗'
         console.error('Error fetching caregivers:', err)
-        this.caregivers = mockCaregivers
       } finally {
         this.loading = false
       }
     },
 
     async fetchCaregiverById(id: string) {
+      this.loading = true
+      this.error = null
+      
       try {
         const caregiver = await $fetch(`/api/caregivers/${id}`)
+        this.selectedCaregiver = caregiver
         return caregiver
       } catch (err: any) {
         this.error = err.data?.message || err.message || '載入照護員資料失敗'
         console.error('Error fetching caregiver:', err)
-        return this.getCaregiverById(Number(id))
+        throw err
+      } finally {
+        this.loading = false
       }
     },
 
-    async createCaregiver(caregiverData: Omit<Caregiver, 'id' | 'created_at' | 'updated_at'>) {
-      try {
-        const newCaregiver = await $fetch<Caregiver>('/api/caregivers', {
-          method: 'POST' as const,
-          body: caregiverData
-        })
-        
-        this.caregivers.push(newCaregiver)
-        return newCaregiver
-      } catch (err: any) {
-        this.error = err.data?.message || err.message || '建立照護員資料失敗'
-        console.error('Error creating caregiver:', err)
-        throw new Error(this.error || '未知錯誤')
-      }
-    },
 
-    async updateCaregiver(id: string, updates: Partial<Caregiver>) {
-      try {
-        const updatedCaregiver = await $fetch<Caregiver>(`/api/caregivers/${id}`, {
-          method: 'PUT' as const,
-          body: updates
-        })
-        
-        const index = this.caregivers.findIndex(c => c.id === Number(id))
-        if (index !== -1) {
-          this.caregivers[index] = updatedCaregiver
-        }
-        
-        return updatedCaregiver
-      } catch (err: any) {
-        this.error = err.data?.message || err.message || '更新照護員資料失敗'
-        console.error('Error updating caregiver:', err)
-        throw new Error(this.error || '未知錯誤')
-      }
-    },
-
-    getRecommendedCaregivers(userPreferences?: {
-      location?: string
-      skills?: string[]
-      maxPrice?: number
-      serviceType?: 'hourly' | 'shift'
+    getRecommendedCaregivers(preferences?: {
+      area?: string
+      specialties?: string[]
+      maxRate?: number
     }) {
       let candidates = [...this.caregivers]
 
-      if (userPreferences) {
-        if (userPreferences.location) {
+      if (preferences) {
+        if (preferences.area) {
           candidates = candidates.filter(c => 
-            c.location?.includes(userPreferences.location!)
+            c.service_areas.includes(preferences.area!)
           )
         }
         
-        if (userPreferences.skills && userPreferences.skills.length > 0) {
+        if (preferences.specialties && preferences.specialties.length > 0) {
           candidates = candidates.filter(c =>
-            userPreferences.skills!.some(skill =>
-              c.skills.toLowerCase().includes(skill.toLowerCase())
+            preferences.specialties!.some(specialty =>
+              c.specialties.includes(specialty)
             )
           )
         }
 
-        if (userPreferences.maxPrice) {
-          candidates = candidates.filter(c => {
-            const price = userPreferences.serviceType === 'shift' 
-              ? c.shift_rate 
-              : c.hourly_rate
-            return price <= userPreferences.maxPrice!
-          })
+        if (preferences.maxRate) {
+          candidates = candidates.filter(c => 
+            c.hourly_rate <= preferences.maxRate!
+          )
         }
       }
 
       return candidates
-        .sort((a, b) => b.rating - a.rating)
+        .sort((a, b) => {
+          // 優先評分，其次評價數
+          if (b.rating !== a.rating) return b.rating - a.rating
+          return b.reviews_count - a.reviews_count
+        })
         .slice(0, 3)
     }
   }

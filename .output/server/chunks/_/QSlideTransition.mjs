@@ -1,5 +1,5 @@
 import { onBeforeUnmount, h, Transition } from 'vue';
-import { s as createComponent } from '../build/server.mjs';
+import { n as createComponent } from '../build/server.mjs';
 
 const __nuxt_component_7 = createComponent({
   name: 'QSlideTransition',

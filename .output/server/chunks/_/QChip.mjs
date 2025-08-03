@@ -1,5 +1,5 @@
 import { getCurrentInstance, computed, h } from 'vue';
-import { s as createComponent, y as useSizeProps, z as useDarkProps, A as useDark, B as useSize, C as hDir, D as __q_directive_0, b as __nuxt_component_1, E as hMergeSlotSafely, F as stopAndPrevent } from '../build/server.mjs';
+import { n as createComponent, W as useSizeProps, v as useDarkProps, w as useDark, X as useSize, E as hDir, Y as __q_directive_0, b as __nuxt_component_1, Z as hMergeSlotSafely, $ as stopAndPrevent } from '../build/server.mjs';
 
 const defaultSizes = {
   xs: 8,

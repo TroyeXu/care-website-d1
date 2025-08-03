@@ -1,8 +1,8 @@
 import { computed, h } from 'vue';
-import { s as createComponent, b as __nuxt_component_1 } from '../build/server.mjs';
+import { n as createComponent, b as __nuxt_component_1 } from '../build/server.mjs';
 import { u as useCheckboxEmits, a as useCheckboxProps, b as useCheckbox } from './use-checkbox.mjs';
 
-const __nuxt_component_12$1 = createComponent({
+const __nuxt_component_12$2 = createComponent({
   name: 'QToggle',
 
   props: {
@@ -46,5 +46,5 @@ const __nuxt_component_12$1 = createComponent({
   }
 });
 
-export { __nuxt_component_12$1 as _ };
+export { __nuxt_component_12$2 as _ };
 //# sourceMappingURL=QToggle.mjs.map

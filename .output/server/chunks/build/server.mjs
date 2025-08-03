@@ -1112,9 +1112,11 @@ const Plugin$1 = createReactivePlugin({
 });
 
 const quasarKey = '_q_';
+const timelineKey = '_q_t_';
 const stepperKey = '_q_s_';
 const layoutKey = '_q_l_';
 const pageContainerKey = '_q_pc_';
+const fabKey = '_q_f_';
 const formKey = '_q_fo_';
 const tabsKey = '_q_tabs_';
 
@@ -1351,6 +1353,20 @@ const installQuasar = function (parentApp, opts = {}, ssrContext) {
       ssrContext
     });
   }
+
+function offset (el) {
+  if (el === window) {
+    return { top: 0, left: 0 }
+  }
+  const { top, left } = el.getBoundingClientRect();
+  return { top, left }
+}
+
+function height (el) {
+  return el === window
+    ? window.innerHeight
+    : el.getBoundingClientRect().height
+}
 
 function css (element, css) {
   const style = element.style;
@@ -3884,7 +3900,7 @@ const __nuxt_component_2 = createComponent({
   }
 });
 
-const __nuxt_component_10 = createComponent({
+const __nuxt_component_24 = createComponent({
   name: 'QCardActions',
 
   props: {
@@ -3918,7 +3934,7 @@ const margins = {
   xl: 24
 };
 
-const __nuxt_component_15 = createComponent({
+const __nuxt_component_9$1 = createComponent({
   name: 'QSeparator',
 
   props: {
@@ -6148,7 +6164,7 @@ const Dialog = {
   }
 };
 
-const __nuxt_component_6 = createComponent({
+const __nuxt_component_6$1 = createComponent({
   name: 'QAvatar',
 
   props: {
@@ -6805,7 +6821,7 @@ const __nuxt_component_4$1 = createComponent({
 
 const alignValues$1 = [ 'top', 'middle', 'bottom' ];
 
-const __nuxt_component_5 = createComponent({
+const __nuxt_component_12$1 = createComponent({
   name: 'QBadge',
 
   props: {
@@ -8388,7 +8404,7 @@ const __nuxt_component_14 = createComponent({
   }
 });
 
-const __nuxt_component_15$1 = createComponent({
+const __nuxt_component_15 = createComponent({
   name: 'QPageContainer',
 
   setup (_, { slots }) {
@@ -9545,6 +9561,8 @@ if (!globalThis.$fetch) {
 if (!("global" in globalThis)) {
   globalThis.global = globalThis;
 }
+const asyncDataDefaults = { "deep": false };
+const fetchDefaults = {};
 const appId = "nuxt-app";
 function getNuxtAppCtx(id = appId) {
   return getContext(id, {
@@ -10094,7 +10112,6 @@ const __nuxt_page_meta$2 = {
   layout: "default"
 };
 const __nuxt_page_meta$1 = {
-  title: "登入",
   layout: "auth"
 };
 const __nuxt_page_meta = {
@@ -10106,12 +10123,12 @@ const _routes = [
     name: "join",
     path: "/join",
     meta: __nuxt_page_meta$2 || {},
-    component: () => import('./join-BNM5HFMc.mjs')
+    component: () => import('./join-Cd-_KWRT.mjs')
   },
   {
     name: "index",
     path: "/",
-    component: () => import('./index-pEpYddhD.mjs')
+    component: () => import('./index-sQdY8uZG.mjs')
   },
   {
     name: "info-app",
@@ -10122,12 +10139,12 @@ const _routes = [
     name: "auth-login",
     path: "/auth/login",
     meta: __nuxt_page_meta$1 || {},
-    component: () => import('./login-CWtKIJbK.mjs')
+    component: () => import('./login-fRpiHhsH.mjs')
   },
   {
     name: "info-about",
     path: "/info/about",
-    component: () => import('./about-OICxLRY9.mjs')
+    component: () => import('./about-DeQCfEv9.mjs')
   },
   {
     name: "info-guide",
@@ -10142,12 +10159,12 @@ const _routes = [
   {
     name: "content-blog",
     path: "/content/blog",
-    component: () => import('./blog-DpPO8lw9.mjs')
+    component: () => import('./blog-D-WXjK8a.mjs')
   },
   {
     name: "info-pricing",
     path: "/info/pricing",
-    component: () => import('./pricing-BsW-q1AM.mjs')
+    component: () => import('./pricing-BWmZJUED.mjs')
   },
   {
     name: "info-subsidy",
@@ -10158,28 +10175,27 @@ const _routes = [
     name: "auth-register",
     path: "/auth/register",
     meta: __nuxt_page_meta || {},
-    component: () => import('./register-BC23GRHG.mjs')
+    component: () => import('./register-CeIvXvB_.mjs')
   },
   {
     name: "booking-match",
     path: "/booking/match",
-    component: () => import('./match-DJ2XEHoL.mjs')
+    component: () => import('./match-KAWn99L2.mjs')
   },
   {
     name: "info-services",
     path: "/info/services",
-    component: () => import('./services-DY9jY34D.mjs')
+    component: () => import('./services-DynkiAPC.mjs')
   },
   {
     name: "user-dashboard",
     path: "/user/dashboard",
-    meta: { "middleware": "auth" },
-    component: () => import('./dashboard-BbW4eHoU.mjs')
+    component: () => import('./dashboard-DrHdMklM.mjs')
   },
   {
     name: "caregivers-id",
     path: "/caregivers/:id()",
-    component: () => import('./_id_-CHevF_-q.mjs')
+    component: () => import('./_id_-PZkViZ5q.mjs')
   },
   {
     name: "info-advantages",
@@ -10189,37 +10205,37 @@ const _routes = [
   {
     name: "support-contact",
     path: "/support/contact",
-    component: () => import('./contact-CUccfXWz.mjs')
+    component: () => import('./contact-BMmzhCk7.mjs')
   },
   {
     name: "support-reviews",
     path: "/support/reviews",
-    component: () => import('./reviews-x7mBUk--.mjs')
+    component: () => import('./reviews-D4joLd4M.mjs')
   },
   {
     name: "booking-schedule",
     path: "/booking/schedule",
-    component: () => import('./schedule-BMZGf4WM.mjs')
+    component: () => import('./schedule-CyG60Nyk.mjs')
   },
   {
     name: "caregivers",
     path: "/caregivers",
-    component: () => import('./index-LPSZdrb3.mjs')
+    component: () => import('./index-BxYMZE1n.mjs')
   },
   {
     name: "caregivers-search",
     path: "/caregivers/search",
-    component: () => import('./search-CH0WRkyQ.mjs')
+    component: () => import('./search-CP6lPY6l.mjs')
   },
   {
     name: "content-resources",
     path: "/content/resources",
-    component: () => import('./resources-DxYEl5fy.mjs')
+    component: () => import('./resources-DTw-Imbg.mjs')
   },
   {
     name: "booking-calculator",
     path: "/booking/calculator",
-    component: () => import('./calculator-DWy3-x6P.mjs')
+    component: () => import('./calculator-CHDYTO0T.mjs')
   }
 ];
 const ROUTE_KEY_PARENTHESES_RE = /(:\w+)\([^)]+\)/g;
@@ -10336,11 +10352,7 @@ const globalMiddleware = [
   validate,
   manifest_45route_45rule
 ];
-const namedMiddleware = {
-  auth: () => import('./auth-DjFWyx4Y.mjs'),
-  caregiver: () => import('./caregiver-CSJiJ4Zk.mjs'),
-  patient: () => import('./patient-Sf5PWf-A.mjs')
-};
+const namedMiddleware = {};
 const plugin$1 = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:router",
   enforce: "pre",
@@ -10622,6 +10634,9 @@ function useState(...args) {
 function useRequestEvent(nuxtApp) {
   nuxtApp ||= useNuxtApp();
   return nuxtApp.ssrContext?.event;
+}
+function useRequestFetch() {
+  return useRequestEvent()?.$fetch || globalThis.$fetch;
 }
 function prerenderRoutes(path) {
   {
@@ -16512,29 +16527,29 @@ const useAuthStore = /* @__PURE__ */ defineStore("auth", {
   actions: {
     loadMockData() {
       this.users = mockUsers;
-      this.currentUser = mockUsers[0];
+      this.currentUser = mockUsers.find((u) => u.id === "1") || null;
       this.isAuthenticated = true;
     },
     async login(credentials) {
       this.loading = true;
       this.error = null;
       try {
-        const { data } = await $fetch("/api/auth/login", {
+        const response = await $fetch("/api/auth/login", {
           method: "POST",
           body: credentials
         });
-        this.currentUser = data.user;
+        this.currentUser = response.user;
         this.isAuthenticated = true;
-        const userIndex = this.users.findIndex((u) => u.id === data.user.id);
+        const userIndex = this.users.findIndex((u) => u.id === response.user.id);
         if (userIndex !== -1) {
-          this.users[userIndex] = data.user;
+          this.users[userIndex] = response.user;
         } else {
-          this.users.push(data.user);
+          this.users.push(response.user);
         }
       } catch (err) {
         this.error = err.data?.message || err.message || "登入失敗";
         console.error("Login error:", err);
-        throw new Error(this.error);
+        throw new Error(this.error || "未知錯誤");
       } finally {
         this.loading = false;
       }
@@ -16543,18 +16558,18 @@ const useAuthStore = /* @__PURE__ */ defineStore("auth", {
       this.loading = true;
       this.error = null;
       try {
-        const { data } = await $fetch("/api/auth/register", {
+        const response = await $fetch("/api/auth/register", {
           method: "POST",
           body: userData
         });
-        this.currentUser = data.user;
+        this.currentUser = response.user;
         this.isAuthenticated = true;
-        this.users.push(data.user);
-        return data.user;
+        this.users.push(response.user);
+        return response.user;
       } catch (err) {
         this.error = err.data?.message || err.message || "註冊失敗";
         console.error("Registration error:", err);
-        throw new Error(this.error);
+        throw new Error(this.error || "未知錯誤");
       } finally {
         this.loading = false;
       }
@@ -16592,7 +16607,7 @@ const useAuthStore = /* @__PURE__ */ defineStore("auth", {
       } catch (err) {
         this.error = err.data?.message || err.message || "更新失敗";
         console.error("Profile update error:", err);
-        throw new Error(this.error);
+        throw new Error(this.error || "未知錯誤");
       }
     },
     async resetPassword(email) {
@@ -16758,18 +16773,18 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     const canGoBack = computed(() => {
       return false;
     });
-    const goBack = () => {
+    const goBack = async () => {
       if (canGoBack.value) {
         router.go(-1);
       } else {
-        navigateTo("/");
+        await router.push("/");
       }
     };
-    const handleProfileClick = () => {
+    const handleProfileClick = async () => {
       if (authStore.currentUser) {
-        navigateTo("/user/dashboard");
+        await router.push("/user/dashboard");
       } else {
-        navigateTo("/auth/login");
+        await router.push("/auth/login");
       }
     };
     const handleLogout = () => {
@@ -16784,10 +16799,10 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
           color: "grey",
           label: "取消"
         }
-      }).onOk(() => {
+      }).onOk(async () => {
         authStore.logout();
         drawer.value = false;
-        navigateTo("/");
+        await router.push("/");
         $q.notify({
           type: "positive",
           message: "已成功登出",
@@ -16816,17 +16831,17 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       const _component_q_toolbar = __nuxt_component_2$1;
       const _component_q_btn = __nuxt_component_2$1$1;
       const _component_q_toolbar_title = __nuxt_component_4$1;
-      const _component_q_badge = __nuxt_component_5;
-      const _component_q_avatar = __nuxt_component_6;
+      const _component_q_badge = __nuxt_component_12$1;
+      const _component_q_avatar = __nuxt_component_6$1;
       const _component_q_icon = __nuxt_component_1$2;
       const _component_q_drawer = __nuxt_component_8;
       const _component_q_scroll_area = __nuxt_component_9;
-      const _component_q_separator = __nuxt_component_15;
+      const _component_q_separator = __nuxt_component_9$1;
       const _component_q_list = __nuxt_component_11;
       const _component_q_item_label = __nuxt_component_12;
       const _component_q_item = __nuxt_component_13;
       const _component_q_item_section = __nuxt_component_14;
-      const _component_q_page_container = __nuxt_component_15$1;
+      const _component_q_page_container = __nuxt_component_15;
       const _component_NuxtPage = __nuxt_component_16;
       const _component_q_footer = __nuxt_component_17;
       const _component_q_tabs = __nuxt_component_18;
@@ -16835,7 +16850,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       const _component_q_card = __nuxt_component_1$1;
       const _component_q_card_section = __nuxt_component_2;
       const _component_q_space = __nuxt_component_23;
-      const _component_q_card_actions = __nuxt_component_10;
+      const _component_q_card_actions = __nuxt_component_24;
       const _directive_ripple = __q_directive_0;
       _push(ssrRenderComponent(_component_q_layout, mergeProps({ view: "hHh Lpr lFf" }, _attrs), {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
@@ -16882,7 +16897,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           }),
                           _: 1
                         }, _parent4, _scopeId3));
-                        _push4(`<div class="row q-gutter-xs" data-v-ac400102${_scopeId3}>`);
+                        _push4(`<div class="row q-gutter-xs" data-v-d46dd7eb${_scopeId3}>`);
                         if (unref(authStore).currentUser) {
                           _push4(ssrRenderComponent(_component_q_btn, {
                             flat: "",
@@ -16947,7 +16962,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                                   default: withCtx((_5, _push6, _parent6, _scopeId5) => {
                                     if (_push6) {
                                       if (unref(authStore).currentUser.avatar) {
-                                        _push6(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-ac400102${_scopeId5}>`);
+                                        _push6(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-d46dd7eb${_scopeId5}>`);
                                       } else {
                                         _push6(ssrRenderComponent(_component_q_icon, { name: "person" }, null, _parent6, _scopeId5));
                                       }
@@ -16991,7 +17006,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                             flat: "",
                             dense: "",
                             icon: "login",
-                            onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/auth/login"),
+                            onClick: ($event) => unref(router).push("/auth/login"),
                             "aria-label": "登入"
                           }, null, _parent4, _scopeId3));
                         }
@@ -17075,7 +17090,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                               flat: "",
                               dense: "",
                               icon: "login",
-                              onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/auth/login"),
+                              onClick: ($event) => unref(router).push("/auth/login"),
                               "aria-label": "登入"
                             }, null, 8, ["onClick"]))
                           ])
@@ -17165,7 +17180,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                             flat: "",
                             dense: "",
                             icon: "login",
-                            onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/auth/login"),
+                            onClick: ($event) => unref(router).push("/auth/login"),
                             "aria-label": "登入"
                           }, null, 8, ["onClick"]))
                         ])
@@ -17193,12 +17208,12 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                     default: withCtx((_3, _push4, _parent4, _scopeId3) => {
                       if (_push4) {
                         if (unref(authStore).currentUser) {
-                          _push4(`<div class="bg-primary text-white q-pa-md" data-v-ac400102${_scopeId3}><div class="row items-center q-gutter-md" data-v-ac400102${_scopeId3}>`);
+                          _push4(`<div class="bg-primary text-white q-pa-md" data-v-d46dd7eb${_scopeId3}><div class="row items-center q-gutter-md" data-v-d46dd7eb${_scopeId3}>`);
                           _push4(ssrRenderComponent(_component_q_avatar, { size: "50px" }, {
                             default: withCtx((_4, _push5, _parent5, _scopeId4) => {
                               if (_push5) {
                                 if (unref(authStore).currentUser.avatar) {
-                                  _push5(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-ac400102${_scopeId4}>`);
+                                  _push5(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-d46dd7eb${_scopeId4}>`);
                                 } else {
                                   _push5(ssrRenderComponent(_component_q_icon, { name: "person" }, null, _parent5, _scopeId4));
                                 }
@@ -17217,20 +17232,20 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                             }),
                             _: 1
                           }, _parent4, _scopeId3));
-                          _push4(`<div data-v-ac400102${_scopeId3}><div class="text-subtitle1 text-weight-medium" data-v-ac400102${_scopeId3}>${ssrInterpolate(unref(authStore).currentUser.name)}</div><div class="text-caption opacity-80" data-v-ac400102${_scopeId3}>${ssrInterpolate(unref(authStore).currentUser.email)}</div></div></div></div>`);
+                          _push4(`<div data-v-d46dd7eb${_scopeId3}><div class="text-subtitle1 text-weight-medium" data-v-d46dd7eb${_scopeId3}>${ssrInterpolate(unref(authStore).currentUser.name)}</div><div class="text-caption opacity-80" data-v-d46dd7eb${_scopeId3}>${ssrInterpolate(unref(authStore).currentUser.email)}</div></div></div></div>`);
                         } else {
-                          _push4(`<div class="bg-grey-1 q-pa-md text-center" data-v-ac400102${_scopeId3}>`);
+                          _push4(`<div class="bg-grey-1 q-pa-md text-center" data-v-d46dd7eb${_scopeId3}>`);
                           _push4(ssrRenderComponent(_component_q_icon, {
                             name: "person_outline",
                             size: "40px",
                             color: "grey-6"
                           }, null, _parent4, _scopeId3));
-                          _push4(`<div class="text-body2 text-grey-7 q-mt-sm q-mb-md" data-v-ac400102${_scopeId3}> 登入以享受完整功能 </div>`);
+                          _push4(`<div class="text-body2 text-grey-7 q-mt-sm q-mb-md" data-v-d46dd7eb${_scopeId3}> 登入以享受完整功能 </div>`);
                           _push4(ssrRenderComponent(_component_q_btn, {
                             color: "primary",
                             size: "sm",
                             onClick: ($event) => {
-                              ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/auth/login");
+                              unref(router).push("/auth/login");
                               drawer.value = false;
                             }
                           }, {
@@ -18030,7 +18045,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                               color: "primary",
                               size: "sm",
                               onClick: ($event) => {
-                                ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/auth/login");
+                                unref(router).push("/auth/login");
                                 drawer.value = false;
                               }
                             }, {
@@ -18299,7 +18314,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                             color: "primary",
                             size: "sm",
                             onClick: ($event) => {
-                              ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/auth/login");
+                              unref(router).push("/auth/login");
                               drawer.value = false;
                             }
                           }, {
@@ -18564,21 +18579,21 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           name: "home",
                           icon: "home",
                           label: "首頁",
-                          onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/"),
+                          onClick: ($event) => unref(router).push("/"),
                           "no-caps": ""
                         }, null, _parent4, _scopeId3));
                         _push4(ssrRenderComponent(_component_q_tab, {
                           name: "caregivers",
                           icon: "people",
                           label: "看護師",
-                          onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/caregivers"),
+                          onClick: ($event) => unref(router).push("/caregivers"),
                           "no-caps": ""
                         }, null, _parent4, _scopeId3));
                         _push4(ssrRenderComponent(_component_q_tab, {
                           name: "booking",
                           icon: "calendar_today",
                           label: "預約",
-                          onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/booking/match"),
+                          onClick: ($event) => unref(router).push("/booking/match"),
                           "no-caps": ""
                         }, null, _parent4, _scopeId3));
                         _push4(ssrRenderComponent(_component_q_tab, {
@@ -18594,21 +18609,21 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                             name: "home",
                             icon: "home",
                             label: "首頁",
-                            onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/"),
+                            onClick: ($event) => unref(router).push("/"),
                             "no-caps": ""
                           }, null, 8, ["onClick"]),
                           createVNode(_component_q_tab, {
                             name: "caregivers",
                             icon: "people",
                             label: "看護師",
-                            onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/caregivers"),
+                            onClick: ($event) => unref(router).push("/caregivers"),
                             "no-caps": ""
                           }, null, 8, ["onClick"]),
                           createVNode(_component_q_tab, {
                             name: "booking",
                             icon: "calendar_today",
                             label: "預約",
-                            onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/booking/match"),
+                            onClick: ($event) => unref(router).push("/booking/match"),
                             "no-caps": ""
                           }, null, 8, ["onClick"]),
                           createVNode(_component_q_tab, {
@@ -18640,21 +18655,21 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           name: "home",
                           icon: "home",
                           label: "首頁",
-                          onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/"),
+                          onClick: ($event) => unref(router).push("/"),
                           "no-caps": ""
                         }, null, 8, ["onClick"]),
                         createVNode(_component_q_tab, {
                           name: "caregivers",
                           icon: "people",
                           label: "看護師",
-                          onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/caregivers"),
+                          onClick: ($event) => unref(router).push("/caregivers"),
                           "no-caps": ""
                         }, null, 8, ["onClick"]),
                         createVNode(_component_q_tab, {
                           name: "booking",
                           icon: "calendar_today",
                           label: "預約",
-                          onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/booking/match"),
+                          onClick: ($event) => unref(router).push("/booking/match"),
                           "no-caps": ""
                         }, null, 8, ["onClick"]),
                         createVNode(_component_q_tab, {
@@ -18684,7 +18699,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                         _push4(ssrRenderComponent(_component_q_card_section, { class: "row items-center" }, {
                           default: withCtx((_4, _push5, _parent5, _scopeId4) => {
                             if (_push5) {
-                              _push5(`<div class="text-h6" data-v-ac400102${_scopeId4}>通知</div>`);
+                              _push5(`<div class="text-h6" data-v-d46dd7eb${_scopeId4}>通知</div>`);
                               _push5(ssrRenderComponent(_component_q_space, null, null, _parent5, _scopeId4));
                               _push5(ssrRenderComponent(_component_q_btn, {
                                 flat: "",
@@ -19239,7 +19254,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           _push4(ssrRenderComponent(_component_q_card_section, null, {
                             default: withCtx((_4, _push5, _parent5, _scopeId4) => {
                               if (_push5) {
-                                _push5(`<div class="text-center" data-v-ac400102${_scopeId4}>`);
+                                _push5(`<div class="text-center" data-v-d46dd7eb${_scopeId4}>`);
                                 _push5(ssrRenderComponent(_component_q_avatar, {
                                   size: "60px",
                                   class: "q-mb-md"
@@ -19247,7 +19262,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                                   default: withCtx((_5, _push6, _parent6, _scopeId5) => {
                                     if (_push6) {
                                       if (unref(authStore).currentUser.avatar) {
-                                        _push6(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-ac400102${_scopeId5}>`);
+                                        _push6(`<img${ssrRenderAttr("src", unref(authStore).currentUser.avatar)}${ssrRenderAttr("alt", unref(authStore).currentUser.name)} data-v-d46dd7eb${_scopeId5}>`);
                                       } else {
                                         _push6(ssrRenderComponent(_component_q_icon, { name: "person" }, null, _parent6, _scopeId5));
                                       }
@@ -19266,7 +19281,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                                   }),
                                   _: 1
                                 }, _parent5, _scopeId4));
-                                _push5(`<div class="text-h6" data-v-ac400102${_scopeId4}>${ssrInterpolate(unref(authStore).currentUser.name)}</div><div class="text-caption text-grey-6" data-v-ac400102${_scopeId4}>${ssrInterpolate(unref(authStore).currentUser.email)}</div></div>`);
+                                _push5(`<div class="text-h6" data-v-d46dd7eb${_scopeId4}>${ssrInterpolate(unref(authStore).currentUser.name)}</div><div class="text-caption text-grey-6" data-v-d46dd7eb${_scopeId4}>${ssrInterpolate(unref(authStore).currentUser.email)}</div></div>`);
                               } else {
                                 return [
                                   createVNode("div", { class: "text-center" }, [
@@ -19304,7 +19319,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                               _push5(ssrRenderComponent(_component_q_item, {
                                 clickable: "",
                                 onClick: ($event) => {
-                                  ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/profile");
+                                  unref(router).push("/user/profile");
                                   showUserMenu.value = false;
                                 }
                               }, {
@@ -19356,7 +19371,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                               _push5(ssrRenderComponent(_component_q_item, {
                                 clickable: "",
                                 onClick: ($event) => {
-                                  ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/settings");
+                                  unref(router).push("/user/settings");
                                   showUserMenu.value = false;
                                 }
                               }, {
@@ -19469,7 +19484,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                                 createVNode(_component_q_item, {
                                   clickable: "",
                                   onClick: ($event) => {
-                                    ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/profile");
+                                    unref(router).push("/user/profile");
                                     showUserMenu.value = false;
                                   }
                                 }, {
@@ -19492,7 +19507,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                                 createVNode(_component_q_item, {
                                   clickable: "",
                                   onClick: ($event) => {
-                                    ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/settings");
+                                    unref(router).push("/user/settings");
                                     showUserMenu.value = false;
                                   }
                                 }, {
@@ -19574,7 +19589,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                               createVNode(_component_q_item, {
                                 clickable: "",
                                 onClick: ($event) => {
-                                  ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/profile");
+                                  unref(router).push("/user/profile");
                                   showUserMenu.value = false;
                                 }
                               }, {
@@ -19597,7 +19612,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                               createVNode(_component_q_item, {
                                 clickable: "",
                                 onClick: ($event) => {
-                                  ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/settings");
+                                  unref(router).push("/user/settings");
                                   showUserMenu.value = false;
                                 }
                               }, {
@@ -19684,7 +19699,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                             createVNode(_component_q_item, {
                               clickable: "",
                               onClick: ($event) => {
-                                ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/profile");
+                                unref(router).push("/user/profile");
                                 showUserMenu.value = false;
                               }
                             }, {
@@ -19707,7 +19722,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                             createVNode(_component_q_item, {
                               clickable: "",
                               onClick: ($event) => {
-                                ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/settings");
+                                unref(router).push("/user/settings");
                                 showUserMenu.value = false;
                               }
                             }, {
@@ -19848,7 +19863,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           flat: "",
                           dense: "",
                           icon: "login",
-                          onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/auth/login"),
+                          onClick: ($event) => unref(router).push("/auth/login"),
                           "aria-label": "登入"
                         }, null, 8, ["onClick"]))
                       ])
@@ -19908,7 +19923,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           color: "primary",
                           size: "sm",
                           onClick: ($event) => {
-                            ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/auth/login");
+                            unref(router).push("/auth/login");
                             drawer.value = false;
                           }
                         }, {
@@ -20163,21 +20178,21 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                         name: "home",
                         icon: "home",
                         label: "首頁",
-                        onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/"),
+                        onClick: ($event) => unref(router).push("/"),
                         "no-caps": ""
                       }, null, 8, ["onClick"]),
                       createVNode(_component_q_tab, {
                         name: "caregivers",
                         icon: "people",
                         label: "看護師",
-                        onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/caregivers"),
+                        onClick: ($event) => unref(router).push("/caregivers"),
                         "no-caps": ""
                       }, null, 8, ["onClick"]),
                       createVNode(_component_q_tab, {
                         name: "booking",
                         icon: "calendar_today",
                         label: "預約",
-                        onClick: ($event) => ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/booking/match"),
+                        onClick: ($event) => unref(router).push("/booking/match"),
                         "no-caps": ""
                       }, null, 8, ["onClick"]),
                       createVNode(_component_q_tab, {
@@ -20334,7 +20349,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           createVNode(_component_q_item, {
                             clickable: "",
                             onClick: ($event) => {
-                              ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/profile");
+                              unref(router).push("/user/profile");
                               showUserMenu.value = false;
                             }
                           }, {
@@ -20357,7 +20372,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
                           createVNode(_component_q_item, {
                             clickable: "",
                             onClick: ($event) => {
-                              ("navigateTo" in _ctx ? _ctx.navigateTo : unref(navigateTo))("/user/settings");
+                              unref(router).push("/user/settings");
                               showUserMenu.value = false;
                             }
                           }, {
@@ -20431,7 +20446,7 @@ _sfc_main$2.setup = (props, ctx) => {
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("app.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
-const AppComponent = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-ac400102"]]);
+const AppComponent = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-d46dd7eb"]]);
 function usePageSeo(title, description, image = "/vite.svg") {
   const route = useRoute();
   const config = /* @__PURE__ */ useRuntimeConfig();
@@ -20444,7 +20459,7 @@ function usePageSeo(title, description, image = "/vite.svg") {
     script: [
       {
         type: "application/ld+json",
-        children: JSON.stringify({
+        innerHTML: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
@@ -20581,22 +20596,25 @@ const entry$1 = (ssrContext) => entry(ssrContext);
 const server = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   __proto__: null,
   _: _export_sfc,
-  a: useHead,
-  b: useAuthStore,
-  c: useRoute,
-  d: useRuntimeConfig,
+  a: useRouter,
+  b: useHead,
+  c: useAuthStore,
+  d: useRoute,
   default: entry$1,
-  e: useNuxtApp,
-  f: mockPayments,
-  g: mockCaregivers,
-  h: mockReviews,
-  i: mockUsers,
-  j: defineNuxtRouteMiddleware,
-  k: createError,
+  e: useRuntimeConfig,
+  f: useNuxtApp,
+  g: asyncDataDefaults,
+  h: createError,
+  i: fetchDefaults,
+  j: useRequestFetch,
+  k: mockPayments,
+  l: mockCaregivers,
   m: mockBookings,
   n: navigateTo,
+  o: mockReviews,
+  p: mockUsers,
   u: usePageSeo
 }, Symbol.toStringTag, { value: 'Module' }));
 
-export { History as $, useDark as A, useSize as B, hDir as C, __q_directive_0 as D, hMergeSlotSafely as E, stopAndPrevent as F, createDirective as G, getSSRProps as H, useTimeout as I, getNormalizedVNodes as J, stepperKey as K, hMergeSlot as L, useModelToggleEmits as M, useModelToggleProps as N, useRouterLinkProps as O, useId as P, useModelToggle as Q, uid as R, __nuxt_component_4 as S, useFormProps as T, useFormInject as U, hUniqueSlot as V, scrollTargetProp as W, getScrollTarget as X, listenOpts as Y, vmHasRouter as Z, _export_sfc as _, __nuxt_component_2$1$1 as a, createError as a$, isNumber$1 as a0, isDate$1 as a1, isObject$1 as a2, injectMultipleProps as a3, injectProp as a4, getParentProxy as a5, Platform as a6, debounce as a7, useFieldEmits as a8, useFieldProps as a9, useNuxtApp as aA, navigateTo as aB, mockBookings as aC, mockPayments as aD, mockCaregivers as aE, mockReviews as aF, mockUsers as aG, useAlignProps as aH, useAlign as aI, useRouterLink as aJ, useSpinnerProps as aK, useSpinner as aL, useFormAttrs as aM, between as aN, __nuxt_component_7 as aO, btnDesignOptions as aP, btnPadding as aQ, getBtnDesign as aR, formKey as aS, vmIsDestroyed as aT, pad as aU, Plugin$2 as aV, defaultLang as aW, getBtnDesignAttr as aX, TouchPan as aY, __nuxt_component_23 as aZ, defineNuxtRouteMiddleware as a_, useField as aa, useFieldState as ab, prevent as ac, addEvt as ad, isKeyCode as ae, cleanEvt as af, client as ag, getScrollbarWidth as ah, useTransitionProps as ai, useTick as aj, useTransition as ak, usePortal as al, addEscapeKey as am, removeEscapeKey as an, addFocusout as ao, position as ap, removeFocusout as aq, childHasFocus as ar, addFocusFn as as, useFormInputNameAttr as at, fieldValueIsFilled as au, useKeyComposition as av, isDeepEqual as aw, shouldIgnoreKey as ax, normalizeToInterval as ay, stop as az, __nuxt_component_1$2 as b, server as b0, __nuxt_component_1$1 as c, __nuxt_component_2 as d, __nuxt_component_6 as e, __nuxt_component_11 as f, __nuxt_component_13 as g, __nuxt_component_14 as h, __nuxt_component_12 as i, __nuxt_component_5 as j, __nuxt_component_15 as k, __nuxt_component_20 as l, __nuxt_component_10 as m, useHead as n, useQuasar as o, useAuthStore as p, useRoute as q, useRuntimeConfig as r, createComponent as s, layoutKey as t, usePageSeo as u, emptyRenderFn as v, pageContainerKey as w, hSlot as x, useSizeProps as y, useDarkProps as z };
+export { stopAndPrevent as $, useTimeout as A, __nuxt_component_7 as B, vmIsDestroyed as C, isNumber$1 as D, hDir as E, hMergeSlot as F, layoutKey as G, useModelToggleEmits as H, useModelToggleProps as I, useId as J, useModelToggle as K, fabKey as L, noop$1 as M, useRouter as N, useHead as O, useQuasar as P, useAuthStore as Q, __nuxt_component_4 as R, __nuxt_component_23 as S, useRoute as T, useRuntimeConfig as U, pageContainerKey as V, useSizeProps as W, useSize as X, __q_directive_0 as Y, hMergeSlotSafely as Z, _export_sfc as _, __nuxt_component_2$1$1 as a, useRouterLink as a$, stepperKey as a0, useRouterLinkProps as a1, uid as a2, createDirective as a3, getSSRProps as a4, getNormalizedVNodes as a5, fetchDefaults as a6, useNuxtApp as a7, asyncDataDefaults as a8, useRequestFetch as a9, addFocusout as aA, position as aB, removeFocusout as aC, childHasFocus as aD, useFormInputNameAttr as aE, fieldValueIsFilled as aF, useKeyComposition as aG, isDeepEqual as aH, shouldIgnoreKey as aI, prevent as aJ, normalizeToInterval as aK, stop as aL, isKeyCode as aM, getParentProxy as aN, Platform as aO, addEvt as aP, cleanEvt as aQ, client as aR, getScrollbarWidth as aS, navigateTo as aT, mockBookings as aU, mockPayments as aV, mockCaregivers as aW, mockReviews as aX, mockUsers as aY, useAlignProps as aZ, useAlign as a_, createError as aa, useFormProps as ab, useFormAttrs as ac, useFormInject as ad, between as ae, vmHasRouter as af, History as ag, formKey as ah, addFocusFn as ai, useSpinnerProps as aj, useSpinner as ak, isDate$1 as al, isObject$1 as am, injectMultipleProps as an, injectProp as ao, debounce as ap, useFieldEmits as aq, useFieldProps as ar, useField as as, useFieldState as at, useTransitionProps as au, useTick as av, useTransition as aw, usePortal as ax, addEscapeKey as ay, removeEscapeKey as az, __nuxt_component_1$2 as b, btnDesignOptions as b0, btnPadding as b1, getBtnDesign as b2, pad as b3, Plugin$2 as b4, defaultLang as b5, getBtnDesignAttr as b6, TouchPan as b7, server as b8, __nuxt_component_1$1 as c, __nuxt_component_2 as d, __nuxt_component_6$1 as e, __nuxt_component_11 as f, __nuxt_component_13 as g, __nuxt_component_14 as h, __nuxt_component_12 as i, __nuxt_component_12$1 as j, __nuxt_component_9$1 as k, __nuxt_component_20 as l, __nuxt_component_24 as m, createComponent as n, hSlot as o, offset as p, height as q, getScrollTarget as r, scrollTargetProp as s, listenOpts as t, usePageSeo as u, useDarkProps as v, useDark as w, timelineKey as x, emptyRenderFn as y, hUniqueSlot as z };
 //# sourceMappingURL=server.mjs.map

@@ -1,5 +1,5 @@
 import { getCurrentInstance, ref, computed, watch, shallowReactive, onBeforeUnmount, h, withDirectives, vShow } from 'vue';
-import { s as createComponent, M as useModelToggleEmits, z as useDarkProps, N as useModelToggleProps, O as useRouterLinkProps, A as useDark, P as useId, Q as useModelToggle, R as uid, k as __nuxt_component_15, g as __nuxt_component_13, x as hSlot, h as __nuxt_component_14, i as __nuxt_component_12, b as __nuxt_component_1, F as stopAndPrevent } from '../build/server.mjs';
+import { n as createComponent, H as useModelToggleEmits, v as useDarkProps, I as useModelToggleProps, a1 as useRouterLinkProps, w as useDark, J as useId, K as useModelToggle, a2 as uid, k as __nuxt_component_9$1, g as __nuxt_component_13, o as hSlot, h as __nuxt_component_14, i as __nuxt_component_12, b as __nuxt_component_1, $ as stopAndPrevent } from '../build/server.mjs';
 import { _ as __nuxt_component_7$1 } from './QSlideTransition.mjs';
 
 const itemGroups = shallowReactive({});
@@ -331,11 +331,11 @@ const __nuxt_component_7 = createComponent({
 
       if (props.expandSeparator === true) {
         node.push(
-          h(__nuxt_component_15, {
+          h(__nuxt_component_9$1, {
             class: 'q-expansion-item__border q-expansion-item__border--top absolute-top',
             dark: isDark.value
           }),
-          h(__nuxt_component_15, {
+          h(__nuxt_component_9$1, {
             class: 'q-expansion-item__border q-expansion-item__border--bottom absolute-bottom',
             dark: isDark.value
           })

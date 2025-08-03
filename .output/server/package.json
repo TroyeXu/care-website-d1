@@ -34,6 +34,7 @@
     "hookable": "5.5.3",
     "iron-webcrypto": "1.2.1",
     "node-mock-http": "1.0.1",
+    "perfect-debounce": "1.0.0",
     "property-expr": "2.0.6",
     "radix3": "1.1.2",
     "source-map-js": "1.2.1",

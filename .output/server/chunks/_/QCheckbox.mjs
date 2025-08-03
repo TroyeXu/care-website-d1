@@ -1,5 +1,5 @@
 import { h, computed } from 'vue';
-import { s as createComponent, b as __nuxt_component_1 } from '../build/server.mjs';
+import { n as createComponent, b as __nuxt_component_1 } from '../build/server.mjs';
 import { u as useCheckboxEmits, a as useCheckboxProps, b as useCheckbox } from './use-checkbox.mjs';
 
 const createBgNode = () => h('div', {
@@ -23,7 +23,7 @@ const createBgNode = () => h('div', {
   ])
 ]);
 
-const __nuxt_component_5$1 = createComponent({
+const __nuxt_component_7$2 = createComponent({
   name: 'QCheckbox',
 
   props: useCheckboxProps,
@@ -64,5 +64,5 @@ const __nuxt_component_5$1 = createComponent({
   }
 });
 
-export { __nuxt_component_5$1 as _ };
+export { __nuxt_component_7$2 as _ };
 //# sourceMappingURL=QCheckbox.mjs.map

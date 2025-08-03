@@ -1,5 +1,5 @@
 import { getCurrentInstance, ref, computed, toRaw, h } from 'vue';
-import { s as createComponent, T as useFormProps, y as useSizeProps, z as useDarkProps, A as useDark, B as useSize, b as __nuxt_component_1, U as useFormInject, L as hMergeSlot, x as hSlot, F as stopAndPrevent } from '../build/server.mjs';
+import { n as createComponent, ab as useFormProps, W as useSizeProps, v as useDarkProps, w as useDark, X as useSize, b as __nuxt_component_1, ad as useFormInject, F as hMergeSlot, o as hSlot, $ as stopAndPrevent } from '../build/server.mjs';
 import { o as optionSizes, c as useRefocusTarget } from './use-checkbox.mjs';
 
 const createSvg = () => h('svg', {

@@ -245,9 +245,7 @@ import type { Caregiver } from '~/stores/caregivers'
 
 usePageSeo('個人儀表板 - 護理服務平台', '快速查看推薦看護及即將到來的排程')
 
-definePageMeta({
-  middleware: 'auth'
-})
+// 移除認證需求
 
 const authStore = useAuthStore()
 const apiService = useApiService()
