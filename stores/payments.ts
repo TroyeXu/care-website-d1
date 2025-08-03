@@ -1,5 +1,13 @@
 import { defineStore } from 'pinia'
 
+interface Payment {
+  id: number
+  date: string
+  amount: number
+  method: string
+  status: string
+}
+
 export const usePaymentsStore = defineStore('payments', {
   state: () => ({
     payments: JSON.parse(
@@ -14,7 +22,7 @@ export const usePaymentsStore = defineStore('payments', {
     getAll: (state) => state.payments
   },
   actions: {
-    addPayment(payment) {
+    addPayment(payment: Payment) {
       this.payments.push(payment)
       localStorage.setItem('payments', JSON.stringify(this.payments))
     }

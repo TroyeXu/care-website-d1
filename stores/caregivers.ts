@@ -14,6 +14,7 @@ export interface Caregiver {
   shift_rate: number
   location?: string
   description?: string
+  review_count?: number
   created_at: string
   updated_at: string
 }
@@ -170,8 +171,8 @@ export const useCaregiverStore = defineStore('caregivers', {
 
     async createCaregiver(caregiverData: Omit<Caregiver, 'id' | 'created_at' | 'updated_at'>) {
       try {
-        const newCaregiver = await $fetch('/api/caregivers', {
-          method: 'POST',
+        const newCaregiver = await $fetch<Caregiver>('/api/caregivers', {
+          method: 'POST' as const,
           body: caregiverData
         })
         
@@ -180,14 +181,14 @@ export const useCaregiverStore = defineStore('caregivers', {
       } catch (err: any) {
         this.error = err.data?.message || err.message || '建立照護員資料失敗'
         console.error('Error creating caregiver:', err)
-        throw new Error(this.error)
+        throw new Error(this.error || '未知錯誤')
       }
     },
 
     async updateCaregiver(id: string, updates: Partial<Caregiver>) {
       try {
-        const updatedCaregiver = await $fetch(`/api/caregivers/${id}`, {
-          method: 'PUT',
+        const updatedCaregiver = await $fetch<Caregiver>(`/api/caregivers/${id}`, {
+          method: 'PUT' as const,
           body: updates
         })
         
@@ -200,7 +201,7 @@ export const useCaregiverStore = defineStore('caregivers', {
       } catch (err: any) {
         this.error = err.data?.message || err.message || '更新照護員資料失敗'
         console.error('Error updating caregiver:', err)
-        throw new Error(this.error)
+        throw new Error(this.error || '未知錯誤')
       }
     },
 

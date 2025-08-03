@@ -120,7 +120,14 @@ const skillsArray = computed(() => {
 })
 
 const availabilityClass = computed(() => {
-  const availability = props.caregiver.available.toLowerCase()
+  // 處理 available 可能是布林值或字串的情況
+  const available = props.caregiver.available
+  
+  if (typeof available === 'boolean') {
+    return available ? 'available-full' : 'available-limited'
+  }
+  
+  const availability = available.toLowerCase()
   if (availability.includes('全天') || availability.includes('24')) {
     return 'available-full'
   } else if (availability.includes('週')) {

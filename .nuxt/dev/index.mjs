@@ -1812,7 +1812,7 @@ let caregivers = [
     id: "caregiver-1",
     user_id: "user-2",
     name: "\u5F35\u7F8E\u9E97",
-    avatar: "/images/users/caregiver1.jpg",
+    avatar: "https://i.pravatar.cc/150?img=1",
     rating: 4.8,
     reviews_count: 124,
     hourly_rate: 350,
@@ -1833,21 +1833,131 @@ let caregivers = [
     bio: "\u5C08\u696D\u7167\u8B77\u670D\u52D9\u54E1\uFF0C\u64C1\u67095\u5E74\u4EE5\u4E0A\u7167\u8B77\u7D93\u9A57",
     created_at: "2024-01-01T00:00:00Z",
     updated_at: "2024-01-01T00:00:00Z"
+  },
+  {
+    id: "caregiver-2",
+    user_id: "user-3",
+    name: "\u6797\u5FD7\u660E",
+    avatar: "https://i.pravatar.cc/150?img=2",
+    rating: 4.9,
+    reviews_count: 36,
+    hourly_rate: 600,
+    experience_years: 8,
+    certifications: ["\u8B77\u7406\u5E2B\u57F7\u7167", "\u91CD\u75C7\u8B77\u7406\u5E2B\u8B49\u7167", "ACLS\u9AD8\u7D1A\u5FC3\u81DF\u6551\u547D\u8853"],
+    languages: ["\u4E2D\u6587", "\u82F1\u6587"],
+    specialties: ["\u91CD\u75C7\u7167\u8B77", "\u547C\u5438\u7167\u8B77", "\u5FC3\u81DF\u76E3\u6E2C"],
+    service_areas: ["\u53F0\u5317\u5E02", "\u65B0\u5317\u5E02", "\u6843\u5712\u5E02"],
+    availability: {
+      monday: ["00:00", "23:59"],
+      tuesday: ["00:00", "23:59"],
+      wednesday: ["00:00", "23:59"],
+      thursday: ["00:00", "23:59"],
+      friday: ["00:00", "23:59"],
+      saturday: ["00:00", "23:59"],
+      sunday: ["00:00", "23:59"]
+    },
+    bio: "\u5C08\u696D\u91CD\u75C7\u8B77\u7406\u5E2B\uFF0C\u719F\u6089\u5404\u7A2E\u91AB\u7642\u5100\u5668\u64CD\u4F5C\uFF0C\u80FD\u8655\u7406\u8907\u96DC\u7684\u91AB\u7642\u72C0\u6CC1",
+    created_at: "2024-01-02T00:00:00Z",
+    updated_at: "2024-01-20T00:00:00Z"
+  },
+  {
+    id: "caregiver-3",
+    user_id: "user-4",
+    name: "\u738B\u6DD1\u82AC",
+    avatar: "https://i.pravatar.cc/150?img=3",
+    rating: 4.7,
+    reviews_count: 52,
+    hourly_rate: 450,
+    experience_years: 15,
+    certifications: ["\u8B77\u7406\u5E2B\u57F7\u7167", "\u5FA9\u5065\u8B77\u7406\u8A8D\u8B49"],
+    languages: ["\u4E2D\u6587", "\u53F0\u8A9E", "\u5BA2\u8A9E"],
+    specialties: ["\u5FA9\u5065\u8B77\u7406", "\u7269\u7406\u6CBB\u7642\u8F14\u52A9", "\u808C\u529B\u8A13\u7DF4"],
+    service_areas: ["\u53F0\u4E2D\u5E02", "\u5F70\u5316\u7E23", "\u5357\u6295\u7E23"],
+    availability: {
+      monday: null,
+      tuesday: ["14:00", "22:00"],
+      wednesday: ["14:00", "22:00"],
+      thursday: ["14:00", "22:00"],
+      friday: ["14:00", "22:00"],
+      saturday: ["08:00", "18:00"],
+      sunday: ["08:00", "18:00"]
+    },
+    bio: "\u5354\u52A9\u60A3\u8005\u9032\u884C\u5FA9\u5065\u8A13\u7DF4\uFF0C\u63D0\u4F9B\u5C08\u696D\u7684\u5FA9\u5065\u8B77\u7406\u670D\u52D9",
+    created_at: "2024-01-03T00:00:00Z",
+    updated_at: "2024-01-22T00:00:00Z"
+  },
+  {
+    id: "caregiver-4",
+    user_id: "user-5",
+    name: "\u9673\u7F8E\u73B2",
+    avatar: "https://i.pravatar.cc/150?img=4",
+    rating: 4.8,
+    reviews_count: 48,
+    hourly_rate: 500,
+    experience_years: 10,
+    certifications: ["\u8B77\u7406\u5E2B\u57F7\u7167", "\u9577\u7167\u4EBA\u54E1\u8A8D\u8B49", "CPR\u6025\u6551\u8B49\u7167"],
+    languages: ["\u4E2D\u6587", "\u82F1\u6587", "\u65E5\u6587"],
+    specialties: ["\u8001\u5E74\u8B77\u7406", "\u5931\u667A\u75C7\u7167\u8B77", "\u50B7\u53E3\u8B77\u7406"],
+    service_areas: ["\u9AD8\u96C4\u5E02", "\u5C4F\u6771\u7E23"],
+    availability: {
+      monday: ["08:00", "20:00"],
+      tuesday: ["08:00", "20:00"],
+      wednesday: ["08:00", "20:00"],
+      thursday: ["08:00", "20:00"],
+      friday: ["08:00", "20:00"],
+      saturday: null,
+      sunday: null
+    },
+    bio: "\u5C08\u6CE8\u65BC\u63D0\u4F9B\u9AD8\u54C1\u8CEA\u7684\u8001\u5E74\u7167\u8B77\u670D\u52D9\uFF0C\u64C1\u6709\u8C50\u5BCC\u7684\u91AB\u9662\u548C\u5C45\u5BB6\u7167\u8B77\u7D93\u9A57",
+    created_at: "2024-01-04T00:00:00Z",
+    updated_at: "2024-01-23T00:00:00Z"
+  },
+  {
+    id: "caregiver-5",
+    user_id: "user-6",
+    name: "\u674E\u5EFA\u570B",
+    avatar: "https://i.pravatar.cc/150?img=5",
+    rating: 4.5,
+    reviews_count: 42,
+    hourly_rate: 550,
+    experience_years: 12,
+    certifications: ["\u8B77\u7406\u5E2B\u57F7\u7167", "\u5B89\u5BE7\u7642\u8B77\u5C08\u79D1\u8B77\u7406\u5E2B"],
+    languages: ["\u4E2D\u6587", "\u53F0\u8A9E"],
+    specialties: ["\u5B89\u5BE7\u7167\u8B77", "\u75BC\u75DB\u7BA1\u7406", "\u5FC3\u7406\u652F\u6301"],
+    service_areas: ["\u53F0\u5357\u5E02", "\u5609\u7FA9\u5E02"],
+    availability: {
+      monday: ["09:00", "17:00"],
+      tuesday: ["09:00", "17:00"],
+      wednesday: ["09:00", "17:00"],
+      thursday: ["09:00", "17:00"],
+      friday: ["09:00", "17:00"],
+      saturday: ["10:00", "14:00"],
+      sunday: null
+    },
+    bio: "\u63D0\u4F9B\u5168\u4EBA\u7167\u8B77\uFF0C\u91CD\u8996\u75C5\u4EBA\u5C0A\u56B4\uFF0C\u5354\u52A9\u75C5\u4EBA\u53CA\u5BB6\u5C6C\u9762\u5C0D\u751F\u547D\u8B70\u984C",
+    created_at: "2024-01-05T00:00:00Z",
+    updated_at: "2024-01-24T00:00:00Z"
   }
 ];
 let bookings = [
   {
     id: "booking-1",
-    patient_id: "user-1",
-    caregiver_id: "caregiver-1",
-    start_time: "2024-01-15T09:00:00Z",
-    end_time: "2024-01-15T12:00:00Z",
+    user_id: "user-1",
+    caregiver_id: 1,
+    service_type: "hourly",
+    start_date: "2024-01-15",
+    end_date: "2024-01-15",
+    start_time: "09:00",
+    end_time: "12:00",
     status: "completed",
-    total_amount: 1050,
-    location: "\u53F0\u5317\u5E02\u5927\u5B89\u5340\u548C\u5E73\u6771\u8DEF123\u865F",
-    notes: "\u5354\u52A9\u65E5\u5E38\u6D3B\u52D5\u548C\u966A\u4F34",
-    rating: 5,
-    review: "\u670D\u52D9\u5F88\u597D\uFF0C\u7167\u9867\u54E1\u5F88\u5C08\u696D",
+    total_cost: 1050,
+    patient_info: {
+      name: "\u738B\u5C0F\u660E",
+      age: 75,
+      gender: "\u7537",
+      medicalConditions: ["\u9AD8\u8840\u58D3", "\u7CD6\u5C3F\u75C5"],
+      emergencyContact: "\u738B\u5927\u660E (\u5152\u5B50) - 0923-456-789"
+    },
     created_at: "2024-01-10T00:00:00Z",
     updated_at: "2024-01-15T13:00:00Z"
   }
@@ -1858,9 +1968,8 @@ let payments = [
     booking_id: "booking-1",
     amount: 1050,
     status: "completed",
-    payment_method: "credit_card",
+    method: "credit_card",
     transaction_id: "txn_123456",
-    paid_at: "2024-01-15T12:30:00Z",
     created_at: "2024-01-15T12:30:00Z",
     updated_at: "2024-01-15T12:30:00Z"
   }
@@ -1869,12 +1978,62 @@ let reviews = [
   {
     id: "review-1",
     booking_id: "booking-1",
-    patient_id: "user-1",
-    caregiver_id: "caregiver-1",
+    user_id: "user-1",
+    caregiver_id: 1,
     rating: 5,
     comment: "\u670D\u52D9\u5F88\u597D\uFF0C\u7167\u9867\u54E1\u5F88\u5C08\u696D",
     created_at: "2024-01-15T13:00:00Z",
     updated_at: "2024-01-15T13:00:00Z"
+  },
+  {
+    id: "review-2",
+    booking_id: "booking-2",
+    user_id: "user-1",
+    caregiver_id: 1,
+    rating: 5,
+    comment: "\u5F35\u7F8E\u9E97\u8B77\u7406\u5E2B\u975E\u5E38\u5C08\u696D\uFF0C\u5C0D\u5F85\u6211\u7684\u7236\u89AA\u5C31\u50CF\u5BB6\u4EBA\u4E00\u6A23\u3002\u5979\u7684\u5931\u667A\u75C7\u7167\u8B77\u7D93\u9A57\u8C50\u5BCC\uFF0C\u8B93\u6211\u5011\u5F88\u653E\u5FC3\u3002",
+    created_at: "2024-01-20T10:00:00Z",
+    updated_at: "2024-01-20T10:00:00Z"
+  },
+  {
+    id: "review-3",
+    booking_id: "booking-3",
+    user_id: "user-3",
+    caregiver_id: 2,
+    rating: 4,
+    comment: "\u6797\u5FD7\u660E\u8B77\u7406\u5E2B\u7684\u91CD\u75C7\u8B77\u7406\u7D93\u9A57\u78BA\u5BE6\u5F88\u8C50\u5BCC\uFF0C\u8655\u7406\u7DCA\u6025\u72C0\u6CC1\u5F88\u51B7\u975C\u3002\u53EA\u662F\u5E0C\u671B\u80FD\u66F4\u6E96\u6642\u4E00\u4E9B\u3002",
+    created_at: "2024-01-18T14:00:00Z",
+    updated_at: "2024-01-18T14:00:00Z"
+  },
+  {
+    id: "review-4",
+    booking_id: "booking-4",
+    user_id: "user-4",
+    caregiver_id: 3,
+    rating: 5,
+    comment: "\u738B\u6DD1\u82AC\u8B77\u7406\u5E2B\u7684\u5FA9\u5065\u6307\u5C0E\u975E\u5E38\u5C08\u696D\uFF0C\u6211\u7684\u819D\u84CB\u6062\u5FA9\u5F97\u5F88\u597D\u3002\u5979\u5F88\u6709\u8010\u5FC3\uFF0C\u6703\u4ED4\u7D30\u8AAA\u660E\u6BCF\u500B\u52D5\u4F5C\u3002",
+    created_at: "2024-01-12T09:00:00Z",
+    updated_at: "2024-01-12T09:00:00Z"
+  },
+  {
+    id: "review-5",
+    booking_id: "booking-5",
+    user_id: "user-5",
+    caregiver_id: 4,
+    rating: 5,
+    comment: "\u9673\u7F8E\u73B2\u8B77\u7406\u5E2B\u7167\u9867\u6211\u7684\u6BCD\u89AA\u5DF2\u7D93\u534A\u5E74\u4E86\uFF0C\u5979\u7684\u5C08\u696D\u548C\u611B\u5FC3\u8B93\u5168\u5BB6\u4EBA\u90FD\u5F88\u611F\u52D5\u3002\u5F37\u70C8\u63A8\u85A6\uFF01",
+    created_at: "2024-01-08T16:00:00Z",
+    updated_at: "2024-01-08T16:00:00Z"
+  },
+  {
+    id: "review-6",
+    booking_id: "booking-6",
+    user_id: "user-6",
+    caregiver_id: 5,
+    rating: 4,
+    comment: "\u674E\u5EFA\u570B\u8B77\u7406\u5E2B\u7684\u5B89\u5BE7\u7167\u8B77\u7D93\u9A57\u8C50\u5BCC\uFF0C\u7D66\u4E86\u6211\u5011\u5F88\u5927\u7684\u5FC3\u7406\u652F\u6301\u3002",
+    created_at: "2024-01-05T11:00:00Z",
+    updated_at: "2024-01-05T11:00:00Z"
   }
 ];
 const mockStore = {
@@ -1931,7 +2090,7 @@ const mockStore = {
   bookings: {
     getAll: () => bookings,
     getById: (id) => bookings.find((b) => b.id === id),
-    getByPatientId: (patientId) => bookings.filter((b) => b.patient_id === patientId),
+    getByPatientId: (patientId) => bookings.filter((b) => b.user_id === patientId),
     getByCaregiverId: (caregiverId) => bookings.filter((b) => b.caregiver_id === caregiverId),
     create: (booking) => {
       bookings.push(booking);
@@ -2477,7 +2636,22 @@ _qRFKX_eKqgWEZqdWBV9cl99tAgY3vRnSQmL4aWtrwbs,
 _ZNn7ngSYDr6w4vvDvtdcjgvKlCqr3OH_KO64cTS3k
 ];
 
-const assets = {};
+const assets = {
+  "/index.mjs": {
+    "type": "text/javascript; charset=utf-8",
+    "etag": "\"2cbe3-tKrnOkynjlJE7ubzVfjy5HLDGT4\"",
+    "mtime": "2025-08-02T23:06:20.276Z",
+    "size": 183267,
+    "path": "index.mjs"
+  },
+  "/index.mjs.map": {
+    "type": "application/json",
+    "etag": "\"ab25a-7HujoAODZ4oSBBg9mGkZNJvxe/k\"",
+    "mtime": "2025-08-02T23:06:20.278Z",
+    "size": 701018,
+    "path": "index.mjs.map"
+  }
+};
 
 function readAsset (id) {
   const serverDir = dirname$1(fileURLToPath(globalThis._importMeta_.url));
@@ -4458,7 +4632,9 @@ const login_post = defineEventHandler(async (event) => {
       phone: user.phone,
       role: user.role,
       avatar: user.avatar,
-      profile: user.profile
+      profile: user.profile,
+      created_at: user.created_at,
+      updated_at: user.updated_at
     },
     token: `mock-token-${user.id}-${Date.now()}`
   };
@@ -4508,7 +4684,7 @@ const register_post = defineEventHandler(async (event) => {
       id: `caregiver-${Date.now()}`,
       user_id: createdUser.id,
       name: createdUser.name,
-      avatar: createdUser.avatar,
+      avatar: createdUser.avatar || "",
       rating: 0,
       reviews_count: 0,
       hourly_rate: 300,
@@ -4532,7 +4708,9 @@ const register_post = defineEventHandler(async (event) => {
       phone: createdUser.phone,
       role: createdUser.role,
       avatar: createdUser.avatar,
-      profile: createdUser.profile
+      profile: createdUser.profile,
+      created_at: createdUser.created_at,
+      updated_at: createdUser.updated_at
     },
     token: `mock-token-${createdUser.id}-${Date.now()}`
   };

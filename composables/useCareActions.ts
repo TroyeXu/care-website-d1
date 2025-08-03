@@ -1,7 +1,41 @@
 import { watch } from 'vue'
 import { gsap } from 'gsap'
+import type { Ref } from 'vue'
 
-export default function useCareActions(state, calculations, particleApi) {
+interface CareItem {
+  code: string
+  name: string
+  price: number
+  category: string
+  color?: string
+  icon?: string
+  selectedByDefault?: boolean
+}
+
+interface State {
+  careItems: Ref<CareItem[]>
+  selectedHourlyItems: Ref<CareItem[]>
+  selectedShiftItems: Ref<CareItem[]>
+  selectedCategory: Ref<string>
+  selectedShiftType: Ref<string>
+  searchText: Ref<string>
+  isNightShift: Ref<boolean>
+  isUrgent: Ref<boolean>
+  isDoubleUrgent: Ref<boolean>
+  hourCount: Ref<number>
+  dayCount: Ref<number>
+  shiftDayCount: Ref<number>
+}
+
+interface Calculations {
+  selectedItems: Ref<CareItem[]>
+}
+
+interface ParticleApi {
+  createParticleExplosion: (x: number, y: number, color: string) => void
+}
+
+export default function useCareActions(state: State, calculations: Calculations, particleApi: ParticleApi) {
   const {
     careItems,
     selectedHourlyItems,
@@ -19,15 +53,12 @@ export default function useCareActions(state, calculations, particleApi) {
 
   const { createParticleExplosion } = particleApi
 
-  function toggleItem(item) {
+  function toggleItem(item: CareItem, event?: MouseEvent) {
     const targetArray = selectedCategory.value === '鐘點制' ? selectedHourlyItems : selectedShiftItems
-    const index = targetArray.value.findIndex(i => i.code === item.code)
+    const index = targetArray.value.findIndex((i: CareItem) => i.code === item.code)
     
-    if (process.client) {
-      const clickEvent = window.event
-      if (clickEvent) {
-        createParticleExplosion(clickEvent.clientX, clickEvent.clientY, item.color || 'primary')
-      }
+    if (process.client && event) {
+      createParticleExplosion(event.clientX, event.clientY, item.color || 'primary')
     }
     if (index === -1) {
       targetArray.value.push(item)
@@ -46,16 +77,16 @@ export default function useCareActions(state, calculations, particleApi) {
     }
   }
 
-  function isSelected(item) {
-    return calculations.selectedItems.value.some(i => i.code === item.code)
+  function isSelected(item: CareItem) {
+    return calculations.selectedItems.value.some((i: CareItem) => i.code === item.code)
   }
 
-  function selectShiftType(item) {
+  function selectShiftType(item: CareItem) {
     selectedShiftType.value = item.code
   }
 
   function resetSelections() {
-    selectedHourlyItems.value = careItems.value.filter(item => item.selectedByDefault && item.category === '鐘點制')
+    selectedHourlyItems.value = careItems.value.filter((item: CareItem) => item.selectedByDefault && item.category === '鐘點制')
     selectedShiftItems.value = []
     selectedShiftType.value = 'SH01'
     searchText.value = ''
@@ -67,10 +98,10 @@ export default function useCareActions(state, calculations, particleApi) {
     shiftDayCount.value = 1
   }
 
-  function toggleAdditionalService(code) {
-    const item = careItems.value.find(item => item.code === code)
+  function toggleAdditionalService(code: string) {
+    const item = careItems.value.find((item: CareItem) => item.code === code)
     if (!item) return
-    const index = selectedHourlyItems.value.findIndex(i => i.code === code)
+    const index = selectedHourlyItems.value.findIndex((i: CareItem) => i.code === code)
     if (code === 'HR09') {
       if (isNightShift.value && index === -1) {
         selectedHourlyItems.value.push(item)
@@ -92,11 +123,11 @@ export default function useCareActions(state, calculations, particleApi) {
     }
   }
 
-  function getItemIcon(item) {
+  function getItemIcon(item: CareItem) {
     return item.icon || 'help_outline'
   }
 
-  function getItemColor(item) {
+  function getItemColor(item: CareItem) {
     return item.color || 'primary'
   }
 

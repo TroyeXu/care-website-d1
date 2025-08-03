@@ -1,6 +1,26 @@
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 
-export default function useCareFilters(state) {
+interface CareItem {
+  code: string
+  name: string
+  price: number
+  category: string
+  subCategory: string
+}
+
+interface ActiveFilters {
+  price: number
+  subCategory: string | null
+}
+
+interface CareFiltersState {
+  searchText: Ref<string>
+  activeFilters: Ref<ActiveFilters>
+  careItems: Ref<CareItem[]>
+  selectedCategory: Ref<string>
+}
+
+export default function useCareFilters(state: CareFiltersState) {
   const { searchText, activeFilters, careItems, selectedCategory } = state
 
   const isAnyFilterActive = computed(
@@ -11,7 +31,7 @@ export default function useCareFilters(state) {
     const subCategories = careItems.value
       .filter(item => item.category === selectedCategory.value && (item.subCategory === '醫療照護' || item.subCategory === '特殊需求'))
       .map(item => item.subCategory)
-    return [...new Set(subCategories)]
+    return Array.from(new Set(subCategories))
   })
 
   const filteredItems = computed(() => {
@@ -41,14 +61,26 @@ export default function useCareFilters(state) {
     })
   })
 
-  function applyFilter(filterType, value) {
+  function applyFilter(filterType: keyof ActiveFilters | 'search', value: string | number | null) {
     if (filterType !== 'search') {
       searchText.value = ''
     }
-    if (activeFilters.value[filterType] === value) {
-      activeFilters.value[filterType] = filterType === 'price' ? 0 : null
-    } else {
-      activeFilters.value[filterType] = value
+    if (filterType === 'search') {
+      // 搜尋類型不處理 activeFilters
+      return
+    }
+    if (filterType === 'price') {
+      if (activeFilters.value.price === value) {
+        activeFilters.value.price = 0
+      } else {
+        activeFilters.value.price = value as number
+      }
+    } else if (filterType === 'subCategory') {
+      if (activeFilters.value.subCategory === value) {
+        activeFilters.value.subCategory = null
+      } else {
+        activeFilters.value.subCategory = value as string
+      }
     }
   }
 

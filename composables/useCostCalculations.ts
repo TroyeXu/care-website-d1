@@ -1,6 +1,24 @@
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 
-export default function useCostCalculations(state) {
+interface CostItem {
+  code: string
+  name: string
+  price: number
+  category: string
+  subCategory: string
+}
+
+interface CostCalculationsState {
+  selectedCategory: Ref<string>
+  selectedHourlyItems: Ref<CostItem[]>
+  selectedShiftItems: Ref<CostItem[]>
+  selectedShiftType: Ref<string>
+  hourCount: Ref<number>
+  dayCount: Ref<number>
+  shiftDayCount: Ref<number>
+}
+
+export default function useCostCalculations(state: CostCalculationsState) {
   const {
     selectedCategory,
     selectedHourlyItems,
@@ -24,7 +42,7 @@ export default function useCostCalculations(state) {
 
   const hourlyRateReachedLimit = computed(() => hourlyRate.value >= 500)
 
-  function wouldExceedLimit(item) {
+  function wouldExceedLimit(item: CostItem): boolean {
     return false
   }
 
@@ -54,7 +72,7 @@ export default function useCostCalculations(state) {
     selectedCategory.value === '鐘點制' ? hourlyTotalWithTime.value : shiftTotalWithDays.value
   )
 
-  function calculatePreviewCost(item) {
+  function calculatePreviewCost(item: CostItem): number {
     if (selectedCategory.value === '鐘點制' && item.subCategory !== '時段加價') {
       return totalCost.value + item.price * hourCount.value
     } else {
@@ -62,7 +80,7 @@ export default function useCostCalculations(state) {
     }
   }
 
-  function formatCurrency(value) {
+  function formatCurrency(value: number): string {
     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   }
 

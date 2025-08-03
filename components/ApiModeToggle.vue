@@ -72,6 +72,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
 
 const { 
   config, 

@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
 
+interface Review {
+  name: string
+  comment: string
+  rating: number
+}
+
 export const useReviewStore = defineStore('reviews', {
   state: () => ({
     reviews: [
@@ -17,7 +23,7 @@ export const useReviewStore = defineStore('reviews', {
     }
   },
   actions: {
-    addReview(review) {
+    addReview(review: Review) {
       this.reviews.push(review)
     }
   }

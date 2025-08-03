@@ -166,7 +166,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      children: JSON.stringify({
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'OfferCatalog',
         name: '計費方案 - DogFriend',

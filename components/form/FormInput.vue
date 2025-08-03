@@ -2,6 +2,8 @@
   <Field :name="name" v-slot="{ field, errorMessage }">
     <q-input
       v-bind="{ ...field, ...$attrs }"
+      :model-value="field.value"
+      @update:model-value="field['onUpdate:modelValue']"
       :label="label"
       :type="type"
       :placeholder="placeholder"
@@ -33,7 +35,7 @@
 interface Props {
   name: string
   label: string
-  type?: string
+  type?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'search' | 'url' | 'date' | 'time' | 'datetime-local' | 'file' | 'textarea'
   placeholder?: string
   icon?: string
   mask?: string

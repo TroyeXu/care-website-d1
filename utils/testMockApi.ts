@@ -14,8 +14,8 @@ export const testMockApiSetup = async () => {
 
   try {
     // 測試 1: 檢查配置是否載入
-    const { config, isUsingMockApi } = useApiConfig()
-    if (config.value && isUsingMockApi.value) {
+    const apiConfig = useApiConfig()
+    if (apiConfig.config.value && apiConfig.isUsingMockApi.value) {
       results.configLoaded = true
     } else {
       results.errors.push('API 配置未正確載入')

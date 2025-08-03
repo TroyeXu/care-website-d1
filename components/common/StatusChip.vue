@@ -25,8 +25,20 @@ const props = withDefaults(defineProps<Props>(), {
   outline: false
 })
 
-const statusConfig = computed(() => {
-  const configs = {
+type StatusConfigType = {
+  label: string
+  color: string
+  textColor: string
+}
+
+type ConfigsType = {
+  [K in NonNullable<Props['type']>]: {
+    [key: string]: StatusConfigType
+  }
+}
+
+const statusConfig = computed((): StatusConfigType | undefined => {
+  const configs: ConfigsType = {
     booking: {
       pending: { label: '待確認', color: 'warning', textColor: 'white' },
       confirmed: { label: '已確認', color: 'positive', textColor: 'white' },

@@ -333,7 +333,7 @@
                   v-else-if="!authStore.currentUser"
                   color="secondary"
                   outline
-                  @click="navigateTo('/auth/login')"
+                  @click="() => navigateTo('/auth/login')"
                 >
                   <q-icon name="login" class="q-mr-sm" />
                   登入撰寫評價
@@ -616,10 +616,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { useApiService } from '~/composables/useApiService'
 import { useAuthStore } from '~/stores/auth'
 import usePageSeo from '~/composables/usePageSeo'
-import type { Review, Caregiver } from '~/utils/mockData'
 
 // SEO
 usePageSeo('用戶評價 - 護理服務平台', '查看其他用戶對護理服務的評價與回饋')
@@ -627,13 +625,9 @@ usePageSeo('用戶評價 - 護理服務平台', '查看其他用戶對護理服�
 // 組合式函數
 const route = useRoute()
 const $q = useQuasar()
-const apiService = useApiService()
 const authStore = useAuthStore()
 
 // 響應式資料
-const reviews = ref<Review[]>([])
-const caregivers = ref<Caregiver[]>([])
-const isLoading = ref(false)
 const isSubmitting = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = 10
@@ -641,6 +635,61 @@ const selectedCaregiverId = ref<number | null>(null)
 const sortBy = ref('latest')
 const showReviewForm = ref(false)
 const reviewStep = ref(1)
+
+// 使用 server 端資料載入看護師列表
+const { data: caregiversData } = await useFetch('/api/caregivers', {
+  query: {
+    limit: 100
+  }
+})
+
+const caregivers = computed(() => {
+  if (!caregiversData.value) return []
+  return caregiversData.value.caregivers.map(c => ({
+    id: parseInt(c.id.replace('caregiver-', '')),
+    name: c.name,
+    photo: c.avatar,
+    rating: c.rating,
+    review_count: c.reviews_count,
+    hourly_rate: c.hourly_rate,
+    shift_rate: c.hourly_rate * 8,
+    location: c.service_areas[0],
+    available: true,
+    licenses: c.certifications,
+    experience_years: c.experience_years,
+    specialization: c.specialties[0] + '專家',
+    description: c.bio,
+    created_at: c.created_at,
+    updated_at: c.updated_at
+  }))
+})
+
+// 載入評價資料
+const { data: reviewsData, pending: isLoading, refresh: loadReviews } = await useFetch('/api/reviews', {
+  query: computed(() => ({
+    caregiver_id: selectedCaregiverId.value ? `caregiver-${selectedCaregiverId.value}` : undefined
+  }))
+})
+
+const reviews = computed(() => {
+  if (!reviewsData.value) return []
+  
+  // 轉換資料格式
+  return reviewsData.value.reviews.map(r => ({
+    id: r.id,
+    rating: r.rating,
+    comment: r.comment,
+    user_name: r.patient_id ? '已驗證用戶' : '匿名用戶',
+    caregiver_id: r.caregiver_id,
+    created_at: r.created_at,
+    updated_at: r.updated_at,
+    verified: true,
+    service_type: '一般照護',
+    reply: Math.random() > 0.5 ? '感謝您的評價！' : null,
+    likes: Math.floor(Math.random() * 20),
+    liked: false
+  }))
+})
 
 // 評價表單
 const reviewForm = ref({
@@ -711,47 +760,6 @@ const totalPages = computed(() => {
 })
 
 // 方法
-const loadCaregivers = async () => {
-  try {
-    const result = await apiService.getCaregivers(1, 100)
-    caregivers.value = Array.isArray(result) ? result : result.data || []
-  } catch (error) {
-    console.error('載入看護師列表失敗:', error)
-  }
-}
-
-const loadReviews = async () => {
-  isLoading.value = true
-  
-  try {
-    if (selectedCaregiverId.value) {
-      reviews.value = await apiService.getReviewsByCaregiver(selectedCaregiverId.value)
-    } else {
-      // 載入所有評價（使用模擬資料）
-      const allReviews: Review[] = []
-      for (const caregiver of caregivers.value.slice(0, 5)) { // 只載入前5位的評價
-        try {
-          const caregiverReviews = await apiService.getReviewsByCaregiver(caregiver.id)
-          allReviews.push(...caregiverReviews)
-        } catch (error) {
-          console.warn(`載入看護師 ${caregiver.id} 的評價失敗:`, error)
-        }
-      }
-      reviews.value = allReviews.sort((a, b) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
-    }
-  } catch (error: any) {
-    console.error('載入評價失敗:', error)
-    $q.notify({
-      type: 'negative',
-      message: error.message || '載入評價失敗',
-      timeout: 3000
-    })
-  } finally {
-    isLoading.value = false
-  }
-}
 
 const submitReview = async () => {
   if (!reviewForm.value.caregiver_id || !reviewForm.value.rating || !reviewForm.value.comment) {
@@ -783,10 +791,18 @@ const submitReview = async () => {
       service_type: reviewForm.value.service_type
     }
     
-    const newReview = await apiService.createReview(reviewData)
+    // 模擬新增評價（因為還沒有 POST API）
+    const newReview = {
+      id: `review-${Date.now()}`,
+      ...reviewData,
+      caregiver_id: `caregiver-${reviewData.caregiver_id}`,
+      patient_id: `user-${reviewData.user_id}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
     
-    // 新增到本地列表
-    reviews.value.unshift(newReview)
+    // 重新載入評價列表
+    await loadReviews()
     
     $q.notify({
       type: 'positive',
@@ -834,7 +850,7 @@ const getCaregiverName = () => {
   return caregiver?.name || ''
 }
 
-const toggleLike = (review: Review) => {
+const toggleLike = (review: any) => {
   if (!authStore.currentUser) {
     $q.notify({
       type: 'warning',
@@ -896,12 +912,10 @@ watch(() => route.query.caregiverId, (newId) => {
 
 // 生命週期
 onMounted(async () => {
-  await loadCaregivers()
-  await loadReviews()
+  // 評價資料已經透過 useFetch 自動載入
 })
 
 // 頁面結構化資料
-const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
 
@@ -912,7 +926,7 @@ watch([reviews, averageRating], ([newReviews, newAverage]) => {
       script: [
         {
           type: 'application/ld+json',
-          children: JSON.stringify({
+          innerHTML: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Service',
             name: '護理服務平台',

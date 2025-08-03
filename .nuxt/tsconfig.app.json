@@ -153,7 +153,7 @@
         "./imports"
       ],
       "#app-manifest": [
-        "./manifest/meta/dev"
+        "./manifest/meta/9b093cac-3aff-4311-90e2-84b1c19e230e.json"
       ],
       "#components": [
         "./components"
@@ -256,7 +256,7 @@
     "../node_modules/@nuxt/telemetry/runtime/server",
     "../node_modules/@nuxt/telemetry/dist/runtime/server",
     "../node_modules/@nuxt/telemetry/*.*",
-    "dev",
+    "../.output",
     "../server"
   ]
 }

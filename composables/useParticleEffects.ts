@@ -1,7 +1,19 @@
-import { watch, onMounted } from 'vue'
+import { watch, onMounted, type Ref } from 'vue'
 import { gsap } from 'gsap'
 
-export default function useParticleEffects(state, calculations) {
+interface ParticleState {
+  totalCostElement: Ref<HTMLElement | null>
+  previousTotalCost: Ref<number>
+  isNightShift: Ref<boolean>
+  isUrgent: Ref<boolean>
+  isDoubleUrgent: Ref<boolean>
+}
+
+interface ParticleCalculations {
+  totalCost: Ref<number>
+}
+
+export default function useParticleEffects(state: ParticleState, calculations: ParticleCalculations) {
   const { totalCost } = calculations
   const {
     totalCostElement,
@@ -11,7 +23,7 @@ export default function useParticleEffects(state, calculations) {
     isDoubleUrgent
   } = state
 
-  function particlesLoaded(container) {
+  function particlesLoaded(container: any) {
     console.log('粒子容器已加載', container)
   }
 
@@ -30,7 +42,7 @@ export default function useParticleEffects(state, calculations) {
     detectRetina: true
   }
 
-  function createParticleExplosion(x, y, color) {
+  function createParticleExplosion(x: number, y: number, color: string) {
     const container = document.createElement('div')
     container.style.position = 'fixed'
     container.style.left = '0'

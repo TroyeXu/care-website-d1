@@ -155,13 +155,52 @@
       <!-- 列表檢視 -->
       <div v-else class="caregiver-list-view">
         <q-list separator>
-          <CaregiverListItem
+          <q-item
             v-for="caregiver in filteredCaregivers"
             :key="caregiver.id"
-            :caregiver="caregiver"
-            @select="navigateToDetail"
-            @book="startBooking"
-          />
+            clickable
+            @click="navigateToDetail(caregiver)"
+          >
+            <q-item-section avatar>
+              <q-avatar size="60px">
+                <img :src="caregiver.photo" :alt="caregiver.name" />
+              </q-avatar>
+            </q-item-section>
+            
+            <q-item-section>
+              <q-item-label class="text-h6">{{ caregiver.name }}</q-item-label>
+              <q-item-label caption>
+                <q-icon name="location_on" size="16px" />
+                {{ caregiver.location }}
+              </q-item-label>
+              <q-item-label caption class="q-mt-xs">
+                <q-rating
+                  :model-value="caregiver.rating"
+                  size="sm"
+                  color="orange"
+                  readonly
+                />
+                <span class="q-ml-sm">({{ caregiver.review_count }} 則評價)</span>
+              </q-item-label>
+            </q-item-section>
+            
+            <q-item-section side>
+              <div class="text-right">
+                <div class="text-h6 text-primary">
+                  NT$ {{ caregiver.hourly_rate }}
+                  <span class="text-caption">/小時</span>
+                </div>
+                <q-btn
+                  color="primary"
+                  size="sm"
+                  @click.stop="startBooking(caregiver)"
+                  class="q-mt-sm"
+                >
+                  立即預約
+                </q-btn>
+              </div>
+            </q-item-section>
+          </q-item>
         </q-list>
       </div>
     </div>
@@ -229,11 +268,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { useApiService } from '~/composables/useApiService'
 import CaregiverCard from '~/components/CaregiverCard.vue'
+import type { Caregiver } from '~/stores/caregivers'
 
 // 簡化的頁面設定
 useHead({
@@ -246,16 +285,44 @@ useHead({
 // 組合式函數
 const router = useRouter()
 const $q = useQuasar()
-const apiService = useApiService()
 
-// 響應式資料
-const caregivers = ref([])
-const filteredCaregivers = ref([])
-const loading = ref(false)
+// 使用 server 端資料載入看護師列表
+const { data: caregiversData, pending: loading, error: fetchError, refresh: loadCaregivers } = await useFetch('/api/caregivers', {
+  query: {
+    limit: 50,
+    sortBy: 'rating',
+    sortOrder: 'desc'
+  }
+})
+
+// 轉換資料格式
+const caregivers = computed(() => {
+  if (!caregiversData.value) return []
+  
+  return caregiversData.value.caregivers.map(c => ({
+    id: parseInt(c.id.replace('caregiver-', '')),
+    name: c.name,
+    experience: `${c.experience_years}年經驗`,
+    skills: c.specialties.join('，'),
+    licenses: c.certifications,
+    rating: c.rating,
+    photo: c.avatar,
+    available: c.availability_status || '24小時',
+    hourly_rate: c.hourly_rate,
+    shift_rate: c.hourly_rate * 8,
+    location: c.service_areas[0],
+    description: c.bio,
+    review_count: c.reviews_count,
+    created_at: c.created_at,
+    updated_at: c.updated_at
+  })) as Caregiver[]
+})
+
+const error = computed(() => fetchError.value ? '載入看護師資料失敗' : '')
+const filteredCaregivers = ref<Caregiver[]>([])
 const loadingMore = ref(false)
 const loadingProgress = ref(0)
-const error = ref('')
-const hasMore = ref(true)
+const hasMore = ref(false)
 const currentPage = ref(1)
 
 // UI 狀態
@@ -300,64 +367,11 @@ const hasActiveFilters = computed(() => {
 })
 
 // 方法
-const loadCaregivers = async () => {
-  loading.value = true
-  error.value = ''
-  loadingProgress.value = 0
-  
-  // 模擬載入進度
-  const progressInterval = setInterval(() => {
-    if (loadingProgress.value < 0.9) {
-      loadingProgress.value += 0.1
-    }
-  }, 200)
-  
-  try {
-    const response = await apiService.getCaregivers(1, 50)
-    caregivers.value = response.data?.data || response.data || response
-    filteredCaregivers.value = [...caregivers.value]
-    loadingProgress.value = 1
-    
-    // 清除進度條
-    setTimeout(() => {
-      clearInterval(progressInterval)
-    }, 500)
-    
-  } catch (err: any) {
-    error.value = err.message || '載入看護師資料失敗'
-    console.error('載入看護師失敗:', err)
-    clearInterval(progressInterval)
-  } finally {
-    loading.value = false
-  }
-}
+// loadCaregivers 函數已經由 useFetch 的 refresh 提供
 
 const loadMoreCaregivers = async () => {
-  if (loadingMore.value || !hasMore.value) return
-  
-  loadingMore.value = true
-  currentPage.value++
-  
-  try {
-    const response = await apiService.getCaregivers(currentPage.value, 20)
-    const newCaregivers = response.data?.data || response.data || response
-    
-    if (newCaregivers.length === 0) {
-      hasMore.value = false
-    } else {
-      caregivers.value.push(...newCaregivers)
-      filterCaregivers()
-    }
-  } catch (err: any) {
-    console.error('載入更多看護師失敗:', err)
-    $q.notify({
-      type: 'negative',
-      message: '載入更多資料失敗',
-      timeout: 3000
-    })
-  } finally {
-    loadingMore.value = false
-  }
+  // 目前暫不支援載入更多（因為我們一次載入所有資料）
+  hasMore.value = false
 }
 
 const filterCaregivers = () => {
@@ -446,11 +460,11 @@ const clearAllFilters = () => {
   clearFilters()
 }
 
-const navigateToDetail = (caregiver) => {
+const navigateToDetail = (caregiver: Caregiver) => {
   router.push(`/caregivers/${caregiver.id}`)
 }
 
-const startBooking = (caregiver) => {
+const startBooking = (caregiver: Caregiver) => {
   router.push({
     path: '/booking/create',
     query: { caregiverId: caregiver.id }
@@ -468,7 +482,15 @@ watch(searchQuery, () => {
 
 // 頁面載入時執行
 onMounted(() => {
-  loadCaregivers()
+  // 資料已經透過 useFetch 自動載入
+  filterCaregivers()
+})
+
+// 監聽資料變化
+watchEffect(() => {
+  if (caregivers.value.length > 0 && filteredCaregivers.value.length === 0) {
+    filteredCaregivers.value = [...caregivers.value]
+  }
 })
 </script>
 

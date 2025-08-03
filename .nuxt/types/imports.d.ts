@@ -198,7 +198,6 @@ declare global {
   const useNitroOrigin: typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/useNitroOrigin')['useNitroOrigin']
   const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']
   const useNuxtData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']
-  const useNuxtDevTools: typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']
   const usePageSeo: typeof import('../../composables/usePageSeo')['default']
   const useParticleEffects: typeof import('../../composables/useParticleEffects')['default']
   const usePaymentsStore: typeof import('../../stores/payments')['usePaymentsStore']
@@ -288,9 +287,6 @@ declare global {
   // @ts-ignore
   export type { ApiConfig } from '../../composables/useApiConfig'
   import('../../composables/useApiConfig')
-  // @ts-ignore
-  export type { ApiServiceConfig } from '../../composables/useApiService'
-  import('../../composables/useApiService')
   // @ts-ignore
   export type { CostCalculationParams, CostBreakdown } from '../../composables/useCostCalculator'
   import('../../composables/useCostCalculator')
@@ -520,7 +516,6 @@ declare module 'vue' {
     readonly useNitroOrigin: UnwrapRef<typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/useNitroOrigin')['useNitroOrigin']>
     readonly useNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']>
     readonly useNuxtData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']>
-    readonly useNuxtDevTools: UnwrapRef<typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']>
     readonly usePageSeo: UnwrapRef<typeof import('../../composables/usePageSeo')['default']>
     readonly useParticleEffects: UnwrapRef<typeof import('../../composables/useParticleEffects')['default']>
     readonly usePaymentsStore: UnwrapRef<typeof import('../../stores/payments')['usePaymentsStore']>

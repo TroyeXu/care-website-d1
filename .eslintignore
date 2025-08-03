@@ -1,3 +1,31 @@
-node_modules/
-dist/
-.nuxt/
+# Dependencies
+node_modules
+
+# Nuxt
+.nuxt
+.output
+dist
+
+# Misc
+.DS_Store
+.idea
+.vscode
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+
+# Testing
+coverage
+
+# Generated files
+*.min.js
+*.min.css
+
+# Type definitions
+*.d.ts
+types/auto-imports.d.ts
+types/components.d.ts

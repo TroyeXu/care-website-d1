@@ -9,9 +9,13 @@
     "preview": "nuxt preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "lint": "eslint .",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.vue",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx,.vue --fix",
     "lint:style": "stylelint \"**/*.{css,scss,vue}\" --ignore-path .stylelintignore",
-    "format": "prettier -w ."
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
+    "type-check": "nuxt typecheck",
+    "check-all": "npm run type-check && npm run lint && npm run format:check"
   },
   "dependencies": {
     "@nuxt/kit": "^4.0.0",
@@ -36,16 +40,21 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/sitemap": "^6.1.5",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.5.3",
     "eslint-plugin-vue": "^9.20.0",
     "gh-pages": "^6.3.0",
     "prettier": "^3.2.5",
     "sass": "^1.89.0",
     "stylelint": "^15.11.0",
     "stylelint-config-standard-scss": "^11.0.0",
+    "typescript": "^5.8.3",
     "vite": "^6.3.5"
   }
 }

@@ -31,7 +31,9 @@ export default defineEventHandler(async (event) => {
       phone: user.phone,
       role: user.role,
       avatar: user.avatar,
-      profile: user.profile
+      profile: user.profile,
+      created_at: user.created_at,
+      updated_at: user.updated_at
     },
     token: `mock-token-${user.id}-${Date.now()}`
   }

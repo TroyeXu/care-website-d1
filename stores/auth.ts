@@ -58,7 +58,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     loadMockData() {
       this.users = mockUsers
-      this.currentUser = mockUsers[0]
+      this.currentUser = mockUsers.find(u => u.id === '1') || null
       this.isAuthenticated = true
     },
 
@@ -67,25 +67,25 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        const { data } = await $fetch('/api/auth/login', {
-          method: 'POST',
+        const response = await $fetch('/api/auth/login', {
+          method: 'POST' as const,
           body: credentials
         })
 
-        this.currentUser = data.user
+        this.currentUser = response.user
         this.isAuthenticated = true
         
         // 更新本地用戶列表
-        const userIndex = this.users.findIndex(u => u.id === data.user.id)
+        const userIndex = this.users.findIndex(u => u.id === response.user.id)
         if (userIndex !== -1) {
-          this.users[userIndex] = data.user
+          this.users[userIndex] = response.user
         } else {
-          this.users.push(data.user)
+          this.users.push(response.user)
         }
       } catch (err: any) {
         this.error = err.data?.message || err.message || '登入失敗'
         console.error('Login error:', err)
-        throw new Error(this.error)
+        throw new Error(this.error || '未知錯誤')
       } finally {
         this.loading = false
       }
@@ -96,20 +96,20 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        const { data } = await $fetch('/api/auth/register', {
-          method: 'POST',
+        const response = await $fetch('/api/auth/register', {
+          method: 'POST' as const,
           body: userData
         })
 
-        this.currentUser = data.user
+        this.currentUser = response.user
         this.isAuthenticated = true
-        this.users.push(data.user)
+        this.users.push(response.user)
 
-        return data.user
+        return response.user
       } catch (err: any) {
         this.error = err.data?.message || err.message || '註冊失敗'
         console.error('Registration error:', err)
-        throw new Error(this.error)
+        throw new Error(this.error || '未知錯誤')
       } finally {
         this.loading = false
       }
@@ -154,7 +154,7 @@ export const useAuthStore = defineStore('auth', {
       } catch (err: any) {
         this.error = err.data?.message || err.message || '更新失敗'
         console.error('Profile update error:', err)
-        throw new Error(this.error)
+        throw new Error(this.error || '未知錯誤')
       }
     },
 

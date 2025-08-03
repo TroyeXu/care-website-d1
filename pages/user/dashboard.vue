@@ -235,10 +235,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '~/stores/auth'
 import { useApiService } from '~/composables/useApiService'
 import { useMatchingAlgorithm } from '~/composables/useMatchingAlgorithm'
 import usePageSeo from '~/composables/usePageSeo'
+import type { Booking } from '~/stores/bookings'
+import type { Caregiver } from '~/stores/caregivers'
 
 usePageSeo('個人儀表板 - 護理服務平台', '快速查看推薦看護及即將到來的排程')
 
@@ -249,13 +252,29 @@ definePageMeta({
 const authStore = useAuthStore()
 const apiService = useApiService()
 const { findMatches } = useMatchingAlgorithm()
+const router = useRouter()
+
+// 改用 navigateTo 函數
+const navigateTo = (path: string) => {
+  router.push(path)
+}
 
 // 響應式資料
-const dashboardStats = ref(null)
-const recommendedCaregivers = ref([])
-const upcomingBookings = ref([])
-const recentBookings = ref([])
-const caregivers = ref([])
+interface DashboardStats {
+  totalBookings: number
+  completedBookings: number
+  pendingBookings: number
+  totalSpent: number
+  favoriteCaregiver?: Caregiver
+  recentBookings: Booking[]
+  upcomingBookings: Booking[]
+}
+
+const dashboardStats = ref<DashboardStats | null>(null)
+const recommendedCaregivers = ref<Caregiver[]>([])
+const upcomingBookings = ref<Booking[]>([])
+const recentBookings = ref<Booking[]>([])
+const caregivers = ref<Caregiver[]>([])
 
 // 載入資料
 onMounted(async () => {
@@ -270,26 +289,26 @@ const loadDashboardData = async () => {
       
       // 載入推薦看護師
       const caregiversResponse = await apiService.getFeaturedCaregivers()
-      recommendedCaregivers.value = caregiversResponse.data || caregiversResponse
+      recommendedCaregivers.value = Array.isArray(caregiversResponse) ? caregiversResponse : []
       caregivers.value = recommendedCaregivers.value
       
       // 載入用戶預約
       const bookingsResponse = await apiService.getBookingsByUser(authStore.currentUser.id)
-      const userBookings = bookingsResponse || []
+      const userBookings: Booking[] = Array.isArray(bookingsResponse) ? bookingsResponse : []
       
       // 處理即將到來的預約
       const now = new Date()
       upcomingBookings.value = userBookings
-        .filter(booking => {
+        .filter((booking: Booking) => {
           const bookingDate = new Date(booking.start_date)
           return bookingDate >= now && ['confirmed', 'pending'].includes(booking.status)
         })
-        .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
+        .sort((a: Booking, b: Booking) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
         .slice(0, 3)
       
       // 處理最近的預約
       recentBookings.value = userBookings
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .sort((a: Booking, b: Booking) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     }
   } catch (error) {
     console.error('載入儀表板資料失敗:', error)

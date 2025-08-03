@@ -21,6 +21,22 @@ export const useMockApi = () => {
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
+  // Internal state for bookings with IDs
+  const bookingsWithIds = ref<Booking[]>(
+    mockBookings.map((booking, index) => ({
+      ...booking,
+      id: `booking-${String(index + 1).padStart(3, '0')}`
+    }))
+  )
+
+  // Helper function to convert Omit<Booking, 'id'>[] to Booking[]
+  const addBookingIds = (bookings: Omit<Booking, 'id'>[]): Booking[] => {
+    return bookings.map((booking, index) => ({
+      ...booking,
+      id: `booking-${String(index + 1).padStart(3, '0')}`
+    }))
+  }
+
   // 模擬 API 延遲
   const delay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -382,7 +398,7 @@ export const useMockApi = () => {
         throw new Error('無法載入預約記錄')
       }
 
-      const userBookings = mockBookings.filter(b => b.user_id === userId)
+      const userBookings = bookingsWithIds.value.filter(b => b.user_id === userId)
 
       return {
         success: true,
@@ -410,7 +426,7 @@ export const useMockApi = () => {
         throw new Error('更新預約狀態失敗')
       }
 
-      const bookingIndex = mockBookings.findIndex(b => b.id === bookingId)
+      const bookingIndex = bookingsWithIds.value.findIndex(b => b.id === bookingId)
       
       if (bookingIndex === -1) {
         return {
@@ -419,12 +435,12 @@ export const useMockApi = () => {
         }
       }
 
-      mockBookings[bookingIndex].status = status
-      mockBookings[bookingIndex].updated_at = new Date().toISOString()
+      bookingsWithIds.value[bookingIndex].status = status
+      bookingsWithIds.value[bookingIndex].updated_at = new Date().toISOString()
 
       return {
         success: true,
-        data: mockBookings[bookingIndex],
+        data: bookingsWithIds.value[bookingIndex],
         message: '預約狀態更新成功'
       }
     } catch (err: any) {
@@ -514,7 +530,7 @@ export const useMockApi = () => {
       }
 
       // 透過預約找到用戶的支付記錄
-      const userBookingIds = mockBookings
+      const userBookingIds = bookingsWithIds.value
         .filter(b => b.user_id === userId)
         .map(b => b.id)
 
@@ -626,7 +642,7 @@ export const useMockApi = () => {
         throw new Error('無法載入統計資料')
       }
 
-      const userBookings = mockBookings.filter(b => b.user_id === userId)
+      const userBookings = bookingsWithIds.value.filter(b => b.user_id === userId)
       const userPayments = mockPayments.filter(p => 
         userBookings.some(b => b.id === p.booking_id)
       )
@@ -634,12 +650,12 @@ export const useMockApi = () => {
       const totalSpent = userPayments.reduce((sum, p) => sum + p.amount, 0)
       
       const now = new Date()
-      const upcomingBookings = userBookings.filter(b => {
+      const upcomingBookings: Booking[] = userBookings.filter(b => {
         const bookingDate = new Date(b.start_date)
         return bookingDate >= now && ['confirmed', 'pending'].includes(b.status)
       })
 
-      const recentBookings = userBookings
+      const recentBookings: Booking[] = userBookings
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
         .slice(0, 5)
 

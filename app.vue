@@ -72,7 +72,7 @@
             flat
             dense
             icon="login"
-            @click="navigateTo('/auth/login')"
+            @click="router.push('/auth/login')"
             aria-label="登入"
           />
         </div>
@@ -121,7 +121,7 @@
           <q-btn
             color="primary"
             size="sm"
-            @click="navigateTo('/auth/login'); drawer = false"
+            @click="router.push('/auth/login'); drawer = false"
           >
             立即登入
           </q-btn>
@@ -249,21 +249,21 @@
           name="home"
           icon="home"
           label="首頁"
-          @click="navigateTo('/')"
+          @click="router.push('/')"
           no-caps
         />
         <q-tab
           name="caregivers"
           icon="people"
           label="看護師"
-          @click="navigateTo('/caregivers')"
+          @click="router.push('/caregivers')"
           no-caps
         />
         <q-tab
           name="booking"
           icon="calendar_today"
           label="預約"
-          @click="navigateTo('/booking/match')"
+          @click="router.push('/booking/match')"
           no-caps
         />
         <q-tab
@@ -339,14 +339,14 @@
         <q-separator />
         
         <q-list>
-          <q-item clickable @click="navigateTo('/user/profile'); showUserMenu = false">
+          <q-item clickable @click="router.push('/user/profile'); showUserMenu = false">
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
             <q-item-section>個人資料</q-item-section>
           </q-item>
           
-          <q-item clickable @click="navigateTo('/user/settings'); showUserMenu = false">
+          <q-item clickable @click="router.push('/user/settings'); showUserMenu = false">
             <q-item-section avatar>
               <q-icon name="settings" />
             </q-item-section>
@@ -510,19 +510,19 @@ const canGoBack = computed(() => {
 })
 
 // 方法
-const goBack = () => {
+const goBack = async () => {
   if (canGoBack.value) {
     router.go(-1)
   } else {
-    navigateTo('/')
+    await router.push('/')
   }
 }
 
-const handleProfileClick = () => {
+const handleProfileClick = async () => {
   if (authStore.currentUser) {
-    navigateTo('/user/dashboard')
+    await router.push('/user/dashboard')
   } else {
-    navigateTo('/auth/login')
+    await router.push('/auth/login')
   }
 }
 
@@ -538,10 +538,10 @@ const handleLogout = () => {
       color: 'grey',
       label: '取消'
     }
-  }).onOk(() => {
+  }).onOk(async () => {
     authStore.logout()
     drawer.value = false
-    navigateTo('/')
+    await router.push('/')
     $q.notify({
       type: 'positive',
       message: '已成功登出',

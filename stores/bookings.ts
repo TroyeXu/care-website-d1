@@ -82,7 +82,7 @@ export const useBookingStore = defineStore('bookings', {
     async createBooking(bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>) {
       try {
         const newBooking = await $fetch('/api/bookings', {
-          method: 'POST',
+          method: 'POST' as const,
           body: bookingData
         })
         
@@ -93,14 +93,14 @@ export const useBookingStore = defineStore('bookings', {
       } catch (err: any) {
         this.error = err.data?.message || err.message || '建立預約失敗'
         console.error('Error creating booking:', err)
-        throw new Error(this.error)
+        throw new Error(this.error || '未知錯誤')
       }
     },
 
     async updateBookingStatus(bookingId: string, status: Booking['status']) {
       try {
         const updatedBooking = await $fetch(`/api/bookings/${bookingId}`, {
-          method: 'PUT',
+          method: 'PUT' as const,
           body: { status }
         })
         
@@ -113,7 +113,7 @@ export const useBookingStore = defineStore('bookings', {
       } catch (err: any) {
         this.error = err.data?.message || err.message || '更新預約狀態失敗'
         console.error('Error updating booking status:', err)
-        throw new Error(this.error)
+        throw new Error(this.error || '未知錯誤')
       }
     },
 

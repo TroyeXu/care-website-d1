@@ -31,8 +31,8 @@
                   label="立即申請"
                   icon="arrow_forward"
                   unelevated
-                  @click="scrollToApplication"
                   class="cta-primary q-px-xl"
+                  @click="scrollToApplication"
                 />
                 <q-btn
                   size="lg"
@@ -40,8 +40,8 @@
                   color="white"
                   label="了解更多"
                   icon="info"
-                  @click="scrollToBenefits"
                   class="cta-secondary q-px-xl"
+                  @click="scrollToBenefits"
                 />
               </div>
             </div>
@@ -60,7 +60,11 @@
                     <q-icon name="favorite" size="24px" color="accent" />
                   </div>
                   <div class="floating-icon icon-2">
-                    <q-icon name="health_and_safety" size="28px" color="white" />
+                    <q-icon
+                      name="health_and_safety"
+                      size="28px"
+                      color="white"
+                    />
                   </div>
                   <div class="floating-icon icon-3">
                     <q-icon name="groups" size="26px" color="accent" />
@@ -82,9 +86,9 @@
             :key="stat.label"
             class="col-12 col-sm-6 col-md-3"
           >
-            <q-card 
-              flat 
-              class="stat-card text-center full-height" 
+            <q-card
+              flat
+              class="stat-card text-center full-height"
               :class="`stat-card-${index + 1}`"
             >
               <q-card-section class="q-pb-none">
@@ -99,7 +103,9 @@
                 <div class="stat-value text-weight-bold text-primary q-mb-xs">
                   {{ stat.value }}
                 </div>
-                <div class="stat-label text-body1 text-grey-7">{{ stat.label }}</div>
+                <div class="stat-label text-body1 text-grey-7">
+                  {{ stat.label }}
+                </div>
               </q-card-section>
             </q-card>
           </div>
@@ -134,20 +140,27 @@
             :key="benefit.title"
             class="col-12 col-lg-4 col-md-6"
           >
-            <q-card 
-              class="benefit-card full-height" 
+            <q-card
+              class="benefit-card full-height"
               :class="`benefit-card-${index + 1}`"
             >
               <q-card-section class="text-center q-pa-lg">
                 <div class="benefit-icon-wrapper q-mb-lg">
-                  <q-avatar size="88px" :color="benefit.color" text-color="white" class="benefit-avatar">
+                  <q-avatar
+                    size="88px"
+                    :color="benefit.color"
+                    text-color="white"
+                    class="benefit-avatar"
+                  >
                     <q-icon :name="benefit.icon" size="44px" />
                   </q-avatar>
                 </div>
                 <h3 class="benefit-title text-weight-bold q-mb-md">
                   {{ benefit.title }}
                 </h3>
-                <p class="benefit-description text-body1 text-grey-7">{{ benefit.description }}</p>
+                <p class="benefit-description text-body1 text-grey-7">
+                  {{ benefit.description }}
+                </p>
               </q-card-section>
             </q-card>
           </div>
@@ -212,21 +225,22 @@
               </div>
             </div>
 
-            <template v-slot:navigation>
+            <!-- @ts-ignore - Quasar QStep navigation slot type definition issue -->
+            <template #navigation>
               <q-stepper-navigation>
                 <q-btn
                   v-if="index < processSteps.length - 1"
-                  @click="currentStep = index + 2"
                   color="primary"
                   label="下一步"
+                  @click="currentStep = index + 2"
                 />
                 <q-btn
                   v-if="index > 0"
                   flat
                   color="primary"
-                  @click="currentStep = index"
                   label="上一步"
                   class="q-ml-sm"
+                  @click="currentStep = index"
                 />
               </q-stepper-navigation>
             </template>
@@ -253,7 +267,10 @@
             :key="salaryInfo.type"
             class="col-12 col-md-4"
           >
-            <q-card class="salary-card full-height" :class="salaryInfo.featured ? 'featured' : ''">
+            <q-card
+              class="salary-card full-height"
+              :class="salaryInfo.featured ? 'featured' : ''"
+            >
               <q-card-section class="text-center">
                 <q-badge
                   v-if="salaryInfo.featured"
@@ -282,7 +299,9 @@
                       <q-icon name="check" color="positive" size="sm" />
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label class="text-body2">{{ benefit }}</q-item-label>
+                      <q-item-label class="text-body2">{{
+                        benefit
+                      }}</q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -300,9 +319,7 @@
           <h2 class="text-h4 text-weight-bold text-primary q-mb-md">
             常見問題
           </h2>
-          <p class="text-h6 text-grey-7">
-            解答您在申請過程中可能遇到的疑問
-          </p>
+          <p class="text-h6 text-grey-7">解答您在申請過程中可能遇到的疑問</p>
         </div>
 
         <div class="row justify-center">
@@ -359,8 +376,8 @@
               color="white"
               label="聯絡我們"
               icon="contact_support"
-              @click="showContactDialog = true"
               class="cta-secondary-btn q-px-xl"
+              @click="showContactDialog = true"
             />
           </div>
         </div>
@@ -461,7 +478,8 @@ const benefits = [
   {
     icon: 'payments',
     title: '彈性收入',
-    description: '彈性安排工作時間，依服務時數獲得合理報酬，月收入可達 50,000 元以上',
+    description:
+      '彈性安排工作時間，依服務時數獲得合理報酬，月收入可達 50,000 元以上',
     color: 'green',
   },
   {
@@ -554,36 +572,21 @@ const salaryPackages = [
     type: '居家照護',
     hourlyRate: '300-500',
     monthlyRange: '30,000-60,000',
-    benefits: [
-      '彈性工作時間',
-      '交通費補助',
-      '年終獎金',
-      '績效獎勵',
-    ],
+    benefits: ['彈性工作時間', '交通費補助', '年終獎金', '績效獎勵'],
     featured: false,
   },
   {
     type: '專業護理',
     hourlyRate: '500-800',
     monthlyRange: '50,000-80,000',
-    benefits: [
-      '護理師專業費',
-      '技術津貼',
-      '教育訓練補助',
-      '職業發展機會',
-    ],
+    benefits: ['護理師專業費', '技術津貼', '教育訓練補助', '職業發展機會'],
     featured: true,
   },
   {
     type: '長期陪伴',
     hourlyRate: '250-400',
     monthlyRange: '25,000-50,000',
-    benefits: [
-      '穩定案源',
-      '情感支持津貼',
-      '節日加給',
-      '服務認證',
-    ],
+    benefits: ['穩定案源', '情感支持津貼', '節日加給', '服務認證'],
     featured: false,
   },
 ]
@@ -592,27 +595,33 @@ const salaryPackages = [
 const faqs = [
   {
     question: '需要什麼資格才能申請？',
-    answer: '申請條件：年滿 20 歲、持有照護證照（護理師或照服員）、無犯罪紀錄、身心健康。歡迎有愛心耐心的專業人士加入。',
+    answer:
+      '申請條件：年滿 20 歲、持有照護證照（護理師或照服員）、無犯罪紀錄、身心健康。歡迎有愛心耐心的專業人士加入。',
   },
   {
     question: '工作時間如何安排？',
-    answer: '提供彈性工作安排，可自由設定服務時段。平台會推薦合適案件，您可自主選擇是否接受。',
+    answer:
+      '提供彈性工作安排，可自由設定服務時段。平台會推薦合適案件，您可自主選擇是否接受。',
   },
   {
     question: '薪資如何計算和發放？',
-    answer: '薪資按服務時數計算，每月底結算。透過銀行轉帳發放，通常月初 5 日前到帳，另有績效與年終獎金。',
+    answer:
+      '薪資按服務時數計算，每月底結算。透過銀行轉帳發放，通常月初 5 日前到帳，另有績效與年終獎金。',
   },
   {
     question: '如果遇到緊急狀況怎麼辦？',
-    answer: '提供 24 小時緊急支援熱線，遇緊急狀況可立即聯絡。平台備有完整處理流程指引與必要支援。',
+    answer:
+      '提供 24 小時緊急支援熱線，遇緊急狀況可立即聯絡。平台備有完整處理流程指引與必要支援。',
   },
   {
     question: '是否有提供保險？',
-    answer: '為所有照護員提供工作保險與責任險，保障工作安全。詳細保險內容於簽約時詳細說明。',
+    answer:
+      '為所有照護員提供工作保險與責任險，保障工作安全。詳細保險內容於簽約時詳細說明。',
   },
   {
     question: '培訓課程包含哪些內容？',
-    answer: '培訓涵蓋：基礎照護技能、平台操作、溝通技巧、緊急處理、法律規範。採線上授課，可彈性安排學習時間。',
+    answer:
+      '培訓涵蓋：基礎照護技能、平台操作、溝通技巧、緊急處理、法律規範。採線上授課，可彈性安排學習時間。',
   },
 ]
 
@@ -664,7 +673,8 @@ definePageMeta({
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.08"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.12"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.08"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.12"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>')
+    repeat;
   pointer-events: none;
 }
 
@@ -908,7 +918,11 @@ definePageMeta({
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(25, 118, 210, 0.02) 0%, rgba(66, 165, 245, 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(25, 118, 210, 0.02) 0%,
+    rgba(66, 165, 245, 0.02) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -1052,7 +1066,11 @@ definePageMeta({
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(25, 118, 210, 0.03) 0%, rgba(255, 193, 7, 0.03) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(25, 118, 210, 0.03) 0%,
+    rgba(255, 193, 7, 0.03) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -1247,7 +1265,8 @@ definePageMeta({
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -1265,7 +1284,8 @@ definePageMeta({
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -1278,15 +1298,15 @@ definePageMeta({
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.1rem;
   }
-  
+
   .hero-icon {
     size: 220px;
   }
-  
+
   .floating-icon {
     padding: 10px;
   }
@@ -1298,81 +1318,81 @@ definePageMeta({
     text-align: center;
     padding-top: 2rem;
   }
-  
+
   .hero-content {
     text-align: center;
     margin-bottom: 2rem;
   }
-  
+
   .hero-title {
     font-size: 2rem;
     line-height: 1.1;
   }
-  
+
   .hero-subtitle {
     font-size: 1rem;
     line-height: 1.5;
     margin-bottom: 1.5rem;
     padding: 0 0.5rem;
   }
-  
+
   .cta-buttons {
     flex-direction: column;
     align-items: center;
     gap: 0.75rem;
   }
-  
+
   .cta-buttons .q-btn {
     width: 100%;
     max-width: 280px;
   }
-  
+
   .hero-icon {
     size: 180px;
   }
-  
+
   .floating-icon {
     padding: 8px;
   }
-  
+
   .stats-grid {
     gap: 0.75rem;
   }
-  
+
   .stat-card {
     margin-bottom: 0.75rem;
     padding: 1rem 0.75rem;
   }
-  
+
   .benefits-grid {
     gap: 0.75rem;
   }
-  
+
   .benefit-card {
     margin-bottom: 0.75rem;
   }
-  
+
   .benefit-card .q-card-section {
     padding: 1.25rem 1rem;
   }
-  
+
   .benefit-description {
     font-size: 0.95rem;
     line-height: 1.5;
   }
-  
+
   .section-title {
     font-size: 1.8rem;
     line-height: 1.3;
     margin-bottom: 1rem;
   }
-  
+
   .section-subtitle {
     font-size: 1rem;
     line-height: 1.5;
     padding: 0 0.5rem;
   }
-  
+
   .container {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -1384,86 +1404,86 @@ definePageMeta({
     min-height: 60vh;
     padding-top: 1rem;
   }
-  
+
   .hero-content {
     padding: 0 0.5rem;
   }
-  
+
   .hero-title {
     font-size: 1.75rem;
   }
-  
+
   .hero-subtitle {
     font-size: 0.95rem;
     line-height: 1.4;
     padding: 0 0.25rem;
   }
-  
+
   .hero-icon {
     size: 140px;
   }
-  
+
   .floating-elements {
     display: none;
   }
-  
+
   .cta-buttons .q-btn {
     padding: 12px 24px;
     font-size: 0.9rem;
   }
-  
+
   .stat-value {
     font-size: 1.8rem;
   }
-  
+
   .stat-label {
     font-size: 0.9rem;
   }
-  
+
   .section-title {
     font-size: 1.6rem;
     line-height: 1.2;
     padding: 0 0.5rem;
   }
-  
+
   .section-subtitle {
     font-size: 0.95rem;
     padding: 0 0.25rem;
   }
-  
+
   .benefit-title {
     font-size: 1.1rem;
     line-height: 1.3;
     margin-bottom: 0.75rem;
   }
-  
+
   .benefit-description {
     font-size: 0.9rem;
     line-height: 1.4;
   }
-  
+
   .container {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
   }
-  
+
   .q-pa-xl {
     padding: 1.5rem;
   }
-  
+
   .q-py-xl {
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
   }
-  
+
   .process-stepper .q-stepper__step-inner {
     padding: 1.25rem;
   }
-  
+
   .salary-card .q-card-section {
     padding: 1.25rem 1rem;
   }
-  
+
   .faq-item .q-expansion-item__content {
     padding: 1rem;
   }
@@ -1516,7 +1536,7 @@ definePageMeta({
   .salary-card {
     border-width: 2px;
   }
-  
+
   .hero-section {
     background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%);
   }

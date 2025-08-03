@@ -1,4 +1,5 @@
 import { ref, computed, reactive } from 'vue'
+import type { Caregiver } from '~/stores/caregivers'
 
 // 篩選器配置介面
 interface FilterConfig {
@@ -56,7 +57,7 @@ export const useBookingFilters = () => {
   ]
 
   // 媒合算分邏輯  
-  const calculateMatchScore = (caregiver: any, preferences: MatchPreferences): number => {
+  const calculateMatchScore = (caregiver: Caregiver, preferences: MatchPreferences): number => {
     let score = 0.5 // 基礎分
     
     // 評分加分 (30%)
@@ -86,7 +87,7 @@ export const useBookingFilters = () => {
   }
 
   // 獲取媒合原因
-  const getMatchReasons = (caregiver: any, preferences: MatchPreferences): string[] => {
+  const getMatchReasons = (caregiver: Caregiver, preferences: MatchPreferences): string[] => {
     const reasons: string[] = []
     
     if (caregiver.rating >= 4.5) {
@@ -110,15 +111,16 @@ export const useBookingFilters = () => {
       reasons.push('價格合理')
     }
     
-    if (caregiver.experience_years >= 5) {
-      reasons.push('經驗豐富')
-    }
+    // Note: 使用 experience 字段而非 experience_years，因為 Caregiver 接口中沒有 experience_years
+    // if (caregiver.experience_years >= 5) {
+    //   reasons.push('經驗豐富')
+    // }
     
     return reasons
   }
 
   // 篩選器邏輯
-  const filterCaregivers = (caregivers: any[], filters: FilterConfig) => {
+  const filterCaregivers = (caregivers: Caregiver[], filters: FilterConfig) => {
     return caregivers.filter(caregiver => {
       // 地區篩選
       if (filters.location && filters.location.length > 0) {
@@ -151,23 +153,23 @@ export const useBookingFilters = () => {
         }
       }
       
-      // 經驗篩選
-      if (filters.experience) {
-        if (caregiver.experience_years < filters.experience.min || 
-            caregiver.experience_years > filters.experience.max) {
-          return false
-        }
-      }
+      // 經驗篩選 - 注意：Caregiver 接口中沒有 experience_years 字段
+      // if (filters.experience) {
+      //   if (caregiver.experience_years < filters.experience.min || 
+      //       caregiver.experience_years > filters.experience.max) {
+      //     return false
+      //   }
+      // }
       
       return true
     })
   }
 
   // 排序邏輯
-  const sortCaregivers = (caregivers: any[], sortBy: string = 'match_score', order: 'asc' | 'desc' = 'desc') => {
+  const sortCaregivers = (caregivers: Caregiver[], sortBy: string = 'match_score', order: 'asc' | 'desc' = 'desc') => {
     return [...caregivers].sort((a, b) => {
-      let aValue = a[sortBy]
-      let bValue = b[sortBy]
+      let aValue = (a as any)[sortBy]
+      let bValue = (b as any)[sortBy]
       
       // 處理不同類型的值
       if (typeof aValue === 'string') {

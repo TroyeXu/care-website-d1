@@ -194,7 +194,8 @@ const form = ref({
     name: '',
     age: 0,
     gender: '',
-    emergencyContact: ''
+    emergencyContact: '',
+    medicalConditions: [] as string[]
   }
 })
 

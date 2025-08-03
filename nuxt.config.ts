@@ -50,19 +50,19 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
     defaultLocale: 'zh',
     locales: [
-      { 
-        code: 'en', 
-        language: 'en', 
-        file: 'en.json', 
+      {
+        code: 'en',
+        language: 'en',
+        file: 'en.json',
         name: 'English',
-        iso: 'en'
+        iso: 'en',
       },
-      { 
-        code: 'zh', 
-        language: 'zh-TW', 
-        file: 'zh.json', 
+      {
+        code: 'zh',
+        language: 'zh-TW',
+        file: 'zh.json',
         name: '中文',
-        iso: 'zh-TW'
+        iso: 'zh-TW',
       },
     ],
     lazy: true,

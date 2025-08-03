@@ -558,7 +558,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      children: JSON.stringify({
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'SearchResultsPage',
         name: '智能媒合 - 護理服務平台',

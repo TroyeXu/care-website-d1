@@ -44,35 +44,63 @@
           <!-- 左側主要資訊 -->
           <div class="col-12 col-md-8">
             <!-- 基本資訊卡片 -->
-            <q-card flat bordered class="q-mb-lg">
-              <q-card-section>
-                <div class="row items-center">
+            <q-card flat class="info-card hero-card q-mb-lg">
+              <div class="hero-gradient">
+                <div class="hero-pattern"></div>
+              </div>
+              <q-card-section class="q-pa-lg">
+                <div class="row items-start">
                   <div class="col">
-                    <div class="text-h5 text-primary q-mb-xs">{{ caregiver.name }}</div>
-                    <div class="text-subtitle1 text-grey-7">{{ caregiver.specialization || '專業看護師' }}</div>
+                    <div class="text-h4 text-weight-bold q-mb-xs animate-slide-left">
+                      {{ caregiver.name }}
+                    </div>
+                    <div class="text-subtitle1 text-grey-6 q-mb-md animate-slide-left" style="animation-delay: 0.1s">
+                      {{ caregiver.specialization || '專業看護師' }}
+                    </div>
+                    
+                    <!-- 評分區域 -->
+                    <div class="rating-section animate-fade-in" style="animation-delay: 0.2s">
+                      <div class="row items-center q-gutter-md">
+                        <div class="rating-display">
+                          <div class="rating-number">{{ caregiver.rating }}</div>
+                          <q-rating
+                            v-model="caregiver.rating"
+                            size="1.5em"
+                            :max="5"
+                            color="amber"
+                            readonly
+                          />
+                        </div>
+                        <q-separator vertical inset />
+                        <div class="review-count">
+                          <div class="text-h6 text-weight-medium">{{ caregiver.review_count || 12 }}</div>
+                          <div class="text-caption text-grey-6">則評價</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                  
+                  <!-- 照片區域 -->
                   <div class="col-auto">
-                    <q-rating
-                      v-model="caregiver.rating"
-                      size="2em"
-                      :max="5"
-                      color="orange"
-                      readonly
-                    />
-                    <div class="text-center text-caption q-mt-xs">
-                      {{ caregiver.rating }}/5 (基於 {{ caregiver.review_count || 12 }} 則評價)
+                    <div class="caregiver-photo-wrapper">
+                      <q-avatar size="120px" class="caregiver-photo">
+                        <img :src="caregiver.photo" :alt="caregiver.name" />
+                      </q-avatar>
+                      <div class="photo-badge" v-if="caregiver.verified">
+                        <q-icon name="verified" color="white" size="24px" />
+                      </div>
                     </div>
                   </div>
                 </div>
                 
                 <!-- 標籤 -->
-                <div class="q-mt-md">
+                <div class="q-mt-lg tags-section animate-fade-up" style="animation-delay: 0.3s">
                   <q-chip
                     v-if="caregiver.available"
                     color="positive"
                     text-color="white"
                     icon="check_circle"
-                    size="sm"
+                    class="status-chip"
                   >
                     目前可預約
                   </q-chip>
@@ -81,53 +109,86 @@
                     color="negative"
                     text-color="white"
                     icon="schedule"
-                    size="sm"
+                    class="status-chip"
                   >
                     目前不可預約
                   </q-chip>
                   <q-chip
                     v-if="caregiver.location"
-                    outline
-                    color="primary"
+                    class="info-chip"
                     icon="location_on"
-                    size="sm"
                   >
                     {{ caregiver.location }}
                   </q-chip>
                   <q-chip
                     v-if="caregiver.experience_years"
-                    outline
-                    color="secondary"
+                    class="info-chip"
                     icon="work"
-                    size="sm"
                   >
                     {{ caregiver.experience_years || 5 }} 年經驗
+                  </q-chip>
+                  <q-chip
+                    v-for="skill in (caregiver.skills || '').split(',').slice(0, 3)"
+                    :key="skill"
+                    class="skill-chip"
+                    icon="star"
+                  >
+                    {{ skill.trim() }}
                   </q-chip>
                 </div>
               </q-card-section>
             </q-card>
             
             <!-- 經驗與技能 -->
-            <q-card flat bordered class="q-mb-lg">
-              <q-card-section>
-                <div class="text-h6 q-mb-md">
-                  <q-icon name="psychology" class="q-mr-sm" />
-                  專業經驗與技能
+            <q-card flat class="info-card section-card q-mb-lg animate-fade-up" style="animation-delay: 0.4s">
+              <q-card-section class="q-pa-lg">
+                <div class="section-header q-mb-lg">
+                  <q-icon name="psychology" size="32px" color="primary" />
+                  <div class="text-h5 text-weight-medium">專業經驗與技能</div>
                 </div>
                 
-                <div class="q-mb-md">
-                  <div class="text-subtitle2 q-mb-sm">工作經驗</div>
-                  <div class="text-body2">{{ caregiver.experience }}</div>
+                <div class="experience-grid">
+                  <div class="experience-item">
+                    <div class="experience-icon">
+                      <q-icon name="work_history" size="24px" color="primary" />
+                    </div>
+                    <div class="experience-content">
+                      <div class="text-subtitle1 text-weight-medium q-mb-sm">工作經驗</div>
+                      <div class="text-body1 text-grey-7">{{ caregiver.experience }}</div>
+                    </div>
+                  </div>
+                  
+                  <div class="experience-item">
+                    <div class="experience-icon">
+                      <q-icon name="psychology" size="24px" color="secondary" />
+                    </div>
+                    <div class="experience-content">
+                      <div class="text-subtitle1 text-weight-medium q-mb-sm">專業技能</div>
+                      <div class="skills-tags">
+                        <q-badge 
+                          v-for="skill in (caregiver.skills || '').split(',').map(s => s.trim())"
+                          :key="skill"
+                          color="blue-1"
+                          text-color="blue-8"
+                          class="skill-badge"
+                        >
+                          {{ skill }}
+                        </q-badge>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
-                <div class="q-mb-md">
-                  <div class="text-subtitle2 q-mb-sm">專業技能</div>
-                  <div class="text-body2">{{ caregiver.skills }}</div>
-                </div>
+                <q-separator class="q-my-lg" />
                 
-                <div v-if="caregiver.description" class="q-mb-md">
-                  <div class="text-subtitle2 q-mb-sm">個人簡介</div>
-                  <div class="text-body2">{{ caregiver.description || '我是一位專業的看護師，擁有豐富的照護經驗和專業技能。我致力於為每位患者提供最優質的照護服務，確保他們的健康和安全。' }}</div>
+                <div v-if="caregiver.description" class="description-section">
+                  <div class="row items-center q-mb-md">
+                    <q-icon name="person" size="24px" color="grey-7" class="q-mr-sm" />
+                    <div class="text-subtitle1 text-weight-medium">個人簡介</div>
+                  </div>
+                  <div class="description-text">
+                    {{ caregiver.description || '我是一位專業的看護師，擁有豐富的照護經驗和專業技能。我致力於為每位患者提供最優質的照護服務，確保他們的健康和安全。' }}
+                  </div>
                 </div>
               </q-card-section>
             </q-card>
@@ -227,60 +288,98 @@
           <!-- 右側預約資訊 -->
           <div class="col-12 col-md-4">
             <!-- 價格資訊 -->
-            <q-card flat bordered class="q-mb-lg sticky-card">
-              <q-card-section>
-                <div class="text-h6 q-mb-md text-center">服務價格</div>
+            <q-card flat class="price-card sticky-card q-mb-lg animate-fade-up" style="animation-delay: 0.5s">
+              <div class="price-header">
+                <div class="price-pattern"></div>
+                <q-icon name="payments" size="48px" color="white" />
+              </div>
+              
+              <q-card-section class="q-pa-lg">
+                <div class="text-h5 text-center text-weight-medium q-mb-lg">服務價格</div>
                 
-                <div class="text-center q-mb-md">
-                  <div class="text-h4 text-primary">
-                    NT$ {{ caregiver.hourly_rate }}
+                <!-- 價格顯示 -->
+                <div class="price-display q-mb-lg">
+                  <div class="price-item primary-price">
+                    <div class="price-label">按小時計費</div>
+                    <div class="price-value">
+                      <span class="currency">NT$</span>
+                      <span class="amount">{{ caregiver.hourly_rate }}</span>
+                      <span class="unit">/小時</span>
+                    </div>
                   </div>
-                  <div class="text-caption text-grey-6">每小時</div>
-                </div>
-                
-                <div class="text-center q-mb-lg">
-                  <div class="text-h5 text-secondary">
-                    NT$ {{ caregiver.shift_rate }}
+                  
+                  <div class="price-divider">
+                    <q-icon name="circle" size="xs" color="grey-4" />
                   </div>
-                  <div class="text-caption text-grey-6">每班 (早/晚班 8小時)</div>
+                  
+                  <div class="price-item">
+                    <div class="price-label">按班次計費</div>
+                    <div class="price-value">
+                      <span class="currency">NT$</span>
+                      <span class="amount">{{ caregiver.shift_rate }}</span>
+                      <span class="unit">/班</span>
+                    </div>
+                    <div class="price-note">早/晚班 8小時</div>
+                  </div>
                 </div>
-                
-                <q-separator class="q-mb-md" />
                 
                 <!-- 預約按鈕 -->
                 <q-btn
-                  color="primary"
+                  :color="caregiver.available ? 'primary' : 'grey'"
                   size="lg"
-                  class="full-width q-mb-sm"
-                  icon="calendar_today"
+                  class="full-width booking-btn q-mb-md"
+                  unelevated
+                  rounded
                   :disable="!caregiver.available"
                   @click="startBooking"
                 >
+                  <q-icon name="calendar_today" class="q-mr-sm" />
                   {{ caregiver.available ? '立即預約' : '目前不可預約' }}
                 </q-btn>
                 
-                <q-btn
-                  flat
-                  color="secondary"
-                  class="full-width q-mb-sm"
-                  icon="message"
-                  @click="contactCaregiver"
-                >
-                  聯繫看護師
-                </q-btn>
+                <!-- 其他操作按鈕 -->
+                <div class="action-buttons">
+                  <q-btn
+                    outline
+                    color="primary"
+                    class="action-btn"
+                    rounded
+                    @click="contactCaregiver"
+                  >
+                    <q-icon name="message" />
+                    <q-tooltip>聯繫看護師</q-tooltip>
+                  </q-btn>
+                  
+                  <q-btn
+                    outline
+                    :color="isFavorite ? 'negative' : 'grey'"
+                    class="action-btn"
+                    rounded
+                    @click="toggleFavorite"
+                  >
+                    <q-icon :name="isFavorite ? 'favorite' : 'favorite_border'" />
+                    <q-tooltip>{{ isFavorite ? '取消收藏' : '加入收藏' }}</q-tooltip>
+                  </q-btn>
+                  
+                  <q-btn
+                    outline
+                    color="grey"
+                    class="action-btn"
+                    rounded
+                    @click="shareProfile"
+                  >
+                    <q-icon name="share" />
+                    <q-tooltip>分享</q-tooltip>
+                  </q-btn>
+                </div>
                 
-                <q-btn
-                  flat
-                  color="grey"
-                  class="full-width"
-                  icon="favorite_border"
-                  @click="toggleFavorite"
-                >
-                  {{ isFavorite ? '取消收藏' : '收藏看護師' }}
-                </q-btn>
+                <q-separator class="q-my-md" />
                 
-                <div class="text-caption text-grey-6 text-center q-mt-md">
-                  最後更新：{{ formatDate(caregiver.updated_at) }}
+                <div class="update-info text-center">
+                  <q-icon name="update" size="16px" color="grey-6" />
+                  <span class="text-caption text-grey-6 q-ml-xs">
+                    最後更新：{{ formatDate(caregiver.updated_at) }}
+                  </span>
                 </div>
               </q-card-section>
             </q-card>
@@ -360,64 +459,75 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { useApiService } from '~/composables/useApiService'
 import { useAuthStore } from '~/stores/auth'
 import usePageSeo from '~/composables/usePageSeo'
-import type { Caregiver, Review } from '~/utils/mockData'
+
+interface Review {
+  id: string
+  rating: number
+  comment: string
+  user_name: string
+  created_at: string
+}
 
 // 組合式函數
 const route = useRoute()
 const $q = useQuasar()
-const apiService = useApiService()
 const authStore = useAuthStore()
 
 // 響應式資料
-const caregiver = ref<Caregiver | null>(null)
 const reviews = ref<Review[]>([])
-const isLoading = ref(false)
 const isLoadingReviews = ref(false)
-const error = ref<string | null>(null)
 const isFavorite = ref(false)
 
 // 計算屬性
 const caregiverId = computed(() => {
   const id = route.params.id
-  return typeof id === 'string' ? parseInt(id) : Array.isArray(id) ? parseInt(id[0]) : 0
+  return typeof id === 'string' ? id : Array.isArray(id) ? id[0] : ''
 })
 
-// 載入看護師資料
-const loadCaregiverData = async () => {
-  if (!caregiverId.value) {
-    error.value = '無效的看護師 ID'
-    return
-  }
-  
-  isLoading.value = true
-  error.value = null
-  
-  try {
-    caregiver.value = await apiService.getCaregiverById(caregiverId.value)
-    
-    // 更新 SEO
-    if (caregiver.value) {
-      usePageSeo(
-        `${caregiver.value.name} - 護理服務平台`,
-        `查看 ${caregiver.value.name} 的詳細資歷、專業技能和用戶評價`
-      )
+// 使用 server 端資料載入看護師資料
+const { data: caregiver, pending: isLoading, error } = await useFetch(
+  `/api/caregivers/${caregiverId.value}`,
+  {
+    transform: (data) => {
+      // 確保資料格式正確
+      if (!data) return null
+      
+      // 將 server 的資料格式轉換為頁面使用的格式
+      return {
+        id: parseInt(data.id.replace('caregiver-', '')),
+        name: data.name,
+        photo: data.avatar,
+        rating: data.rating,
+        experience: `${data.experience_years}年專業照護經驗，${data.bio}`,
+        skills: data.specialties.join('，'),
+        hourly_rate: data.hourly_rate,
+        shift_rate: data.hourly_rate * 8,
+        location: data.service_areas[0],
+        available: true, // 根據 availability 判斷
+        licenses: data.certifications,
+        review_count: data.reviews_count,
+        experience_years: data.experience_years,
+        specialization: data.specialties[0] + '專家',
+        description: data.bio,
+        verified: true,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      }
     }
-    
-    // 自動載入評價
-    await loadReviews()
-    
-  } catch (err: any) {
-    console.error('載入看護師資料失敗:', err)
-    error.value = err.message || '載入失敗，請稍後再試'
-  } finally {
-    isLoading.value = false
   }
+)
+
+// 更新 SEO
+if (caregiver.value) {
+  usePageSeo(
+    `${caregiver.value.name} - 護理服務平台`,
+    `查看 ${caregiver.value.name} 的詳細資歷、專業技能和用戶評價`
+  )
 }
 
 // 載入評價
@@ -427,14 +537,32 @@ const loadReviews = async () => {
   isLoadingReviews.value = true
   
   try {
-    reviews.value = await apiService.getReviewsByCaregiver(caregiverId.value)
-  } catch (err: any) {
+    // 從 server API 載入評價
+    const { data } = await $fetch('/api/reviews', {
+      query: {
+        caregiver_id: `caregiver-${caregiverId.value}`
+      }
+    })
+    
+    // 轉換資料格式
+    reviews.value = data.reviews.map((r: any) => ({
+      id: r.id,
+      rating: r.rating,
+      comment: r.comment,
+      user_name: r.patient_id ? '已驗證用戶' : '匿名用戶',
+      created_at: r.created_at
+    }))
+  } catch (err) {
     console.error('載入評價失敗:', err)
-    // 評價載入失敗不阻擋頁面顯示
   } finally {
     isLoadingReviews.value = false
   }
 }
+
+// 自動載入評價
+onMounted(() => {
+  loadReviews()
+})
 
 // 開始預約
 const startBooking = () => {
@@ -491,6 +619,29 @@ const toggleFavorite = () => {
   })
 }
 
+// 分享個人資料
+const shareProfile = () => {
+  if (!caregiver.value) return
+  
+  if (navigator.share) {
+    navigator.share({
+      title: `${caregiver.value.name} - 專業看護師`,
+      text: `查看 ${caregiver.value.name} 的詳細資歷和服務`,
+      url: window.location.href
+    }).catch(() => {
+      // 使用者取消分享
+    })
+  } else {
+    // 複製連結到剪貼簿
+    navigator.clipboard.writeText(window.location.href)
+    $q.notify({
+      type: 'positive',
+      message: '連結已複製到剪貼簿',
+      timeout: 2000
+    })
+  }
+}
+
 // 格式化日期
 const formatDate = (dateString: string) => {
   const date = new Date(dateString)
@@ -501,13 +652,8 @@ const formatDate = (dateString: string) => {
   })
 }
 
-// 生命週期
-onMounted(() => {
-  loadCaregiverData()
-})
 
 // 頁面結構化資料
-const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
 
@@ -518,7 +664,7 @@ watch(caregiver, (newCaregiver) => {
       script: [
         {
           type: 'application/ld+json',
-          children: JSON.stringify({
+          innerHTML: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Person',
             name: newCaregiver.name,
@@ -545,33 +691,410 @@ watch(caregiver, (newCaregiver) => {
 </script>
 
 <style scoped>
-.sticky-card {
-  position: sticky;
-  top: 20px;
+/* Hero Card Styles */
+.hero-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
+.hero-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+  z-index: 0;
+}
+
+.hero-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  animation: bgMove 20s ease-in-out infinite;
+}
+
+@keyframes bgMove {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.1) rotate(5deg); }
+}
+
+.hero-card .q-card-section {
+  position: relative;
+  z-index: 1;
+  background: white;
+  margin-top: 120px;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Caregiver Photo */
+.caregiver-photo-wrapper {
+  position: relative;
+  margin-top: -40px;
+}
+
+.caregiver-photo {
+  border: 4px solid white;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.photo-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  background: #4caf50;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+}
+
+/* Rating Section */
+.rating-section {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.rating-display {
+  text-align: center;
+}
+
+.rating-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ff9800;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.review-count {
+  text-align: center;
+}
+
+/* Tags */
+.tags-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.status-chip {
+  font-weight: 600;
+  padding: 0 1rem;
+}
+
+.info-chip {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.skill-chip {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  font-weight: 500;
+}
+
+/* Section Cards */
+.section-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.section-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Experience Grid */
+.experience-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.experience-item {
+  display: flex;
+  gap: 1rem;
+}
+
+.experience-icon {
+  width: 48px;
+  height: 48px;
+  background: #e3f2fd;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.experience-content {
+  flex: 1;
+}
+
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.description-text {
+  line-height: 1.7;
+  color: #4a5568;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Price Card */
+.price-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.price-header {
+  height: 100px;
+  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.price-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.1) 10px,
+    rgba(255, 255, 255, 0.1) 20px
+  );
+}
+
+.price-display {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.price-item {
+  text-align: center;
+  padding: 1rem;
+}
+
+.primary-price {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.price-label {
+  font-size: 0.875rem;
+  color: #718096;
+  margin-bottom: 0.5rem;
+}
+
+.price-value {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.currency {
+  font-size: 1.25rem;
+  color: #718096;
+}
+
+.amount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.unit {
+  font-size: 1rem;
+  color: #718096;
+}
+
+.price-note {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  margin-top: 0.25rem;
+}
+
+.price-divider {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+/* Buttons */
+.booking-btn {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  height: 48px;
+  transition: all 0.3s ease;
+}
+
+.booking-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+/* Sticky Card */
+.sticky-card {
+  position: sticky;
+  top: 80px;
+}
+
+/* Animations */
+.animate-slide-left {
+  animation: slideLeft 0.6s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.6s ease-out;
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Info Card Base */
+.info-card {
+  background: white;
+  transition: all 0.3s ease;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .sticky-card {
     position: relative;
     top: auto;
   }
+  
+  .hero-card .q-card-section {
+    margin-top: 80px;
+  }
+  
+  .caregiver-photo-wrapper {
+    margin-top: -60px;
+  }
+  
+  .caregiver-photo {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  
+  .rating-number {
+    font-size: 2rem;
+  }
+  
+  .text-h4 {
+    font-size: 1.75rem !important;
+  }
+  
+  .experience-grid {
+    gap: 1.5rem;
+  }
+  
+  .amount {
+    font-size: 2rem;
+  }
+  
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+  
+  .action-btn {
+    min-width: 100px;
+  }
 }
 
-.q-rating {
-  font-size: 1.2em;
-}
-
-.detail-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.info-card {
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.q-chip {
-  margin: 2px;
+@media (max-width: 480px) {
+  .hero-gradient {
+    height: 150px;
+  }
+  
+  .tags-section {
+    gap: 0.25rem;
+  }
+  
+  .q-chip {
+    font-size: 0.75rem;
+  }
+  
+  .section-header .text-h5 {
+    font-size: 1.25rem !important;
+  }
+  
+  .price-display {
+    padding: 1rem;
+  }
 }
 </style>

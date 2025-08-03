@@ -363,7 +363,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      children: JSON.stringify({
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'SearchResultsPage',
         name: '搜尋看護師 - 護理服務平台',

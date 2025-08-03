@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
       id: `caregiver-${Date.now()}`,
       user_id: createdUser.id,
       name: createdUser.name,
-      avatar: createdUser.avatar,
+      avatar: createdUser.avatar || '',
       rating: 0,
       reviews_count: 0,
       hourly_rate: 300,
@@ -59,7 +59,9 @@ export default defineEventHandler(async (event) => {
       phone: createdUser.phone,
       role: createdUser.role,
       avatar: createdUser.avatar,
-      profile: createdUser.profile
+      profile: createdUser.profile,
+      created_at: createdUser.created_at,
+      updated_at: createdUser.updated_at
     },
     token: `mock-token-${createdUser.id}-${Date.now()}`
   }

@@ -269,7 +269,7 @@
                   flat
                   no-caps
                   class="faq-btn"
-                  @click="navigateTo('/content/blog')"
+                  @click="() => navigateTo('/content/blog')"
                 >
                   <div class="faq-content">
                     <div class="faq-icon">
@@ -286,7 +286,7 @@
                   flat
                   no-caps
                   class="faq-btn"
-                  @click="navigateTo('/info/pricing')"
+                  @click="() => navigateTo('/info/pricing')"
                 >
                   <div class="faq-content">
                     <div class="faq-icon">
@@ -401,7 +401,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      children: JSON.stringify({
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'ContactPage',
         name: '聯繫我們 - 護理服務平台',

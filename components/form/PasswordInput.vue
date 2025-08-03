@@ -1,7 +1,9 @@
 <template>
   <Field :name="name" v-slot="{ field, errorMessage }">
     <q-input
-      v-bind="field"
+      v-bind="{ ...field, ...$attrs }"
+      :model-value="field.value"
+      @update:model-value="field['onUpdate:modelValue']"
       :label="label"
       :type="showPassword ? 'text' : 'password'"
       :placeholder="placeholder"
@@ -11,7 +13,6 @@
       dense
       :error="!!errorMessage"
       :error-message="errorMessage"
-      v-bind="$attrs"
     >
       <template #prepend>
         <q-icon name="lock" color="primary" />

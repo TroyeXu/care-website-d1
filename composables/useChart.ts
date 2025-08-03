@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 import {
   Chart as ChartJS,
   Title,
@@ -6,19 +6,34 @@ import {
   Legend,
   ArcElement,
   CategoryScale,
-  LinearScale
+  LinearScale,
+  type TooltipItem
 } from 'chart.js'
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Title, Tooltip, Legend)
 
-export default function useChart(calculations) {
+interface SelectedItem {
+  code: string
+  name: string
+  price: number
+  category: string
+  subCategory: string
+}
+
+interface ChartCalculations {
+  selectedItems: Ref<SelectedItem[]>
+  totalCost: Ref<number>
+  formatCurrency: (value: number) => string
+}
+
+export default function useChart(calculations: ChartCalculations) {
   const { selectedItems, totalCost, formatCurrency } = calculations
 
   const chartData = computed(() => {
     if (selectedItems.value.length === 0) {
       return { labels: [], datasets: [] }
     }
-    const subCategoryCosts = {}
+    const subCategoryCosts: Record<string, number> = {}
     selectedItems.value.forEach(item => {
       if (!subCategoryCosts[item.subCategory]) {
         subCategoryCosts[item.subCategory] = 0
@@ -26,7 +41,7 @@ export default function useChart(calculations) {
       subCategoryCosts[item.subCategory] += item.price
     })
     const labels = Object.keys(subCategoryCosts)
-    const data = labels.map(label => subCategoryCosts[label])
+    const data = labels.map(label => subCategoryCosts[label] || 0)
     const backgroundColors = ['#4A90E2', '#50C8B4', '#F5A623', '#D0021B', '#9013FE', '#BD10E0', '#7ED321']
     return { labels, datasets: [{ data, backgroundColor: backgroundColors.slice(0, labels.length), borderWidth: 0 }] }
   })
@@ -41,9 +56,9 @@ export default function useChart(calculations) {
       },
       tooltip: {
         callbacks: {
-          label: function (context) {
+          label: function (context: TooltipItem<'doughnut'>) {
             const label = context.label || ''
-            const value = context.raw || 0
+            const value = (context.raw as number) || 0
             const percentage = ((value / totalCost.value) * 100).toFixed(1)
             return `${label}: ${formatCurrency(value)} 元 (${percentage}%)`
           }
