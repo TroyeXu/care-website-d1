@@ -1,5 +1,5 @@
 -- 照護員表
-CREATE TABLE caregivers (
+CREATE TABLE IF NOT EXISTS caregivers (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   avatar TEXT,
@@ -13,7 +13,7 @@ CREATE TABLE caregivers (
 );
 
 -- 照護員證照表
-CREATE TABLE caregiver_certifications (
+CREATE TABLE IF NOT EXISTS caregiver_certifications (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   caregiver_id TEXT NOT NULL,
   certification TEXT NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE caregiver_certifications (
 );
 
 -- 照護員語言表
-CREATE TABLE caregiver_languages (
+CREATE TABLE IF NOT EXISTS caregiver_languages (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   caregiver_id TEXT NOT NULL,
   language TEXT NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE caregiver_languages (
 );
 
 -- 照護員專長表
-CREATE TABLE caregiver_specialties (
+CREATE TABLE IF NOT EXISTS caregiver_specialties (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   caregiver_id TEXT NOT NULL,
   specialty TEXT NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE caregiver_specialties (
 );
 
 -- 照護員服務區域表
-CREATE TABLE caregiver_service_areas (
+CREATE TABLE IF NOT EXISTS caregiver_service_areas (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   caregiver_id TEXT NOT NULL,
   area TEXT NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE caregiver_service_areas (
 );
 
 -- 預約記錄表
-CREATE TABLE bookings (
+CREATE TABLE IF NOT EXISTS bookings (
   id TEXT PRIMARY KEY,
   patient_name TEXT NOT NULL,
   patient_phone TEXT NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE bookings (
 );
 
 -- 評價表
-CREATE TABLE reviews (
+CREATE TABLE IF NOT EXISTS reviews (
   id TEXT PRIMARY KEY,
   booking_id TEXT NOT NULL,
   caregiver_id TEXT NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE reviews (
 );
 
 -- 建立索引以提升查詢效能
-CREATE INDEX idx_bookings_caregiver ON bookings(caregiver_id);
-CREATE INDEX idx_bookings_date ON bookings(service_date);
-CREATE INDEX idx_reviews_caregiver ON reviews(caregiver_id);
-CREATE INDEX idx_caregiver_rating ON caregivers(rating);
+CREATE INDEX IF NOT EXISTS idx_bookings_caregiver ON bookings(caregiver_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_date ON bookings(service_date);
+CREATE INDEX IF NOT EXISTS idx_reviews_caregiver ON reviews(caregiver_id);
+CREATE INDEX IF NOT EXISTS idx_caregiver_rating ON caregivers(rating);

@@ -65,12 +65,12 @@ jobs:
             wrangler d1 create care-platform-db
           fi
           
-          # 執行 schema
+          # 執行 schema（使用 --remote 在遠端資料庫執行）
           echo "Applying database schema..."
-          wrangler d1 execute care-platform-db --file=./database/schema.sql
+          wrangler d1 execute care-platform-db --file=./database/schema.sql --remote
           
-          # 執行 seed（僅在需要時）
+          # 執行 seed（僅在手動觸發時）
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "Seeding database..."
-            wrangler d1 execute care-platform-db --file=./database/seed.sql
+            wrangler d1 execute care-platform-db --file=./database/seed.sql --remote
           fi
