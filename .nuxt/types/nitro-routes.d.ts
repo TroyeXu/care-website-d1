@@ -5,7 +5,6 @@ declare module "nitropack/types" {
   interface InternalApi {
     '/api/bookings/:id': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/bookings/[id].get').default>>>>
-      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/bookings/[id].put').default>>>>
     }
     '/api/bookings': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/bookings/index.get').default>>>>
@@ -17,31 +16,8 @@ declare module "nitropack/types" {
     '/api/caregivers': {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/caregivers/index.get').default>>>>
     }
-    '/api/payments/:id': {
-      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/payments/[id].get').default>>>>
-    }
-    '/api/payments': {
-      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/payments/index.post').default>>>>
-    }
-    '/api/reviews': {
-      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/reviews/index.get').default>>>>
-      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/reviews/index.post').default>>>>
-    }
-    '/api/users/:id': {
-      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/[id].get').default>>>>
-      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/[id].put').default>>>>
-    }
-    '/api/users': {
-      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/users/index.get').default>>>>
-    }
     '/__nuxt_error': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/nuxt/dist/core/runtime/nitro/handlers/renderer').default>>>>
-    }
-    '/__site-config__/debug.json': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/nuxt-site-config/dist/runtime/nitro/routes/__site-config__/debug').default>>>>
-    }
-    '/__sitemap__/debug.json': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/@nuxtjs/sitemap/dist/runtime/nitro/routes/__sitemap__/debug').default>>>>
     }
     '/__sitemap__/style.xsl': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/@nuxtjs/sitemap/dist/runtime/nitro/routes/sitemap.xsl').default>>>>

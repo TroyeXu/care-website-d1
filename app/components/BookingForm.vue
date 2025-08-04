@@ -5,14 +5,14 @@
       <p v-if="caregiver">預約看護師：{{ caregiver.name }}</p>
     </div>
 
-    <form @submit.prevent="handleSubmit" class="booking-form-content">
+    <form class="booking-form-content" @submit.prevent="handleSubmit">
       <div class="form-section">
         <h3>服務類型</h3>
         <div class="radio-group">
           <label>
             <input
-              type="radio"
               v-model="form.serviceType"
+              type="radio"
               value="hourly"
               required
             />
@@ -20,8 +20,8 @@
           </label>
           <label>
             <input
-              type="radio"
               v-model="form.serviceType"
+              type="radio"
               value="shift"
               required
             />
@@ -36,8 +36,8 @@
           <div class="form-group">
             <label>開始日期</label>
             <input
-              type="date"
               v-model="form.startDate"
+              type="date"
               required
               :min="minDate"
             />
@@ -45,27 +45,19 @@
           <div class="form-group">
             <label>結束日期</label>
             <input
-              type="date"
               v-model="form.endDate"
+              type="date"
               required
               :min="form.startDate"
             />
           </div>
           <div class="form-group">
             <label>開始時間</label>
-            <input
-              type="time"
-              v-model="form.startTime"
-              required
-            />
+            <input v-model="form.startTime" type="time" required />
           </div>
-          <div class="form-group" v-if="form.serviceType === 'hourly'">
+          <div v-if="form.serviceType === 'hourly'" class="form-group">
             <label>結束時間</label>
-            <input
-              type="time"
-              v-model="form.endTime"
-              required
-            />
+            <input v-model="form.endTime" type="time" required />
           </div>
         </div>
       </div>
@@ -76,8 +68,8 @@
           <div class="form-group">
             <label>姓名</label>
             <input
-              type="text"
               v-model="form.patientInfo.name"
+              type="text"
               required
               placeholder="請輸入被照護者姓名"
             />
@@ -85,8 +77,8 @@
           <div class="form-group">
             <label>年齡</label>
             <input
-              type="number"
               v-model="form.patientInfo.age"
+              type="number"
               required
               min="1"
               max="120"
@@ -103,14 +95,14 @@
           <div class="form-group">
             <label>緊急聯絡人電話</label>
             <input
-              type="tel"
               v-model="form.patientInfo.emergencyContact"
+              type="tel"
               required
               placeholder="0912-345-678"
             />
           </div>
         </div>
-        
+
         <div class="form-group">
           <label>疾病史/特殊需求</label>
           <textarea
@@ -138,7 +130,9 @@
         <div class="cost-breakdown">
           <div class="cost-item">
             <span>預估總費用</span>
-            <span class="cost-value">NT$ {{ estimatedCost.toLocaleString() }}</span>
+            <span class="cost-value"
+              >NT$ {{ estimatedCost.toLocaleString() }}</span
+            >
           </div>
           <div class="cost-note">
             <small>*實際費用以最終確認為準</small>
@@ -147,7 +141,7 @@
       </div>
 
       <div class="form-actions">
-        <button type="button" @click="$emit('cancel')" class="btn-secondary">
+        <button type="button" class="btn-secondary" @click="$emit('cancel')">
           取消
         </button>
         <button type="submit" :disabled="isSubmitting" class="btn-primary">
@@ -164,7 +158,7 @@ import { useBookingStore } from '~/stores/bookings'
 import { useCaregiverStore } from '~/stores/caregivers'
 
 interface Props {
-  caregiverId?: number
+  caregiverId?: string
 }
 
 const props = defineProps<Props>()
@@ -176,9 +170,17 @@ const emit = defineEmits<{
 const bookingStore = useBookingStore()
 const caregiverStore = useCaregiverStore()
 
-const caregiver = computed(() => 
-  props.caregiverId ? caregiverStore.getCaregiverById(props.caregiverId) : null
-)
+const caregiver = computed(() => {
+  const c = props.caregiverId
+    ? caregiverStore.getCaregiverById(props.caregiverId)
+    : null
+  if (!c) return null
+  // 添加 shift_rate 屬性
+  return {
+    ...c,
+    shift_rate: c.hourly_rate * 12, // 假設12小時班
+  }
+})
 
 const isSubmitting = ref(false)
 const medicalConditionsText = ref('')
@@ -195,8 +197,8 @@ const form = ref({
     age: 0,
     gender: '',
     emergencyContact: '',
-    medicalConditions: [] as string[]
-  }
+    medicalConditions: [] as string[],
+  },
 })
 
 const minDate = computed(() => {
@@ -211,7 +213,10 @@ const estimatedCost = computed(() => {
 
   const startDate = new Date(form.value.startDate)
   const endDate = new Date(form.value.endDate || form.value.startDate)
-  const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
+  const days =
+    Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+    ) + 1
 
   if (form.value.serviceType === 'hourly' && form.value.endTime) {
     const startTime = new Date(`2000-01-01T${form.value.startTime}`)
@@ -225,21 +230,29 @@ const estimatedCost = computed(() => {
   return 0
 })
 
-watch(() => form.value.startDate, (newDate) => {
-  if (newDate && !form.value.endDate) {
-    form.value.endDate = newDate
-  }
-})
+watch(
+  () => form.value.startDate,
+  (newDate) => {
+    if (newDate && !form.value.endDate) {
+      form.value.endDate = newDate
+    }
+  },
+)
 
-watch(() => form.value.serviceType, (newType) => {
-  if (newType === 'shift') {
-    form.value.endTime = ''
-  }
-})
+watch(
+  () => form.value.serviceType,
+  (newType) => {
+    if (newType === 'shift') {
+      form.value.endTime = ''
+    }
+  },
+)
 
 watch(medicalConditionsText, (newValue) => {
   // 將文字轉換為陣列
-  const conditions = newValue.split('\n').filter(condition => condition.trim())
+  const conditions = newValue
+    .split('\n')
+    .filter((condition) => condition.trim())
   form.value.patientInfo.medicalConditions = conditions
 })
 
@@ -250,7 +263,7 @@ const handleSubmit = async () => {
 
   try {
     const bookingData = {
-      caregiver_id: caregiver.value.id,
+      caregiver_id: parseInt(caregiver.value.id.replace('caregiver-', '')),
       user_id: 'user-001', // 暫時使用固定用戶ID
       service_type: form.value.serviceType,
       start_date: form.value.startDate,
@@ -262,12 +275,16 @@ const handleSubmit = async () => {
       status: 'pending' as const,
       patient_info: {
         ...form.value.patientInfo,
-        medicalConditions: medicalConditionsText.value.split('\n').filter(condition => condition.trim())
-      }
+        medicalConditions: medicalConditionsText.value
+          .split('\n')
+          .filter((condition) => condition.trim()),
+      },
     }
 
     const newBooking = await bookingStore.createBooking(bookingData)
-    emit('success', newBooking.id)
+    if (newBooking && typeof newBooking === 'object' && 'id' in newBooking) {
+      emit('success', (newBooking as any).id)
+    }
   } catch (error) {
     console.error('預約失敗:', error)
     alert('預約失敗，請稍後再試')
@@ -447,16 +464,16 @@ const handleSubmit = async () => {
   .booking-form {
     padding: 16px;
   }
-  
+
   .date-time-grid,
   .patient-info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .radio-group {
     flex-direction: column;
     gap: 12px;

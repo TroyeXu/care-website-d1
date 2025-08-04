@@ -22,24 +22,14 @@
           />
         </div>
       </div>
-      
+
       <q-slide-transition>
         <div v-show="isExpanded">
           <slot :filters="filters" :update-filter="updateFilter" />
-          
+
           <div v-if="showActions" class="row justify-end q-gutter-sm q-mt-md">
-            <q-btn
-              flat
-              color="grey"
-              @click="resetFilters"
-            >
-              重設
-            </q-btn>
-            <q-btn
-              color="primary"
-              @click="applyFilters"
-              :loading="applying"
-            >
+            <q-btn flat color="grey" @click="resetFilters"> 重設 </q-btn>
+            <q-btn color="primary" :loading="applying" @click="applyFilters">
               套用篩選
             </q-btn>
           </div>
@@ -52,9 +42,19 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 
+// 定義篩選器值的類型
+type FilterValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | string[]
+  | number[]
+
 interface Props {
   title: string
-  modelValue: Record<string, any>
+  modelValue: Record<string, FilterValue>
   collapsible?: boolean
   expanded?: boolean
   showClear?: boolean
@@ -69,14 +69,14 @@ const props = withDefaults(defineProps<Props>(), {
   showClear: true,
   showActions: false,
   applying: false,
-  autoApply: true
+  autoApply: true,
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: Record<string, any>]
-  'apply': [filters: Record<string, any>]
-  'clear': []
-  'reset': []
+  'update:modelValue': [value: Record<string, FilterValue>]
+  apply: [filters: Record<string, FilterValue>]
+  clear: []
+  reset: []
 }>()
 
 // 響應式狀態
@@ -93,17 +93,17 @@ const panelClass = computed(() => {
 })
 
 const hasActiveFilters = computed(() => {
-  return Object.values(filters.value).some(value => {
+  return Object.values(filters.value).some((value) => {
     if (Array.isArray(value)) return value.length > 0
     return value !== null && value !== undefined && value !== ''
   })
 })
 
 // 方法
-const updateFilter = (key: string, value: any) => {
+const updateFilter = (key: string, value: FilterValue) => {
   filters.value[key] = value
   emit('update:modelValue', { ...filters.value })
-  
+
   if (props.autoApply) {
     emit('apply', { ...filters.value })
   }
@@ -114,15 +114,18 @@ const applyFilters = () => {
 }
 
 const clearFilters = () => {
-  const clearedFilters = Object.keys(filters.value).reduce((acc, key) => {
-    acc[key] = Array.isArray(filters.value[key]) ? [] : null
-    return acc
-  }, {} as Record<string, any>)
-  
+  const clearedFilters = Object.keys(filters.value).reduce(
+    (acc, key) => {
+      acc[key] = Array.isArray(filters.value[key]) ? [] : null
+      return acc
+    },
+    {} as Record<string, FilterValue>,
+  )
+
   filters.value = clearedFilters
   emit('update:modelValue', { ...filters.value })
   emit('clear')
-  
+
   if (props.autoApply) {
     emit('apply', { ...filters.value })
   }
@@ -138,9 +141,13 @@ const toggleExpanded = () => {
 }
 
 // 監聽外部變化
-watch(() => props.modelValue, (newValue) => {
-  filters.value = { ...newValue }
-}, { deep: true })
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    filters.value = { ...newValue }
+  },
+  { deep: true },
+)
 </script>
 
 <style scoped>

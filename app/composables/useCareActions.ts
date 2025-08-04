@@ -35,7 +35,11 @@ interface ParticleApi {
   createParticleExplosion: (x: number, y: number, color: string) => void
 }
 
-export default function useCareActions(state: State, calculations: Calculations, particleApi: ParticleApi) {
+export default function useCareActions(
+  state: State,
+  calculations: Calculations,
+  particleApi: ParticleApi,
+) {
   const {
     careItems,
     selectedHourlyItems,
@@ -48,37 +52,66 @@ export default function useCareActions(state: State, calculations: Calculations,
     isDoubleUrgent,
     hourCount,
     dayCount,
-    shiftDayCount
+    shiftDayCount,
   } = state
 
   const { createParticleExplosion } = particleApi
 
   function toggleItem(item: CareItem, event?: MouseEvent) {
-    const targetArray = selectedCategory.value === '鐘點制' ? selectedHourlyItems : selectedShiftItems
-    const index = targetArray.value.findIndex((i: CareItem) => i.code === item.code)
-    
+    const targetArray =
+      selectedCategory.value === '鐘點制'
+        ? selectedHourlyItems
+        : selectedShiftItems
+    const index = targetArray.value.findIndex(
+      (i: CareItem) => i.code === item.code,
+    )
+
     if (process.client && event) {
-      createParticleExplosion(event.clientX, event.clientY, item.color || 'primary')
+      createParticleExplosion(
+        event.clientX,
+        event.clientY,
+        item.color || 'primary',
+      )
     }
     if (index === -1) {
       targetArray.value.push(item)
       if (process.client) {
         const el = document.querySelector(`[data-code="${item.code}"]`)
         if (el) {
-          gsap.fromTo(el, { scale: 1, backgroundColor: 'rgba(76, 175, 80, 0.2)' }, { scale: 1, backgroundColor: 'rgba(25, 118, 210, 0.08)', duration: 0.5, ease: 'power1.out' })
+          gsap.fromTo(
+            el,
+            { scale: 1, backgroundColor: 'rgba(76, 175, 80, 0.2)' },
+            {
+              scale: 1,
+              backgroundColor: 'rgba(25, 118, 210, 0.08)',
+              duration: 0.5,
+              ease: 'power1.out',
+            },
+          )
         }
       }
     } else if (item.code !== 'HR01') {
       targetArray.value.splice(index, 1)
       const el = document.querySelector(`[data-code="${item.code}"]`)
       if (el) {
-        gsap.fromTo(el, { scale: 1, backgroundColor: 'rgba(255, 87, 34, 0.2)' }, { scale: 1, backgroundColor: 'transparent', duration: 0.5, ease: 'power1.out' })
+        gsap.fromTo(
+          el,
+          { scale: 1, backgroundColor: 'rgba(255, 87, 34, 0.2)' },
+          {
+            scale: 1,
+            backgroundColor: 'transparent',
+            duration: 0.5,
+            ease: 'power1.out',
+          },
+        )
       }
     }
   }
 
   function isSelected(item: CareItem) {
-    return calculations.selectedItems.value.some((i: CareItem) => i.code === item.code)
+    return calculations.selectedItems.value.some(
+      (i: CareItem) => i.code === item.code,
+    )
   }
 
   function selectShiftType(item: CareItem) {
@@ -86,7 +119,9 @@ export default function useCareActions(state: State, calculations: Calculations,
   }
 
   function resetSelections() {
-    selectedHourlyItems.value = careItems.value.filter((item: CareItem) => item.selectedByDefault && item.category === '鐘點制')
+    selectedHourlyItems.value = careItems.value.filter(
+      (item: CareItem) => item.selectedByDefault && item.category === '鐘點制',
+    )
     selectedShiftItems.value = []
     selectedShiftType.value = 'SH01'
     searchText.value = ''
@@ -101,7 +136,9 @@ export default function useCareActions(state: State, calculations: Calculations,
   function toggleAdditionalService(code: string) {
     const item = careItems.value.find((item: CareItem) => item.code === code)
     if (!item) return
-    const index = selectedHourlyItems.value.findIndex((i: CareItem) => i.code === code)
+    const index = selectedHourlyItems.value.findIndex(
+      (i: CareItem) => i.code === code,
+    )
     if (code === 'HR09') {
       if (isNightShift.value && index === -1) {
         selectedHourlyItems.value.push(item)
@@ -131,9 +168,15 @@ export default function useCareActions(state: State, calculations: Calculations,
     return item.color || 'primary'
   }
 
-  watch(isNightShift, () => { toggleAdditionalService('HR09') })
-  watch(isUrgent, () => { toggleAdditionalService('HR10') })
-  watch(isDoubleUrgent, () => { toggleAdditionalService('HR11') })
+  watch(isNightShift, () => {
+    toggleAdditionalService('HR09')
+  })
+  watch(isUrgent, () => {
+    toggleAdditionalService('HR10')
+  })
+  watch(isDoubleUrgent, () => {
+    toggleAdditionalService('HR11')
+  })
 
   return {
     toggleItem,
@@ -142,6 +185,6 @@ export default function useCareActions(state: State, calculations: Calculations,
     resetSelections,
     toggleAdditionalService,
     getItemIcon,
-    getItemColor
+    getItemColor,
   }
 }

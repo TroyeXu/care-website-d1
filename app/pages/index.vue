@@ -424,7 +424,7 @@ const { data: caregiversData } = await useFetch('/api/caregivers', {
 })
 
 const featuredCaregivers = computed(() => {
-  if (!caregiversData.value) return []
+  if (!caregiversData.value || !caregiversData.value.caregivers) return []
 
   // 轉換資料格式以符合頁面使用
   return caregiversData.value.caregivers.map((caregiver) => ({
@@ -434,7 +434,7 @@ const featuredCaregivers = computed(() => {
     rating: caregiver.rating,
     review_count: caregiver.reviews_count,
     experience: `${caregiver.experience_years}年經驗`,
-    location: caregiver.service_areas[0],
+    location: caregiver.service_areas?.[0] || '未設定',
     hourly_rate: caregiver.hourly_rate,
     available: true, // 根據 availability 判斷
   }))

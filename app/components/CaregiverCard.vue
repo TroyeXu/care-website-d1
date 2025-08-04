@@ -2,8 +2,8 @@
   <div class="caregiver-card" @click="$emit('select', caregiver)">
     <div class="card-header">
       <div class="avatar-section">
-        <img 
-          :src="caregiver.photo" 
+        <img
+          :src="caregiver.photo"
           :alt="caregiver.name"
           class="avatar"
           @error="handleImageError"
@@ -12,12 +12,17 @@
           {{ caregiver.available }}
         </div>
       </div>
-      
+
       <div class="basic-info">
         <h3 class="name">{{ caregiver.name }}</h3>
         <div class="rating">
           <div class="stars">
-            <span v-for="i in 5" :key="i" class="star" :class="{ filled: i <= Math.floor(caregiver.rating) }">
+            <span
+              v-for="i in 5"
+              :key="i"
+              class="star"
+              :class="{ filled: i <= Math.floor(caregiver.rating) }"
+            >
               ★
             </span>
           </div>
@@ -25,7 +30,7 @@
         </div>
         <p class="location">📍 {{ caregiver.location }}</p>
       </div>
-      
+
       <div class="pricing">
         <div class="price-item">
           <span class="label">時薪</span>
@@ -47,11 +52,7 @@
       <div class="skills">
         <h4>專業技能</h4>
         <div class="skills-tags">
-          <span 
-            v-for="skill in skillsArray" 
-            :key="skill" 
-            class="skill-tag"
-          >
+          <span v-for="skill in skillsArray" :key="skill" class="skill-tag">
             {{ skill }}
           </span>
         </div>
@@ -60,9 +61,9 @@
       <div class="licenses">
         <h4>專業證照</h4>
         <div class="licenses-list">
-          <span 
-            v-for="license in caregiver.licenses" 
-            :key="license" 
+          <span
+            v-for="license in caregiver.licenses"
+            :key="license"
             class="license-badge"
           >
             🏆 {{ license }}
@@ -78,15 +79,11 @@
 
     <div class="card-footer">
       <div class="actions">
-        <button 
-          type="button" 
-          class="btn-secondary"
-          @click.stop="goDetail"
-        >
+        <button type="button" class="btn-secondary" @click.stop="goDetail">
           查看詳情
         </button>
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="btn-primary"
           @click.stop="$emit('book', caregiver)"
         >
@@ -100,10 +97,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import type { Caregiver } from '~/stores/caregivers'
+import type { CaregiverDisplay } from '~/types/caregiver'
 
 interface Props {
-  caregiver: Caregiver
+  caregiver: CaregiverDisplay
   compact?: boolean
 }
 
@@ -111,23 +108,25 @@ const props = defineProps<Props>()
 const router = useRouter()
 
 const emit = defineEmits<{
-  select: [caregiver: Caregiver]
-  book: [caregiver: Caregiver]
+  select: [caregiver: CaregiverDisplay]
+  book: [caregiver: CaregiverDisplay]
 }>()
 
 const skillsArray = computed(() => {
-  return props.caregiver.skills.split('、').filter(skill => skill.trim())
+  return (
+    props.caregiver.skills?.split('、').filter((skill) => skill.trim()) || []
+  )
 })
 
 const availabilityClass = computed(() => {
   // 處理 available 可能是布林值或字串的情況
   const available = props.caregiver.available
-  
+
   if (typeof available === 'boolean') {
     return available ? 'available-full' : 'available-limited'
   }
-  
-  const availability = available.toLowerCase()
+
+  const availability = (available || '').toLowerCase()
   if (availability.includes('全天') || availability.includes('24')) {
     return 'available-full'
   } else if (availability.includes('週')) {
@@ -382,15 +381,15 @@ const goDetail = () => {
     gap: 12px;
     text-align: center;
   }
-  
+
   .pricing {
     text-align: center;
   }
-  
+
   .actions {
     flex-direction: column;
   }
-  
+
   .skills-tags {
     justify-content: center;
   }

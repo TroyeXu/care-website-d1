@@ -15,7 +15,7 @@
     >
       <slot>{{ label }}</slot>
     </q-btn>
-    
+
     <!-- 表單錯誤提示 -->
     <div
       v-if="hasErrors && showErrorMessage"
@@ -55,7 +55,7 @@ const props = withDefaults(defineProps<Props>(), {
   showErrorMessage: true,
   errorMessage: '請修正表單中的錯誤後再提交',
   errorId: 'form-errors',
-  fullWidth: true
+  fullWidth: true,
 })
 
 // 發出事件
@@ -79,7 +79,7 @@ const handleClick = (event: Event) => {
 
 // 讓組件能夠透傳屬性
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 })
 </script>
 

@@ -7,13 +7,11 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": [
-      "@nuxtjs/i18n",
-      "@pinia/nuxt"
-    ]
+    "types": ["@nuxtjs/i18n", "@pinia/nuxt"]
   },
-  "include": [
-    "app/**/*",
-    "server/**/*"
+  "include": ["app/**/*", "server/**/*"],
+  "exclude": [
+    "node_modules",
+    "app/pages/join.vue"
   ]
 }

@@ -14,7 +14,7 @@ const apiConfig = ref<ApiConfig>({
   debug: true,
   baseUrl: '/api',
   timeout: 30000,
-  retryCount: 3
+  retryCount: 3,
 })
 
 // 使用 Mock API 的狀態
@@ -22,27 +22,27 @@ const isUsingMockApi = ref(true)
 
 export const useApiConfig = () => {
   const isProduction = computed(() => process.env.NODE_ENV === 'production')
-  
+
   // 更新配置
   const updateConfig = (newConfig: Partial<ApiConfig>) => {
     apiConfig.value = { ...apiConfig.value, ...newConfig }
-    
+
     // 在開發模式下記錄配置變更
     if (apiConfig.value.debug && !isProduction.value) {
       console.log('🔧 Mock API 配置已更新:', apiConfig.value)
     }
   }
-  
+
   // 設定 Mock 延遲
   const setMockDelay = (delay: number) => {
     updateConfig({ mockDelay: delay })
   }
-  
+
   // 切換除錯模式
   const toggleDebug = () => {
     updateConfig({ debug: !apiConfig.value.debug })
   }
-  
+
   // 重設為預設配置
   const resetToDefaults = () => {
     apiConfig.value = {
@@ -50,11 +50,11 @@ export const useApiConfig = () => {
       debug: !isProduction.value,
       baseUrl: '/api',
       timeout: 30000,
-      retryCount: 3
+      retryCount: 3,
     }
     isUsingMockApi.value = true
   }
-  
+
   // 切換到 Mock API
   const switchToMockApi = () => {
     isUsingMockApi.value = true
@@ -63,7 +63,7 @@ export const useApiConfig = () => {
       console.log('🔄 已切換到 Mock API 模式')
     }
   }
-  
+
   // 切換到真實 API
   const switchToRealApi = () => {
     isUsingMockApi.value = false
@@ -72,9 +72,9 @@ export const useApiConfig = () => {
       console.log('☁️ 已切換到真實 API 模式')
     }
   }
-  
+
   // 智慧 API 選擇
-  const smartApiSelection = async () => {
+  const smartApiSelection = () => {
     if (isProduction.value) {
       // 生產環境優先使用真實 API
       switchToRealApi()
@@ -83,13 +83,13 @@ export const useApiConfig = () => {
       switchToMockApi()
     }
   }
-  
+
   return {
     // 配置狀態
     config: computed(() => apiConfig.value),
     isProduction,
     isUsingMockApi: computed(() => isUsingMockApi.value),
-    
+
     // 配置方法
     updateConfig,
     setMockDelay,
@@ -97,6 +97,6 @@ export const useApiConfig = () => {
     resetToDefaults,
     switchToMockApi,
     switchToRealApi,
-    smartApiSelection
+    smartApiSelection,
   }
 }

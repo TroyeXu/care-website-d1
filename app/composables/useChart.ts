@@ -7,7 +7,7 @@ import {
   ArcElement,
   CategoryScale,
   LinearScale,
-  type TooltipItem
+  type TooltipItem,
 } from 'chart.js'
 
 ChartJS.register(CategoryScale, LinearScale, ArcElement, Title, Tooltip, Legend)
@@ -34,16 +34,35 @@ export default function useChart(calculations: ChartCalculations) {
       return { labels: [], datasets: [] }
     }
     const subCategoryCosts: Record<string, number> = {}
-    selectedItems.value.forEach(item => {
-      if (!subCategoryCosts[item.subCategory]) {
-        subCategoryCosts[item.subCategory] = 0
+    selectedItems.value.forEach((item) => {
+      const category = item.subCategory
+      if (!subCategoryCosts[category]) {
+        subCategoryCosts[category] = 0
       }
-      subCategoryCosts[item.subCategory] += item.price
+      subCategoryCosts[category] =
+        (subCategoryCosts[category] || 0) + item.price
     })
     const labels = Object.keys(subCategoryCosts)
-    const data = labels.map(label => subCategoryCosts[label] || 0)
-    const backgroundColors = ['#4A90E2', '#50C8B4', '#F5A623', '#D0021B', '#9013FE', '#BD10E0', '#7ED321']
-    return { labels, datasets: [{ data, backgroundColor: backgroundColors.slice(0, labels.length), borderWidth: 0 }] }
+    const data = labels.map((label) => subCategoryCosts[label] || 0)
+    const backgroundColors = [
+      '#4A90E2',
+      '#50C8B4',
+      '#F5A623',
+      '#D0021B',
+      '#9013FE',
+      '#BD10E0',
+      '#7ED321',
+    ]
+    return {
+      labels,
+      datasets: [
+        {
+          data,
+          backgroundColor: backgroundColors.slice(0, labels.length),
+          borderWidth: 0,
+        },
+      ],
+    }
   })
 
   const chartOptions = {
@@ -52,7 +71,7 @@ export default function useChart(calculations: ChartCalculations) {
     plugins: {
       legend: {
         position: 'bottom',
-        labels: { boxWidth: 12, padding: 15, font: { size: 12 } }
+        labels: { boxWidth: 12, padding: 15, font: { size: 12 } },
       },
       tooltip: {
         callbacks: {
@@ -61,10 +80,10 @@ export default function useChart(calculations: ChartCalculations) {
             const value = (context.raw as number) || 0
             const percentage = ((value / totalCost.value) * 100).toFixed(1)
             return `${label}: ${formatCurrency(value)} 元 (${percentage}%)`
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   }
 
   return { chartData, chartOptions }

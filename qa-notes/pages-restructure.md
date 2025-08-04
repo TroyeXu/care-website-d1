@@ -7,10 +7,12 @@
 ### 解決步驟：
 
 1. **分析現有目錄結構**
+
    - 使用 LS 工具檢視現有的 pages 目錄
    - 識別所有的頁面檔案和現有的子目錄
 
 2. **規劃新的目錄結構**
+
    - auth/: 認證相關頁面 (login, register)
    - user/: 使用者功能頁面 (dashboard, profile, settings)
    - caregivers/: 照護者相關頁面 (index, [id], search)
@@ -21,6 +23,7 @@
    - demo/: 示範頁面 (api-demo)
 
 3. **建立新目錄並移動檔案**
+
    ```bash
    mkdir -p auth user/profile user/settings booking info content support demo
    mv login.vue register.vue auth/
@@ -39,19 +42,22 @@
    - 更新程式碼中的路由跳轉 (dashboard.vue, middleware 等)
 
 ### 相關檔案：
+
 - pages/ 目錄的完整重新組織
 - app.vue:17-23, 78-84 (導航選單更新)
 - layouts/default.vue (導航選單更新)
 - pages/user/dashboard.vue (功能連結更新)
-- middleware/*.ts (認證重導向更新)
+- middleware/\*.ts (認證重導向更新)
 
 ### 學習重點：
+
 - Nuxt.js 的檔案路由系統會自動對應目錄結構
 - 移動頁面檔案後需要更新所有對該路由的引用
 - 良好的目錄結構有助於程式碼維護和協作開發
 - 使用功能分類來組織頁面比平坦結構更容易理解和維護
 
 ### 新的目錄結構優點：
+
 - **更清晰的功能分組**：相關功能的頁面放在同一目錄下
 - **更容易維護**：修改特定功能時可快速找到相關檔案
 - **更好的擴展性**：新增頁面時有明確的歸類標準

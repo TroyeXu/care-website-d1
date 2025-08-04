@@ -1,5 +1,5 @@
 <template>
-  <q-card flat :class="cardClass">
+  <q-card flat :class="cardClass" @click="handleClick">
     <q-card-section class="text-center">
       <div v-if="icon" class="q-mb-sm">
         <q-icon :name="icon" :size="iconSize" :color="iconColor" />
@@ -14,7 +14,7 @@
         {{ description }}
       </div>
     </q-card-section>
-    
+
     <!-- 可選的操作區域 -->
     <q-card-actions v-if="$slots.actions" align="center">
       <slot name="actions" />
@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
   color: 'blue',
   iconSize: '2em',
   loading: false,
-  clickable: false
+  clickable: false,
 })
 
 const emit = defineEmits<{
@@ -64,14 +64,14 @@ const iconColor = computed(() => `${props.color}-6`)
 
 const formattedValue = computed(() => {
   if (props.loading) return '---'
-  
+
   let value = props.value
-  
+
   // 如果是數字，進行格式化
   if (typeof value === 'number') {
     value = value.toLocaleString()
   }
-  
+
   return `${props.prefix || ''}${value}${props.suffix || ''}`
 })
 

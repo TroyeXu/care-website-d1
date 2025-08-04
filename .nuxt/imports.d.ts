@@ -46,8 +46,9 @@ export { useMatchingAlgorithm, MatchingCriteria, MatchResult } from '../app/comp
 export { useMockApi, ApiResponse, PaginatedResponse } from '../app/composables/useMockApi';
 export { default as usePageSeo } from '../app/composables/usePageSeo';
 export { default as useParticleEffects } from '../app/composables/useParticleEffects';
-export { mockCaregivers, mockUsers, mockBookings, mockReviews, mockPayments, mockServiceTypes, mockCostModifiers, getMockDataForStore, User, Review, Payment, ServiceType, CostModifier } from '../app/utils/mockData';
+export { mockUsers, mockBookings, mockReviews, mockPayments, mockServiceTypes, mockCostModifiers, mockCaregivers, getMockDataForStore, User, Review, Payment, ServiceType, CostModifier } from '../app/utils/mockData';
 export { commonValidations, loginSchema, registerSchema, profileUpdateSchema, passwordResetSchema, passwordChangeSchema, contactSchema, bookingSchema, paymentSchema, reviewSchema, LoginFormData, RegisterFormData, ProfileUpdateFormData, PasswordResetFormData, PasswordChangeFormData, ContactFormData, BookingFormData, PaymentFormData, ReviewFormData } from '../app/utils/validationSchemas';
+export { fieldProps } from '../app/utils/veeValidateHelpers';
 export { useAuthStore, AuthState, LoginCredentials, RegisterData } from '../app/stores/auth';
 export { useBookingStore, Booking } from '../app/stores/bookings';
 export { useCaregiverStore, Caregiver, CaregiverFilter } from '../app/stores/caregivers';
@@ -65,5 +66,4 @@ export { useRouteBaseName, useLocalePath, useLocaleRoute, useSwitchLocalePath, u
 export { useDialogPluginComponent, useFormChild, useInterval, useMeta, useQuasar, useRenderCache, useSplitAttrs, useTick, useTimeout, Notify, Dialog, Loading } from 'quasar';
 export { useField, useFieldArray, useFieldError, useFieldValue, useForm, useFormContext, useFormErrors, useFormValues, useIsFieldDirty, useIsFieldTouched, useIsFieldValid, useIsFormDirty, useIsFormTouched, useIsFormValid, useIsSubmitting, useIsValidating, useResetForm, useSubmitCount, useSubmitForm, useValidateField, useValidateForm } from 'vee-validate';
 export { toTypedSchema } from '@vee-validate/yup';
-export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';

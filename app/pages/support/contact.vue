@@ -8,7 +8,9 @@
             <q-icon name="support_agent" size="48px" />
           </div>
           <h1 class="hero-title">聯繫我們</h1>
-          <p class="hero-subtitle">我們很樂意為您提供協助，請選擇最適合的聯絡方式</p>
+          <p class="hero-subtitle">
+            我們很樂意為您提供協助，請選擇最適合的聯絡方式
+          </p>
         </div>
       </div>
     </div>
@@ -26,8 +28,7 @@
                   聯絡資訊
                 </h2>
               </q-card-section>
-          
-              
+
               <q-card-section class="contact-methods">
                 <div class="contact-method-grid">
                   <div class="contact-method">
@@ -37,10 +38,12 @@
                     <div class="method-content">
                       <h3 class="method-title">客服電話</h3>
                       <p class="method-value">02-1234-5678</p>
-                      <p class="method-desc">服務時間：週一至週五 09:00-18:00</p>
+                      <p class="method-desc">
+                        服務時間：週一至週五 09:00-18:00
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div class="contact-method">
                     <div class="method-icon">
                       <q-icon name="email" size="32px" />
@@ -51,7 +54,7 @@
                       <p class="method-desc">我們會在24小時內回覆您</p>
                     </div>
                   </div>
-                  
+
                   <div class="contact-method">
                     <div class="method-icon">
                       <q-icon name="location_on" size="32px" />
@@ -66,7 +69,7 @@
               </q-card-section>
             </q-card>
           </div>
-          
+
           <!-- 聯絡表單卡片 -->
           <div class="contact-form-section">
             <q-card class="contact-form-card">
@@ -77,22 +80,19 @@
                 </h2>
                 <p class="section-desc">填寫以下表單，我們會盡快回覆您</p>
               </q-card-section>
-              
+
               <q-card-section class="form-content">
                 <Form
+                  v-slot="{ errors, isSubmitting }"
                   :validation-schema="contactSchema"
                   @submit="handleSubmit"
-                  v-slot="{ errors, isSubmitting }"
                 >
                   <div class="form-grid">
                     <div class="form-row">
                       <div class="form-field">
-                        <Field
-                          name="name"
-                          v-slot="{ field, errorMessage }"
-                        >
+                        <Field v-slot="{ field, errorMessage }" name="name">
                           <q-input
-                            v-bind="field"
+                            v-bind="fieldProps(field)"
                             label="姓名"
                             outlined
                             :error="!!errorMessage"
@@ -100,19 +100,16 @@
                             placeholder="請輸入您的姓名"
                             class="custom-input"
                           >
-                            <template v-slot:prepend>
+                            <template #prepend>
                               <q-icon name="person" class="input-icon" />
                             </template>
                           </q-input>
                         </Field>
                       </div>
                       <div class="form-field">
-                        <Field
-                          name="email"
-                          v-slot="{ field, errorMessage }"
-                        >
+                        <Field v-slot="{ field, errorMessage }" name="email">
                           <q-input
-                            v-bind="field"
+                            v-bind="fieldProps(field)"
                             label="電子郵件"
                             type="email"
                             outlined
@@ -121,22 +118,19 @@
                             placeholder="example@email.com"
                             class="custom-input"
                           >
-                            <template v-slot:prepend>
+                            <template #prepend>
                               <q-icon name="email" class="input-icon" />
                             </template>
                           </q-input>
                         </Field>
                       </div>
                     </div>
-                    
+
                     <div class="form-row">
                       <div class="form-field">
-                        <Field
-                          name="phone"
-                          v-slot="{ field, errorMessage }"
-                        >
+                        <Field v-slot="{ field, errorMessage }" name="phone">
                           <q-input
-                            v-bind="field"
+                            v-bind="fieldProps(field)"
                             label="電話號碼"
                             outlined
                             :error="!!errorMessage"
@@ -144,19 +138,16 @@
                             placeholder="09XXXXXXXX"
                             class="custom-input"
                           >
-                            <template v-slot:prepend>
+                            <template #prepend>
                               <q-icon name="phone" class="input-icon" />
                             </template>
                           </q-input>
                         </Field>
                       </div>
                       <div class="form-field">
-                        <Field
-                          name="subject"
-                          v-slot="{ field, errorMessage }"
-                        >
+                        <Field v-slot="{ field, errorMessage }" name="subject">
                           <q-select
-                            v-bind="field"
+                            v-bind="fieldProps(field)"
                             label="聯絡主題"
                             :options="subjectOptions"
                             outlined
@@ -166,22 +157,19 @@
                             :error-message="errorMessage"
                             class="custom-select"
                           >
-                            <template v-slot:prepend>
+                            <template #prepend>
                               <q-icon name="topic" class="input-icon" />
                             </template>
                           </q-select>
                         </Field>
                       </div>
                     </div>
-                    
+
                     <div class="form-row full-width">
                       <div class="form-field">
-                        <Field
-                          name="message"
-                          v-slot="{ field, errorMessage }"
-                        >
+                        <Field v-slot="{ field, errorMessage }" name="message">
                           <q-input
-                            v-bind="field"
+                            v-bind="fieldProps(field)"
                             label="詳細訊息"
                             type="textarea"
                             outlined
@@ -191,47 +179,58 @@
                             placeholder="請詳細描述您的問題或需求，我們會盡快為您解答"
                             class="custom-textarea"
                           >
-                            <template v-slot:prepend>
-                              <q-icon name="message" class="input-icon textarea-icon" />
+                            <template #prepend>
+                              <q-icon
+                                name="message"
+                                class="input-icon textarea-icon"
+                              />
                             </template>
                           </q-input>
                         </Field>
                       </div>
                     </div>
-                    
+
                     <!-- 成功狀態顯示 -->
                     <div v-if="submitSuccess" class="success-message">
                       <div class="success-content">
-                        <q-icon name="check_circle" size="32px" class="success-icon" />
+                        <q-icon
+                          name="check_circle"
+                          size="32px"
+                          class="success-icon"
+                        />
                         <h3 class="success-title">訊息已成功送出！</h3>
-                        <p class="success-desc">感謝您的聯絡，我們將在24小時內回覆您</p>
+                        <p class="success-desc">
+                          感謝您的聯絡，我們將在24小時內回覆您
+                        </p>
                       </div>
                     </div>
-                    
+
                     <!-- 錯誤狀態顯示 -->
                     <div v-if="submitError" class="error-message">
                       <div class="error-content">
                         <q-icon name="error" size="32px" class="error-icon" />
                         <h3 class="error-title">送出失敗</h3>
                         <p class="error-desc">{{ submitError }}</p>
-                        <q-btn 
-                          flat 
-                          color="negative" 
-                          @click="submitError = ''"
+                        <q-btn
+                          flat
+                          color="negative"
                           class="error-dismiss"
+                          @click="submitError = ''"
                         >
                           關閉
                         </q-btn>
                       </div>
                     </div>
-                    
+
                     <div class="form-actions">
                       <q-btn
                         type="submit"
                         color="primary"
                         size="lg"
                         :loading="isSubmitting || loading"
-                        :disable="Object.keys(errors).length > 0 || submitSuccess"
+                        :disable="
+                          Object.keys(errors).length > 0 || submitSuccess
+                        "
                         :icon="submitSuccess ? 'check' : 'send'"
                         class="submit-btn"
                         :class="{ 'success-btn': submitSuccess }"
@@ -251,7 +250,7 @@
             </q-card>
           </div>
         </div>
-        
+
         <!-- 常見問題快速連結 -->
         <div class="faq-section">
           <q-card class="faq-card">
@@ -262,7 +261,7 @@
               </h2>
               <p class="section-desc">快速找到您需要的答案</p>
             </q-card-section>
-            
+
             <q-card-section>
               <div class="faq-grid">
                 <q-btn
@@ -281,7 +280,7 @@
                     </div>
                   </div>
                 </q-btn>
-                
+
                 <q-btn
                   flat
                   no-caps
@@ -311,12 +310,17 @@
 import { ref } from 'vue'
 import { Form, Field } from 'vee-validate'
 import { useQuasar } from 'quasar'
+import { navigateTo, useRoute, useHead, useRuntimeConfig } from '#app'
 import { useApiService } from '~/composables/useApiService'
 import { contactSchema, type ContactFormData } from '~/utils/validationSchemas'
 import usePageSeo from '~/composables/usePageSeo'
+import { fieldProps } from '~/utils/veeValidateHelpers'
 
 // SEO
-usePageSeo('聯繫我們 - 護理服務平台', '歡迎透過電話或電子郵件與我們聯絡，我們很樂意為您提供協助')
+usePageSeo(
+  '聯繫我們 - 護理服務平台',
+  '歡迎透過電話或電子郵件與我們聯絡，我們很樂意為您提供協助',
+)
 
 // 組合式函數
 const $q = useQuasar()
@@ -334,24 +338,34 @@ const subjectOptions = [
   { label: '技術支援', value: '技術支援' },
   { label: '投訴建議', value: '投訴建議' },
   { label: '合作洽談', value: '合作洽談' },
-  { label: '其他問題', value: '其他問題' }
+  { label: '其他問題', value: '其他問題' },
 ]
 
 // 響應式資料
 const submitSuccess = ref(false)
 const submitError = ref('')
 
+// 聯絡表單類型
+interface ContactFormValues {
+  name: string
+  email: string
+  phone?: string
+  subject: string
+  message: string
+  category: string
+}
+
 // 表單提交處理
-const handleSubmit = async (values: ContactFormData) => {
+const handleSubmit = async (values: ContactFormValues) => {
   loading.value = true
   submitError.value = ''
-  
+
   try {
     const response = await apiService.submitContactForm(values)
-    
+
     // 設定成功狀態
     submitSuccess.value = true
-    
+
     // 顯示成功通知
     $q.notify({
       type: 'positive',
@@ -364,28 +378,27 @@ const handleSubmit = async (values: ContactFormData) => {
         {
           label: '確定',
           color: 'white',
-          handler: () => {}
-        }
-      ]
+          handler: () => {},
+        },
+      ],
     })
-    
+
     // 3秒後重置成功狀態
     setTimeout(() => {
       submitSuccess.value = false
     }, 3000)
-    
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('送出聯絡表單失敗:', error)
-    
+
     submitError.value = error.message || '送出失敗，請稍後再試'
-    
+
     $q.notify({
       type: 'negative',
       message: submitError.value,
       icon: 'error',
       timeout: 6000,
       position: 'top',
-      classes: 'error-notification'
+      classes: 'error-notification',
     })
   } finally {
     loading.value = false
@@ -393,6 +406,7 @@ const handleSubmit = async (values: ContactFormData) => {
 }
 
 // 頁面結構化資料
+// Import 已在上方添加
 const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
@@ -417,12 +431,12 @@ useHead({
             streetAddress: '信義路五段7號35樓',
             addressLocality: '信義區',
             addressRegion: '台北市',
-            addressCountry: 'TW'
-          }
-        }
-      })
-    }
-  ]
+            addressCountry: 'TW',
+          },
+        },
+      }),
+    },
+  ],
 })
 </script>
 
@@ -916,39 +930,39 @@ useHead({
   .hero-section {
     padding: 3rem 0 1.5rem;
   }
-  
+
   .hero-title {
     font-size: 2.2rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.1rem;
   }
-  
+
   .hero-icon {
     width: 80px;
     height: 80px;
   }
-  
+
   .content-grid {
     gap: 1.5rem;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .faq-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .card-header,
   .contact-methods,
   .form-content {
     padding: 1.5rem;
   }
-  
+
   .container {
     padding: 0 1rem;
   }
@@ -958,27 +972,27 @@ useHead({
   .hero-title {
     font-size: 1.8rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1rem;
   }
-  
+
   .contact-method,
   .faq-content {
     padding: 1rem;
   }
-  
+
   .method-icon,
   .faq-icon {
     padding: 8px;
   }
-  
+
   .success-message,
   .error-message {
     padding: 1.5rem;
     margin: 1rem 0;
   }
-  
+
   .success-title,
   .error-title {
     font-size: 1.3rem;

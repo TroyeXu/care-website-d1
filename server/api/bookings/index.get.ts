@@ -1,19 +1,20 @@
+import { defineEventHandler, getQuery } from 'h3'
 import { mockStore } from '../../utils/mockStore'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
   const query = getQuery(event)
-  const { patient_id, caregiver_id, status } = query
+  const { userId, caregiverId, status } = query
 
   let bookings = mockStore.bookings.getAll()
 
-  // 根據病患篩選
-  if (patient_id) {
-    bookings = bookings.filter((b) => b.patient_id === patient_id)
+  // 根據用戶篩選
+  if (userId) {
+    bookings = bookings.filter((b) => b.userId === userId)
   }
 
   // 根據照護員篩選
-  if (caregiver_id) {
-    bookings = bookings.filter((b) => b.caregiver_id === caregiver_id)
+  if (caregiverId) {
+    bookings = bookings.filter((b) => b.caregiverId === caregiverId)
   }
 
   // 根據狀態篩選

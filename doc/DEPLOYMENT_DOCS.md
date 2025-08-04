@@ -90,10 +90,12 @@ npx wrangler d1 execute care-platform-db --local --command "SELECT * FROM caregi
 ### 前置需求
 
 1. **Cloudflare 帳號**
+
    - 需要有 Cloudflare 帳號
    - 開啟 Workers 和 D1 服務
 
 2. **安裝 Wrangler CLI**
+
    ```bash
    npm install -g wrangler
    # 或使用專案內的
@@ -114,14 +116,16 @@ export default defineNuxtConfig({
   // Cloudflare Workers 配置（支援 SSR）
   nitro: {
     preset: 'cloudflare-module',
-    prerender: false,  // 不預渲染，使用完整 SSR
-    publicAssets: [{
-      baseURL: '/',
-      dir: '.output/public',
-      maxAge: 31536000  // 1 年快取
-    }]
+    prerender: false, // 不預渲染，使用完整 SSR
+    publicAssets: [
+      {
+        baseURL: '/',
+        dir: '.output/public',
+        maxAge: 31536000, // 1 年快取
+      },
+    ],
   },
-  ssr: true,  // 啟用 SSR
+  ssr: true, // 啟用 SSR
   // ... 其他配置
 })
 ```
@@ -133,19 +137,21 @@ import { defineNitroConfig } from 'nitropack/config'
 
 export default defineNitroConfig({
   preset: 'cloudflare-module',
-  publicAssets: [{
-    baseURL: '/',
-    dir: '.output/public'
-  }],
+  publicAssets: [
+    {
+      baseURL: '/',
+      dir: '.output/public',
+    },
+  ],
   cloudflare: {
     pages: false,
     wrangler: {
-      configPath: './wrangler.toml'
-    }
+      configPath: './wrangler.toml',
+    },
   },
   routeRules: {
-    '/**': { cors: true }
-  }
+    '/**': { cors: true },
+  },
 })
 ```
 
@@ -208,6 +214,7 @@ npx wrangler deploy
 #### 3. 驗證部署
 
 部署成功後會顯示 URL：
+
 ```
 Uploaded care-platform-worker (6.75 sec)
 Deployed care-platform-worker triggers (0.47 sec)
@@ -234,6 +241,7 @@ curl -I https://your-worker.workers.dev/_nuxt/entry.css
 ### 🎯 這個流程的用途
 
 這個 GitHub Actions workflow 會自動化您的部署流程：
+
 - **自動部署**：當您推送程式碼到 main 分支時，自動部署到 Cloudflare Pages
 - **資料庫管理**：自動設定和更新 D1 資料庫
 - **零停機時間**：新版本會無縫替換舊版本
@@ -256,6 +264,7 @@ curl -I https://your-worker.workers.dev/_nuxt/entry.css
 5. 選擇「Create Custom Token」
 
 **Token 權限設定：**
+
 ```
 Token 名稱: GitHub Actions Deploy
 
@@ -280,12 +289,14 @@ Account Resources:
 4. 點擊「New repository secret」
 
 **新增第一個 Secret：**
+
 ```
 Name: CLOUDFLARE_API_TOKEN
 Secret: [貼上剛才複製的 API Token]
 ```
 
 **新增第二個 Secret：**
+
 ```
 Name: CLOUDFLARE_ACCOUNT_ID
 Secret: [貼上您的 Account ID]
@@ -294,6 +305,7 @@ Secret: [貼上您的 Account ID]
 ### 🚀 使用方式
 
 #### 自動部署
+
 ```bash
 # 當您推送程式碼到 main 分支
 git add .
@@ -307,6 +319,7 @@ git push origin main
 ```
 
 #### 手動部署
+
 1. 進入 GitHub repository
 2. 點擊 Actions 標籤
 3. 左側選擇「Deploy to Cloudflare」
@@ -324,7 +337,7 @@ graph TD
     D --> E[部署到 Cloudflare Pages]
     E --> F[設定 D1 資料庫]
     F --> G[部署完成]
-    
+
     H[手動觸發] --> B
     H --> I[額外：重新載入種子資料]
 ```
@@ -340,6 +353,7 @@ graph TD
 **問題**：部署後 CSS/JS 檔案返回 404
 
 **解決方案**：
+
 - 確保 `wrangler.toml` 使用 `assets` 配置而非 `site.bucket`
 - 檢查 `nitro.config.ts` 的 `publicAssets` 配置
 - 重新建構並部署
@@ -349,6 +363,7 @@ graph TD
 **問題**：API 端點返回「資料庫查詢錯誤」
 
 **解決方案**：
+
 - 確認 D1 資料庫已初始化
 - 執行 schema 和 seed SQL
 - 檢查 `wrangler.toml` 的資料庫綁定
@@ -358,6 +373,7 @@ graph TD
 **問題**：頁面沒有在伺服器端渲染
 
 **解決方案**：
+
 - 確保使用 `cloudflare-module` preset
 - 設定 `ssr: true` 和 `prerender: false`
 - 不要使用 `cloudflare-pages` preset
@@ -367,6 +383,7 @@ graph TD
 **問題**：Token 權限錯誤或資料庫已存在
 
 **解決方案**：
+
 - 確認 API Token 有正確權限
 - 使用 `CREATE TABLE IF NOT EXISTS` 語法
 - 檢查 Secrets 是否正確設定（分開設定兩個 Secrets）
@@ -433,6 +450,7 @@ npx wrangler rollback
 ```
 
 在 Cloudflare Dashboard 也可以：
+
 1. 進入 Pages → 您的專案
 2. 點擊 "Deployments"
 3. 選擇要回滾的版本
@@ -454,11 +472,13 @@ npx wrangler rollback
 ## 💰 成本考量
 
 ### 免費方案限制
+
 - Workers: 每日 100,000 次請求
 - D1: 5GB 儲存空間，每月 500 萬次讀取
 - 適合中小型專案
 
 ### 付費方案
+
 - Workers: $5/月起，1000 萬次請求
 - D1: 按使用量計費
 - 適合大型商業專案
@@ -468,11 +488,13 @@ npx wrangler rollback
 ## 🔒 安全建議
 
 1. **API 安全**
+
    - 實施適當的身份驗證
    - 使用 CORS 限制來源
    - 驗證所有輸入資料
 
 2. **資料庫安全**
+
    - 使用參數化查詢防止 SQL 注入
    - 定期備份資料
    - 限制資料庫權限

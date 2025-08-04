@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     // 不預渲染，使用完整 SSR
     prerender: {
       crawlLinks: false,
-      routes: []
+      routes: [],
     },
     // 設定公共資源路徑
     publicAssets: [

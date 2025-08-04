@@ -1,9 +1,8 @@
 <template>
-  <Field :name="name" v-slot="{ field, errorMessage }">
+  <Field v-slot="{ field, errorMessage }" :name="name">
     <q-input
       v-bind="{ ...field, ...$attrs }"
       :model-value="field.value"
-      @update:model-value="field['onUpdate:modelValue']"
       :label="label"
       :type="showPassword ? 'text' : 'password'"
       :placeholder="placeholder"
@@ -13,23 +12,24 @@
       dense
       :error="!!errorMessage"
       :error-message="errorMessage"
+      @update:model-value="field['onUpdate:modelValue']"
     >
       <template #prepend>
         <q-icon name="lock" color="primary" />
       </template>
-      
+
       <template #append>
         <q-btn
           flat
           round
           dense
           :icon="showPassword ? 'visibility' : 'visibility_off'"
-          @click="togglePasswordVisibility"
           :aria-label="showPassword ? hideLabel : showLabel"
           tabindex="-1"
+          @click="togglePasswordVisibility"
         />
       </template>
-      
+
       <!-- 允許父組件自定義插槽內容 -->
       <template v-for="(_, slot) of $slots" #[slot]="scope">
         <slot :name="slot" v-bind="scope" />
@@ -54,7 +54,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   autocomplete: 'current-password',
   showLabel: '顯示密碼',
-  hideLabel: '隱藏密碼'
+  hideLabel: '隱藏密碼',
 })
 
 // 響應式狀態
@@ -71,6 +71,6 @@ const togglePasswordVisibility = () => {
 
 // 讓組件能夠透傳屬性
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 })
 </script>

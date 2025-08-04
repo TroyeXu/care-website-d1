@@ -9,7 +9,7 @@
         共找到 {{ searchResults.length }} 位看護師
       </div>
     </div>
-    
+
     <!-- 搜尋輸入框 -->
     <div class="row q-gutter-md q-mb-lg">
       <div class="col-12 col-md-8">
@@ -20,20 +20,20 @@
           dense
           clearable
           :loading="isSearching"
+          placeholder="例如：林護理師、復健、台北、護理師證照"
           @input="performSearch"
           @keyup.enter="performSearch"
-          placeholder="例如：林護理師、復健、台北、護理師證照"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <q-icon name="search" />
           </template>
-          <template v-slot:append>
+          <template #append>
             <q-btn
               flat
               dense
               icon="tune"
-              @click="showAdvancedFilters = !showAdvancedFilters"
               :color="hasActiveFilters ? 'primary' : 'grey'"
+              @click="showAdvancedFilters = !showAdvancedFilters"
             >
               <q-tooltip>進階篩選</q-tooltip>
             </q-btn>
@@ -45,14 +45,14 @@
           color="primary"
           icon="search"
           :loading="isSearching"
-          @click="performSearch"
           class="full-width"
+          @click="performSearch"
         >
           搜尋
         </q-btn>
       </div>
     </div>
-    
+
     <!-- 進階篩選 -->
     <q-slide-transition>
       <q-card v-show="showAdvancedFilters" flat bordered class="q-mb-lg">
@@ -122,49 +122,36 @@
           </div>
           <div class="row q-gutter-md q-mt-md">
             <div class="col">
-              <q-btn
-                flat
-                color="grey"
-                @click="clearFilters"
-              >
-                清除篩選
-              </q-btn>
+              <q-btn flat color="grey" @click="clearFilters"> 清除篩選 </q-btn>
             </div>
             <div class="col-auto">
-              <q-btn
-                color="primary"
-                @click="applyFilters"
-              >
-                套用篩選
-              </q-btn>
+              <q-btn color="primary" @click="applyFilters"> 套用篩選 </q-btn>
             </div>
           </div>
         </q-card-section>
       </q-card>
     </q-slide-transition>
-    
+
     <!-- 搜尋結果 -->
     <div v-if="isSearching" class="text-center q-pa-lg">
       <q-spinner-dots size="50px" color="primary" />
       <div class="text-body2 q-mt-md">搜尋中...</div>
     </div>
-    
-    <div v-else-if="searchResults.length === 0 && hasSearched" class="text-center q-pa-lg">
+
+    <div
+      v-else-if="searchResults.length === 0 && hasSearched"
+      class="text-center q-pa-lg"
+    >
       <q-icon name="search_off" size="80px" color="grey-5" />
       <div class="text-h6 q-mt-md text-grey-7">沒有找到符合條件的看護師</div>
       <div class="text-body2 text-grey-6 q-mt-sm">
         請嘗試調整搜尋關鍵字或篩選條件
       </div>
-      <q-btn
-        flat
-        color="primary"
-        @click="clearSearch"
-        class="q-mt-md"
-      >
+      <q-btn flat color="primary" class="q-mt-md" @click="clearSearch">
         清除搜尋
       </q-btn>
     </div>
-    
+
     <div v-else-if="searchResults.length > 0" class="caregiver-list">
       <CaregiverCard
         v-for="caregiver in searchResults"
@@ -173,7 +160,7 @@
         @click="navigateTo(`/caregivers/${caregiver.id}`)"
       />
     </div>
-    
+
     <!-- 預設推薦 -->
     <div v-else>
       <div class="text-h6 q-mb-md text-grey-7">推薦看護師</div>
@@ -192,13 +179,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
+import { navigateTo, useRoute, useHead, useRuntimeConfig } from '#app'
 import { useApiService } from '~/composables/useApiService'
 import usePageSeo from '~/composables/usePageSeo'
 import CaregiverCard from '~/components/CaregiverCard.vue'
 import type { Caregiver } from '~/utils/mockData'
 
 // SEO
-usePageSeo('搜尋看護師 - 護理服務平台', '快速搜尋專業看護師，找到最適合的照護服務')
+usePageSeo(
+  '搜尋看護師 - 護理服務平台',
+  '快速搜尋專業看護師，找到最適合的照護服務',
+)
 
 // 組合式函數
 const $q = useQuasar()
@@ -215,10 +206,10 @@ const showAdvancedFilters = ref(false)
 // 篩選條件
 const filters = ref({
   location: '',
-  minRating: null as number | null,
-  maxHourlyRate: null as number | null,
-  maxShiftRate: null as number | null,
-  skills: [] as string[]
+  minRating: undefined as number | undefined,
+  maxHourlyRate: undefined as number | undefined,
+  maxShiftRate: undefined as number | undefined,
+  skills: [] as string[],
 })
 
 // 選項資料
@@ -228,7 +219,7 @@ const locationOptions = [
   { label: '桃園市', value: '桃園' },
   { label: '台中市', value: '台中' },
   { label: '台南市', value: '台南' },
-  { label: '高雄市', value: '高雄' }
+  { label: '高雄市', value: '高雄' },
 ]
 
 const skillOptions = [
@@ -241,16 +232,18 @@ const skillOptions = [
   '心理支持',
   '物理治療',
   '語言治療',
-  '職能治療'
+  '職能治療',
 ]
 
 // 計算屬性
 const hasActiveFilters = computed(() => {
-  return filters.value.location ||
-         filters.value.minRating !== null ||
-         filters.value.maxHourlyRate !== null ||
-         filters.value.maxShiftRate !== null ||
-         filters.value.skills.length > 0
+  return (
+    filters.value.location ||
+    filters.value.minRating !== null ||
+    filters.value.maxHourlyRate !== null ||
+    filters.value.maxShiftRate !== null ||
+    filters.value.skills.length > 0
+  )
 })
 
 // 方法
@@ -260,56 +253,63 @@ const performSearch = async () => {
     hasSearched.value = false
     return
   }
-  
+
   isSearching.value = true
   hasSearched.value = true
-  
+
   try {
     let results: Caregiver[] = []
-    
+
     if (searchQuery.value.trim()) {
       // 執行文字搜尋
       results = await apiService.searchCaregivers(searchQuery.value.trim())
     } else {
       // 僅使用篩選條件
       const allCaregivers = await apiService.getCaregivers(1, 100)
-      results = Array.isArray(allCaregivers) ? allCaregivers : allCaregivers.data || []
+      results = Array.isArray(allCaregivers)
+        ? allCaregivers
+        : (allCaregivers as any).data || []
     }
-    
+
     // 套用進階篩選
     if (hasActiveFilters.value) {
       results = await apiService.filterCaregivers({
         ...filters.value,
         // 將 null 值過濾掉
-        ...(filters.value.minRating && { minRating: filters.value.minRating }),
-        ...(filters.value.maxHourlyRate && { maxHourlyRate: filters.value.maxHourlyRate }),
-        ...(filters.value.maxShiftRate && { maxShiftRate: filters.value.maxShiftRate })
+        ...(filters.value.minRating !== undefined && {
+          minRating: filters.value.minRating,
+        }),
+        ...(filters.value.maxHourlyRate !== undefined && {
+          maxHourlyRate: filters.value.maxHourlyRate,
+        }),
+        ...(filters.value.maxShiftRate !== undefined && {
+          maxShiftRate: filters.value.maxShiftRate,
+        }),
       })
     }
-    
+
     searchResults.value = Array.isArray(results) ? results : []
-    
+
     // 顯示搜尋結果通知
     if (searchResults.value.length === 0) {
       $q.notify({
         type: 'info',
         message: '沒有找到符合條件的看護師，請嘗試調整搜尋條件',
-        timeout: 3000
+        timeout: 3000,
       })
     } else {
       $q.notify({
         type: 'positive',
         message: `找到 ${searchResults.value.length} 位符合條件的看護師`,
-        timeout: 2000
+        timeout: 2000,
       })
     }
-    
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('搜尋失敗:', error)
     $q.notify({
       type: 'negative',
       message: error.message || '搜尋失敗，請稍後再試',
-      timeout: 3000
+      timeout: 3000,
     })
   } finally {
     isSearching.value = false
@@ -324,10 +324,10 @@ const applyFilters = () => {
 const clearFilters = () => {
   filters.value = {
     location: '',
-    minRating: null,
-    maxHourlyRate: null,
-    maxShiftRate: null,
-    skills: []
+    minRating: undefined,
+    maxHourlyRate: undefined,
+    maxShiftRate: undefined,
+    skills: [],
   }
   performSearch()
 }
@@ -343,7 +343,9 @@ const clearSearch = () => {
 const loadRecommendedCaregivers = async () => {
   try {
     const result = await apiService.getFeaturedCaregivers()
-    recommendedCaregivers.value = Array.isArray(result) ? result : result.data || []
+    recommendedCaregivers.value = Array.isArray(result)
+      ? result
+      : (result as any).data || []
   } catch (error) {
     console.error('載入推薦看護師失敗:', error)
   }
@@ -355,6 +357,7 @@ onMounted(() => {
 })
 
 // 頁面結構化資料
+// Import 已在上方添加
 const route = useRoute()
 const config = useRuntimeConfig()
 const baseUrl = config.public.baseUrl || ''
@@ -371,11 +374,11 @@ useHead({
         description: '快速搜尋專業看護師，找到最適合的照護服務',
         provider: {
           '@type': 'Organization',
-          name: '護理服務平台'
-        }
-      })
-    }
-  ]
+          name: '護理服務平台',
+        },
+      }),
+    },
+  ],
 })
 </script>
 

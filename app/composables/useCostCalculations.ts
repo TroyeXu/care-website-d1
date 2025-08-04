@@ -26,11 +26,13 @@ export default function useCostCalculations(state: CostCalculationsState) {
     selectedShiftType,
     hourCount,
     dayCount,
-    shiftDayCount
+    shiftDayCount,
   } = state
 
   const selectedItems = computed(() =>
-    selectedCategory.value === '鐘點制' ? selectedHourlyItems.value : selectedShiftItems.value
+    selectedCategory.value === '鐘點制'
+      ? selectedHourlyItems.value
+      : selectedShiftItems.value,
   )
 
   const hourlyRate = computed(() => {
@@ -64,16 +66,24 @@ export default function useCostCalculations(state: CostCalculationsState) {
     } else if (selectedShiftType.value === 'SH02') {
       basePrice = 5500
     }
-    const additionalServices = selectedShiftItems.value.reduce((sum, item) => sum + item.price, 0)
+    const additionalServices = selectedShiftItems.value.reduce(
+      (sum, item) => sum + item.price,
+      0,
+    )
     return (basePrice + additionalServices) * shiftDayCount.value
   })
 
   const totalCost = computed(() =>
-    selectedCategory.value === '鐘點制' ? hourlyTotalWithTime.value : shiftTotalWithDays.value
+    selectedCategory.value === '鐘點制'
+      ? hourlyTotalWithTime.value
+      : shiftTotalWithDays.value,
   )
 
   function calculatePreviewCost(item: CostItem): number {
-    if (selectedCategory.value === '鐘點制' && item.subCategory !== '時段加價') {
+    if (
+      selectedCategory.value === '鐘點制' &&
+      item.subCategory !== '時段加價'
+    ) {
       return totalCost.value + item.price * hourCount.value
     } else {
       return totalCost.value + item.price
@@ -93,6 +103,6 @@ export default function useCostCalculations(state: CostCalculationsState) {
     shiftTotalWithDays,
     totalCost,
     calculatePreviewCost,
-    formatCurrency
+    formatCurrency,
   }
 }

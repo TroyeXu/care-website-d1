@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', {
     users: mockUsers,
     isAuthenticated: false,
     loading: false,
-    error: null
+    error: null,
   }),
 
   getters: {
@@ -47,18 +47,18 @@ export const useAuthStore = defineStore('auth', {
     userProfile: (state) => state.currentUser?.profile,
     userName: (state) => state.currentUser?.name,
     userEmail: (state) => state.currentUser?.email,
-    
-    getUserById: (state) => (id: string) => 
-      state.users.find(user => user.id === id),
-      
+
+    getUserById: (state) => (id: string) =>
+      state.users.find((user) => user.id === id),
+
     getUsersByRole: (state) => (role: 'patient' | 'caregiver' | 'admin') =>
-      state.users.filter(user => user.role === role)
+      state.users.filter((user) => user.role === role),
   },
 
   actions: {
     loadMockData() {
       this.users = mockUsers
-      this.currentUser = mockUsers.find(u => u.id === '1') || null
+      this.currentUser = mockUsers.find((u) => u.id === '1') || null
       this.isAuthenticated = true
     },
 
@@ -67,16 +67,19 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        const response = await $fetch('/api/auth/login', {
-          method: 'POST' as const,
-          body: credentials
-        })
+        const response = await $fetch<{ user: User; token?: string }>(
+          '/api/auth/login',
+          {
+            method: 'POST' as const,
+            body: credentials,
+          },
+        )
 
         this.currentUser = response.user
         this.isAuthenticated = true
-        
+
         // 更新本地用戶列表
-        const userIndex = this.users.findIndex(u => u.id === response.user.id)
+        const userIndex = this.users.findIndex((u) => u.id === response.user.id)
         if (userIndex !== -1) {
           this.users[userIndex] = response.user
         } else {
@@ -96,9 +99,9 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        const response = await $fetch('/api/auth/register', {
+        const response = await $fetch<{ user: User }>('/api/auth/register', {
           method: 'POST' as const,
-          body: userData
+          body: userData,
         })
 
         this.currentUser = response.user
@@ -120,9 +123,9 @@ export const useAuthStore = defineStore('auth', {
 
       try {
         await $fetch('/api/auth/logout', {
-          method: 'POST'
+          method: 'POST',
         })
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Logout error:', err)
       } finally {
         this.currentUser = null
@@ -138,14 +141,19 @@ export const useAuthStore = defineStore('auth', {
       }
 
       try {
-        const updatedUser = await $fetch(`/api/users/${this.currentUser.id}`, {
-          method: 'PUT',
-          body: { profile: updates }
-        })
+        const updatedUser = await $fetch<User>(
+          `/api/users/${this.currentUser.id}`,
+          {
+            method: 'PUT',
+            body: { profile: updates },
+          },
+        )
 
         this.currentUser = updatedUser
-        
-        const userIndex = this.users.findIndex(u => u.id === this.currentUser!.id)
+
+        const userIndex = this.users.findIndex(
+          (u) => u.id === this.currentUser!.id,
+        )
         if (userIndex !== -1) {
           this.users[userIndex] = { ...this.currentUser }
         }
@@ -163,12 +171,15 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        // 模擬密碼重設功能
-        return { message: '密碼重設信件已寄出' }
+        const response = await $fetch('/api/auth/reset-password', {
+          method: 'POST',
+          body: { email }
+        })
+        return response
       } catch (err: any) {
-        this.error = err.message
+        this.error = err.data?.message || err.message || '重設密碼失敗'
         console.error('Password reset error:', err)
-        throw err
+        throw new Error(this.error || '未知錯誤')
       } finally {
         this.loading = false
       }
@@ -181,10 +192,10 @@ export const useAuthStore = defineStore('auth', {
           // 可以在這裡添加 token 驗證邏輯
           return
         }
-        
+
         this.currentUser = null
         this.isAuthenticated = false
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Auth status check error:', err)
         this.currentUser = null
         this.isAuthenticated = false
@@ -199,12 +210,14 @@ export const useAuthStore = defineStore('auth', {
       if (this.currentUser) {
         this.currentUser.role = newRole
         this.currentUser.updated_at = new Date().toISOString()
-        
-        const userIndex = this.users.findIndex(u => u.id === this.currentUser!.id)
+
+        const userIndex = this.users.findIndex(
+          (u) => u.id === this.currentUser!.id,
+        )
         if (userIndex !== -1) {
           this.users[userIndex] = { ...this.currentUser }
         }
       }
-    }
-  }
+    },
+  },
 })

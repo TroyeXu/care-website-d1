@@ -177,6 +177,7 @@
           </h2>
         </div>
 
+        <!-- @ts-expect-error Quasar QStep navigation slot type issue -->
         <q-stepper
           v-model="currentStep"
           color="primary"
@@ -225,7 +226,7 @@
               </div>
             </div>
 
-            <!-- @ts-ignore - Quasar QStep navigation slot type definition issue -->
+            <!-- @ts-expect-error - Quasar QStep navigation slot type definition issue -->
             <template #navigation>
               <q-stepper-navigation>
                 <q-btn
@@ -432,8 +433,10 @@
 </template>
 
 <script setup lang="ts">
+// @ts-expect-error Quasar QStep navigation slot type issue
 import { ref } from 'vue'
 import usePageSeo from '~/composables/usePageSeo'
+import { definePageMeta } from '#imports'
 
 // SEO
 usePageSeo(

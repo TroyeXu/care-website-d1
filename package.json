@@ -15,7 +15,8 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
     "type-check": "nuxt typecheck",
-    "check-all": "npm run type-check && npm run lint && npm run format:check"
+    "check-all": "npm run type-check && npm run lint && npm run format:check",
+    "prepare": "husky"
   },
   "dependencies": {
     "@nuxt/kit": "^4.0.0",
@@ -50,11 +51,17 @@
     "eslint-plugin-prettier": "^5.5.3",
     "eslint-plugin-vue": "^9.20.0",
     "gh-pages": "^6.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
     "prettier": "^3.2.5",
     "sass": "^1.89.0",
     "stylelint": "^15.11.0",
     "stylelint-config-standard-scss": "^11.0.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": ["eslint --fix", "prettier --write"],
+    "*.{html,css,scss,json,md}": ["prettier --write"]
   }
 }

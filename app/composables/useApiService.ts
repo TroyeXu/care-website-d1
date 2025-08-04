@@ -1,13 +1,11 @@
 import { computed } from 'vue'
 import { useMockApi } from './useMockApi'
-import { useApiConfig } from './useApiConfig'
-import type { User, Booking, Review, Payment } from '~/utils/mockData'
-import type { Caregiver, CaregiverFilter } from '~/stores/caregivers'
+import type { User, Review, Payment, Booking } from '~/utils/mockData'
+import type { CaregiverFilter } from '~/stores/caregivers'
 
 export const useApiService = () => {
   const mockApi = useMockApi()
-  const { config } = useApiConfig()
-  
+
   // ===============================
   // 認證相關 API
   // ===============================
@@ -20,7 +18,9 @@ export const useApiService = () => {
     return response.data!
   }
 
-  const register = async (userData: Omit<User, 'id' | 'created_at' | 'updated_at'>) => {
+  const register = async (
+    userData: Omit<User, 'id' | 'created_at' | 'updated_at'>,
+  ) => {
     const response = await mockApi.registerUser(userData)
     if (!response.success) {
       throw new Error(response.error || '註冊失敗')
@@ -28,7 +28,7 @@ export const useApiService = () => {
     return response.data!
   }
 
-  const logout = async () => {
+  const logout = () => {
     return { success: true }
   }
 
@@ -36,12 +36,15 @@ export const useApiService = () => {
   // 用戶相關 API
   // ===============================
 
-  const getUserProfile = async (userId: string) => {
+  const getUserProfile = (_userId: string) => {
     // Mock API 中暫無此功能，返回空資料
     return null
   }
 
-  const updateUserProfile = async (userId: string, profileData: Partial<User['profile']>) => {
+  const updateUserProfile = async (
+    userId: string,
+    profileData: Partial<User['profile']>,
+  ) => {
     const response = await mockApi.updateUserProfile(userId, profileData)
     if (!response.success) {
       throw new Error(response.error || '更新失敗')
@@ -105,7 +108,9 @@ export const useApiService = () => {
   // 預約相關 API
   // ===============================
 
-  const createBooking = async (bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>) => {
+  const createBooking = async (
+    bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>,
+  ) => {
     const response = await mockApi.createBooking(bookingData)
     if (!response.success) {
       throw new Error(response.error || '預約失敗')
@@ -121,7 +126,7 @@ export const useApiService = () => {
     return response.data!
   }
 
-  const getBookingById = async (bookingId: string) => {
+  const getBookingById = (_bookingId: string) => {
     // Mock API 中暫無此功能
     return null
   }
@@ -146,8 +151,20 @@ export const useApiService = () => {
   // 支付相關 API
   // ===============================
 
-  const processPayment = async (paymentData: Omit<Payment, 'id' | 'created_at' | 'updated_at'>) => {
-    const response = await mockApi.processPayment(paymentData)
+  const processPayment = async (
+    paymentData: Omit<Payment, 'id' | 'created_at' | 'updated_at'>,
+  ) => {
+    // 轉換為 mockApi 期望的格式
+    const apiPaymentData = {
+      bookingId: paymentData.booking_id,
+      amount: paymentData.amount,
+      method: paymentData.method,
+      ...(paymentData.method === 'credit_card' && {
+        cardDetails: (paymentData as any).cardDetails,
+      }),
+    }
+
+    const response = await mockApi.processPayment(apiPaymentData)
     if (!response.success) {
       throw new Error(response.error || '支付失敗')
     }
@@ -162,7 +179,7 @@ export const useApiService = () => {
     return response.data!
   }
 
-  const getPaymentById = async (paymentId: string) => {
+  const getPaymentById = (_paymentId: string) => {
     // Mock API 中暫無此功能
     return null
   }
@@ -171,7 +188,9 @@ export const useApiService = () => {
   // 評價相關 API
   // ===============================
 
-  const createReview = async (reviewData: Omit<Review, 'id' | 'created_at' | 'updated_at'>) => {
+  const createReview = async (
+    reviewData: Omit<Review, 'id' | 'created_at' | 'updated_at'>,
+  ) => {
     const response = await mockApi.createReview(reviewData)
     if (!response.success) {
       throw new Error(response.error || '提交失敗')
@@ -187,7 +206,7 @@ export const useApiService = () => {
     return response.data!
   }
 
-  const getReviewsByUser = async (userId: string) => {
+  const getReviewsByUser = (_userId: string) => {
     // Mock API 中暫無此功能
     return []
   }
@@ -204,12 +223,12 @@ export const useApiService = () => {
     return response.data!
   }
 
-  const getRecentActivity = async (userId: string) => {
+  const getRecentActivity = (_userId: string) => {
     // Mock API 中暫無此功能
     return []
   }
 
-  const getNotifications = async (userId: string) => {
+  const getNotifications = (_userId: string) => {
     // Mock API 中暫無此功能
     return []
   }
@@ -218,12 +237,12 @@ export const useApiService = () => {
   // 搜尋相關 API
   // ===============================
 
-  const getSearchSuggestions = async (query: string) => {
+  const getSearchSuggestions = (_query: string) => {
     // 返回搜尋建議
     return []
   }
 
-  const getPopularSearchTerms = async () => {
+  const getPopularSearchTerms = () => {
     return ['專業照護', '失智症', '復健', '夜間照護', '居家照護', '陪伴服務']
   }
 
@@ -240,7 +259,7 @@ export const useApiService = () => {
     return response.data!
   }
 
-  const getRecommendations = async (userId: string) => {
+  const getRecommendations = async (_userId: string) => {
     // 獲取推薦的看護師
     const response = await mockApi.getCaregivers(1, 3)
     if (!response.success) {
@@ -253,13 +272,18 @@ export const useApiService = () => {
   // 聯絡表單相關 API
   // ===============================
 
-  const submitContactForm = async (contactData: { name: string; email: string; phone?: string; message: string }) => {
+  const submitContactForm = (contactData: {
+    name: string
+    email: string
+    phone?: string
+    message: string
+  }) => {
     // 模擬提交聯絡表單
-    return { 
-      id: `contact-${Date.now()}`, 
-      ...contactData, 
+    return {
+      id: `contact-${Date.now()}`,
+      ...contactData,
       created_at: new Date().toISOString(),
-      message: '您的訊息已成功送出，我們會盡快回覆您' 
+      message: '您的訊息已成功送出，我們會盡快回覆您',
     }
   }
 
@@ -267,16 +291,16 @@ export const useApiService = () => {
     // 狀態
     isLoading: computed(() => mockApi.isLoading.value),
     error: computed(() => mockApi.error.value),
-    
+
     // 認證
     login,
     register,
     logout,
-    
+
     // 用戶
     getUserProfile,
     updateUserProfile,
-    
+
     // 看護師
     getCaregivers,
     searchCaregivers,
@@ -284,7 +308,7 @@ export const useApiService = () => {
     filterCaregivers,
     getFeaturedCaregivers,
     getTopRatedCaregivers,
-    
+
     // 預約
     createBooking,
     getBookingsByUser,
@@ -292,34 +316,34 @@ export const useApiService = () => {
     updateBookingStatus,
     cancelBooking,
     confirmBooking,
-    
+
     // 支付
     processPayment,
     getPaymentHistory,
     getPaymentById,
-    
+
     // 評價
     createReview,
     getReviewsByCaregiver,
     getReviewsByUser,
-    
+
     // 儀表板
     getDashboardStats,
     getRecentActivity,
     getNotifications,
-    
+
     // 搜尋
     getSearchSuggestions,
     getPopularSearchTerms,
-    
+
     // 媒合
     findMatches,
     getRecommendations,
-    
+
     // 聯絡表單
     submitContactForm,
-    
+
     // 工具
-    clearError: () => mockApi.clearError()
+    clearError: () => mockApi.clearError(),
   }
 }

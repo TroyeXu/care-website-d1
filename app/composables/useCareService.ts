@@ -19,6 +19,6 @@ export function useCareService() {
     ...calculations,
     ...particles,
     ...actions,
-    ...chart
+    ...chart,
   }
 }

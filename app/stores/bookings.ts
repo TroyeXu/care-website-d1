@@ -29,36 +29,39 @@ export const useBookingStore = defineStore('bookings', {
     bookings: [] as Booking[],
     currentBooking: null as Booking | null,
     loading: false,
-    error: null as string | null
+    error: null as string | null,
   }),
 
   getters: {
     getBookingById: (state) => (id: string) =>
-      state.bookings.find(b => b.id === id),
+      state.bookings.find((b) => b.id === id),
 
     getBookingsByUserId: (state) => (userId: string) =>
-      state.bookings.filter(b => b.user_id === userId),
+      state.bookings.filter((b) => b.user_id === userId),
 
     getBookingsByCaregiver: (state) => (caregiverId: number) =>
-      state.bookings.filter(b => b.caregiver_id === caregiverId),
+      state.bookings.filter((b) => b.caregiver_id === caregiverId),
 
     pendingBookings: (state) =>
-      state.bookings.filter(b => b.status === 'pending'),
+      state.bookings.filter((b) => b.status === 'pending'),
 
     confirmedBookings: (state) =>
-      state.bookings.filter(b => b.status === 'confirmed'),
+      state.bookings.filter((b) => b.status === 'confirmed'),
 
     recentBookings: (state) =>
       state.bookings
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 5)
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        )
+        .slice(0, 5),
   },
 
   actions: {
     loadMockData() {
       const bookingsWithIds = mockBookings.map((booking, index) => ({
         ...booking,
-        id: `booking-${String(index + 1).padStart(3, '0')}`
+        id: `booking-${String(index + 1).padStart(3, '0')}`,
       }))
       this.bookings = bookingsWithIds
     },
@@ -66,11 +69,13 @@ export const useBookingStore = defineStore('bookings', {
     async fetchBookings() {
       this.loading = true
       this.error = null
-      
+
       try {
-        const { bookings } = await $fetch('/api/bookings')
+        const { bookings } = await $fetch<{ bookings: Booking[] }>(
+          '/api/bookings',
+        )
         this.bookings = bookings || []
-      } catch (err: any) {
+      } catch (err: unknown) {
         this.error = err.data?.message || err.message || '載入預約資料失敗'
         console.error('Error fetching bookings:', err)
         this.loadMockData()
@@ -79,18 +84,20 @@ export const useBookingStore = defineStore('bookings', {
       }
     },
 
-    async createBooking(bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>) {
+    async createBooking(
+      bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>,
+    ) {
       try {
-        const newBooking = await $fetch('/api/bookings', {
+        const newBooking = await $fetch<Booking>('/api/bookings', {
           method: 'POST' as const,
-          body: bookingData
+          body: bookingData,
         })
-        
+
         this.bookings.unshift(newBooking)
         this.currentBooking = newBooking
-        
+
         return newBooking
-      } catch (err: any) {
+      } catch (err: unknown) {
         this.error = err.data?.message || err.message || '建立預約失敗'
         console.error('Error creating booking:', err)
         throw new Error(this.error || '未知錯誤')
@@ -99,18 +106,21 @@ export const useBookingStore = defineStore('bookings', {
 
     async updateBookingStatus(bookingId: string, status: Booking['status']) {
       try {
-        const updatedBooking = await $fetch(`/api/bookings/${bookingId}`, {
-          method: 'PUT' as const,
-          body: { status }
-        })
-        
-        const index = this.bookings.findIndex(b => b.id === bookingId)
+        const updatedBooking = await $fetch<Booking>(
+          `/api/bookings/${bookingId}`,
+          {
+            method: 'PUT' as const,
+            body: { status },
+          },
+        )
+
+        const index = this.bookings.findIndex((b) => b.id === bookingId)
         if (index !== -1) {
           this.bookings[index] = updatedBooking
         }
-        
+
         return updatedBooking
-      } catch (err: any) {
+      } catch (err: unknown) {
         this.error = err.data?.message || err.message || '更新預約狀態失敗'
         console.error('Error updating booking status:', err)
         throw new Error(this.error || '未知錯誤')
@@ -127,9 +137,11 @@ export const useBookingStore = defineStore('bookings', {
 
     async fetchBookingsByUser(userId: string) {
       try {
-        const { bookings } = await $fetch(`/api/bookings?patient_id=${userId}`)
+        const { bookings } = await $fetch<{ bookings: Booking[] }>(
+          `/api/bookings?patient_id=${userId}`,
+        )
         return bookings || []
-      } catch (err: any) {
+      } catch (err: unknown) {
         this.error = err.data?.message || err.message || '載入用戶預約失敗'
         console.error('Error fetching user bookings:', err)
         return []
@@ -142,6 +154,6 @@ export const useBookingStore = defineStore('bookings', {
 
     clearCurrentBooking() {
       this.currentBooking = null
-    }
-  }
+    },
+  },
 })

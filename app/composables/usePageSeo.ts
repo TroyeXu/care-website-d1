@@ -1,9 +1,4 @@
-import {
-  useSeoMeta,
-  useRoute,
-  useRuntimeConfig,
-  useHead,
-} from '#imports'
+import { useSeoMeta, useRoute, useRuntimeConfig, useHead } from '#imports'
 
 export default function usePageSeo(
   title: string,
@@ -15,9 +10,7 @@ export default function usePageSeo(
   const baseUrl = config.public.baseUrl || 'http://localhost:3333'
 
   useHead({
-    link: [
-      { rel: 'canonical', href: baseUrl + route.fullPath },
-    ],
+    link: [{ rel: 'canonical', href: baseUrl + route.fullPath }],
     meta: [{ name: 'robots', content: 'index, follow' }],
     script: [
       {

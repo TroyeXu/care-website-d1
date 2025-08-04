@@ -1,17 +1,3 @@
-<script setup lang="ts">
-import usePageSeo from '~/composables/usePageSeo'
-
-usePageSeo('錯誤 - DogFriend', '發生錯誤時的說明頁面')
-const props = defineProps({
-  error: Object,
-})
-
-// 提供清除錯誤的功能，返回上一頁或首頁
-const handleError = () => {
-  clearError({ redirect: props.error?.statusCode === 404 ? '/' : '' })
-}
-</script>
-
 <template>
   <div
     class="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-50 dark:bg-gray-900"
@@ -45,7 +31,7 @@ const handleError = () => {
         <button
           v-if="error?.statusCode !== 404"
           class="px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          @click="() => { if (typeof window !== 'undefined') window.history.back() }"
+          @click="handleBack"
         >
           返回上一頁
         </button>
@@ -53,3 +39,24 @@ const handleError = () => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { clearError } from '#app'
+import usePageSeo from '~/composables/usePageSeo'
+
+usePageSeo('錯誤 - DogFriend', '發生錯誤時的說明頁面')
+const props = defineProps({
+  error: Object,
+})
+
+// 提供清除錯誤的功能，返回上一頁或首頁
+const handleError = () => {
+  clearError({ redirect: props.error?.statusCode === 404 ? '/' : '' })
+}
+
+const handleBack = () => {
+  if (typeof window !== 'undefined') {
+    window.history.back()
+  }
+}
+</script>

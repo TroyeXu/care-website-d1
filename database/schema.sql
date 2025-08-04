@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS caregivers (
   name TEXT NOT NULL,
   avatar TEXT,
   rating REAL DEFAULT 0,
-  reviews_count INTEGER DEFAULT 0,
   hourly_rate INTEGER NOT NULL,
   experience_years INTEGER DEFAULT 0,
   bio TEXT,
@@ -63,21 +62,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   FOREIGN KEY (caregiver_id) REFERENCES caregivers(id)
 );
 
--- 評價表
-CREATE TABLE IF NOT EXISTS reviews (
-  id TEXT PRIMARY KEY,
-  booking_id TEXT NOT NULL,
-  caregiver_id TEXT NOT NULL,
-  patient_name TEXT NOT NULL,
-  rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
-  comment TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (booking_id) REFERENCES bookings(id),
-  FOREIGN KEY (caregiver_id) REFERENCES caregivers(id)
-);
-
 -- 建立索引以提升查詢效能
 CREATE INDEX IF NOT EXISTS idx_bookings_caregiver ON bookings(caregiver_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_date ON bookings(service_date);
-CREATE INDEX IF NOT EXISTS idx_reviews_caregiver ON reviews(caregiver_id);
 CREATE INDEX IF NOT EXISTS idx_caregiver_rating ON caregivers(rating);

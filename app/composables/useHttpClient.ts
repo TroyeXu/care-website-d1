@@ -1,11 +1,11 @@
-import { ref } from 'vue'
+import { ref, readonly } from 'vue'
 import { useApiRoutes } from './useApiRoutes'
 
 export interface RequestConfig {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
   url: string
-  data?: any
-  params?: Record<string, any>
+  data?: Record<string, unknown> | FormData
+  params?: Record<string, string | number | boolean>
   headers?: Record<string, string>
   timeout?: number
   retry?: number
@@ -16,38 +16,44 @@ export interface ApiError {
   status: number
   message: string
   code?: string
-  details?: any
+  details?: Record<string, unknown>
 }
 
 export const useHttpClient = () => {
   const { errorMessages, isSuccessStatus } = useApiRoutes()
-  
+
   const isLoading = ref(false)
   const error = ref<ApiError | null>(null)
   const abortController = ref<AbortController | null>(null)
 
   // 建立查詢參數字串
-  const createQueryString = (params: Record<string, any>): string => {
+  const createQueryString = (
+    params: Record<string, string | number | boolean>,
+  ): string => {
     const searchParams = new URLSearchParams()
-    
+
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         if (Array.isArray(value)) {
-          value.forEach(item => searchParams.append(key, item.toString()))
+          value.forEach((item) => searchParams.append(key, item.toString()))
         } else {
           searchParams.append(key, value.toString())
         }
       }
     })
-    
+
     return searchParams.toString()
   }
 
   // 模擬延遲
-  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms))
 
   // 模擬 API 響應
-  const mockResponse = async <T>(data: T, config: RequestConfig): Promise<T> => {
+  const mockResponse = async <T>(
+    data: T,
+    config: RequestConfig,
+  ): Promise<T> => {
     if (config.mockDelay) {
       await delay(config.mockDelay)
     }
@@ -61,33 +67,46 @@ export const useHttpClient = () => {
   }
 
   // 處理請求錯誤
-  const handleError = (error: any, url: string): ApiError => {
+  const handleError = (error: unknown, url: string): ApiError => {
     console.error(`API Error [${url}]:`, error)
 
-    if (error.name === 'AbortError') {
-      return {
-        status: 0,
-        message: '請求已取消',
-        code: 'ABORTED'
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        return {
+          status: 0,
+          message: '請求已取消',
+          code: 'ABORTED',
+        }
+      }
+
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        return {
+          status: 0,
+          message: '網路連線錯誤',
+          code: 'NETWORK_ERROR',
+        }
       }
     }
 
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      return {
-        status: 0,
-        message: '網路連線錯誤',
-        code: 'NETWORK_ERROR'
-      }
+    // 處理 HTTP 錯誤響應
+    const errorObj = error as {
+      status?: number
+      message?: string
+      code?: string
+      details?: Record<string, unknown>
     }
 
-    const status = error.status || 500
-    const message = errorMessages[status as keyof typeof errorMessages] || error.message || '未知錯誤'
+    const status = errorObj.status || 500
+    const message =
+      errorMessages[status as keyof typeof errorMessages] ||
+      errorObj.message ||
+      (error instanceof Error ? error.message : '未知錯誤')
 
     return {
       status,
       message,
-      code: error.code,
-      details: error.details
+      code: errorObj.code,
+      details: errorObj.details,
     }
   }
 
@@ -113,8 +132,8 @@ export const useHttpClient = () => {
         signal: abortController.value.signal,
         headers: {
           'Content-Type': 'application/json',
-          ...config.headers
-        }
+          ...config.headers,
+        },
       }
 
       // 添加請求體
@@ -136,9 +155,12 @@ export const useHttpClient = () => {
           const errorData = await response.json().catch(() => ({}))
           throw {
             status: response.status,
-            message: errorData.message || errorMessages[response.status as keyof typeof errorMessages] || 'API 請求失敗',
+            message:
+              errorData.message ||
+              errorMessages[response.status as keyof typeof errorMessages] ||
+              'API 請求失敗',
             code: errorData.code,
-            details: errorData.details
+            details: errorData.details,
           }
         }
 
@@ -148,7 +170,7 @@ export const useHttpClient = () => {
         clearTimeout(timeoutId)
         throw fetchError
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = handleError(err, config.url)
       throw error.value
     } finally {
@@ -158,39 +180,55 @@ export const useHttpClient = () => {
   }
 
   // 便捷方法
-  const get = <T>(url: string, params?: Record<string, any>, options?: Partial<RequestConfig>) => {
+  const get = <T>(
+    url: string,
+    params?: Record<string, any>,
+    options?: Partial<RequestConfig>,
+  ) => {
     return request<T>({
       method: 'GET',
       url,
       params,
-      ...options
+      ...options,
     })
   }
 
-  const post = <T>(url: string, data?: any, options?: Partial<RequestConfig>) => {
+  const post = <T>(
+    url: string,
+    data?: Record<string, unknown> | FormData,
+    options?: Partial<RequestConfig>,
+  ) => {
     return request<T>({
       method: 'POST',
       url,
       data,
-      ...options
+      ...options,
     })
   }
 
-  const put = <T>(url: string, data?: any, options?: Partial<RequestConfig>) => {
+  const put = <T>(
+    url: string,
+    data?: Record<string, unknown> | FormData,
+    options?: Partial<RequestConfig>,
+  ) => {
     return request<T>({
       method: 'PUT',
       url,
       data,
-      ...options
+      ...options,
     })
   }
 
-  const patch = <T>(url: string, data?: any, options?: Partial<RequestConfig>) => {
+  const patch = <T>(
+    url: string,
+    data?: Record<string, unknown> | FormData,
+    options?: Partial<RequestConfig>,
+  ) => {
     return request<T>({
       method: 'PATCH',
       url,
       data,
-      ...options
+      ...options,
     })
   }
 
@@ -198,7 +236,7 @@ export const useHttpClient = () => {
     return request<T>({
       method: 'DELETE',
       url,
-      ...options
+      ...options,
     })
   }
 
@@ -213,30 +251,33 @@ export const useHttpClient = () => {
   }
 
   // 重試機制
-  const retry = async <T>(config: RequestConfig, maxRetries: number = 3): Promise<T> => {
+  const retry = async <T>(
+    config: RequestConfig,
+    maxRetries: number = 3,
+  ): Promise<T> => {
     let lastError: ApiError | null = null
-    
+
     for (let i = 0; i <= maxRetries; i++) {
       try {
         return await request<T>(config)
       } catch (err) {
         lastError = err as ApiError
-        
+
         // 不重試客戶端錯誤
         if (lastError.status >= 400 && lastError.status < 500) {
           break
         }
-        
+
         // 最後一次嘗試
         if (i === maxRetries) {
           break
         }
-        
+
         // 等待後重試
         await delay(Math.pow(2, i) * 1000)
       }
     }
-    
+
     throw lastError
   }
 
@@ -244,7 +285,7 @@ export const useHttpClient = () => {
     // 狀態
     isLoading: readonly(isLoading),
     error: readonly(error),
-    
+
     // 方法
     request,
     get,
@@ -255,8 +296,8 @@ export const useHttpClient = () => {
     cancel,
     clearError,
     retry,
-    
+
     // 工具
-    mockResponse
+    mockResponse,
   }
 }

@@ -16,15 +16,15 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   message: '載入中...',
-  spinnerType: 'dots'
+  spinnerType: 'dots',
 })
 
 const spinnerComponent = computed(() => {
   const spinnerMap = {
     dots: 'q-spinner-dots',
-    grid: 'q-spinner-grid', 
+    grid: 'q-spinner-grid',
     hourglass: 'q-spinner-hourglass',
-    rings: 'q-spinner-rings'
+    rings: 'q-spinner-rings',
   }
   return spinnerMap[props.spinnerType] || 'q-spinner-dots'
 })

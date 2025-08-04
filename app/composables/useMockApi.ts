@@ -1,5 +1,17 @@
-import { ref } from 'vue'
-import { mockCaregivers, mockUsers, mockBookings, mockReviews, mockPayments, type Caregiver, type User, type Booking, type Review, type Payment } from '~/utils/mockData'
+import { ref, readonly } from 'vue'
+import {
+  mockCaregivers,
+  mockUsers,
+  mockBookings,
+  mockReviews,
+  mockPayments,
+  type Caregiver,
+  type User,
+  type Booking,
+  type Review,
+  type Payment,
+} from '~/utils/mockData'
+import { toCaregiverDisplay, type CaregiverDisplay } from '~/types/caregiver'
 
 export interface ApiResponse<T> {
   success: boolean
@@ -25,20 +37,21 @@ export const useMockApi = () => {
   const bookingsWithIds = ref<Booking[]>(
     mockBookings.map((booking, index) => ({
       ...booking,
-      id: `booking-${String(index + 1).padStart(3, '0')}`
-    }))
+      id: `booking-${String(index + 1).padStart(3, '0')}`,
+    })),
   )
 
   // Helper function to convert Omit<Booking, 'id'>[] to Booking[]
   const addBookingIds = (bookings: Omit<Booking, 'id'>[]): Booking[] => {
     return bookings.map((booking, index) => ({
       ...booking,
-      id: `booking-${String(index + 1).padStart(3, '0')}`
+      id: `booking-${String(index + 1).padStart(3, '0')}`,
     }))
   }
 
   // 模擬 API 延遲
-  const delay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms))
+  const delay = (ms: number = 500) =>
+    new Promise((resolve) => setTimeout(resolve, ms))
 
   // 模擬網路錯誤
   const shouldSimulateError = () => Math.random() < 0.05 // 5% 機率模擬錯誤
@@ -47,7 +60,10 @@ export const useMockApi = () => {
   // 用戶相關 API
   // ===============================
 
-  const loginUser = async (email: string, password: string): Promise<ApiResponse<User>> => {
+  const loginUser = async (
+    email: string,
+    password: string,
+  ): Promise<ApiResponse<User>> => {
     isLoading.value = true
     error.value = null
 
@@ -58,12 +74,12 @@ export const useMockApi = () => {
         throw new Error('網路連線異常，請稍後再試')
       }
 
-      const user = mockUsers.find(u => u.email === email)
-      
+      const user = mockUsers.find((u) => u.email === email)
+
       if (!user) {
         return {
           success: false,
-          error: '用戶不存在'
+          error: '用戶不存在',
         }
       }
 
@@ -71,27 +87,29 @@ export const useMockApi = () => {
       if (password.length < 6) {
         return {
           success: false,
-          error: '密碼錯誤'
+          error: '密碼錯誤',
         }
       }
 
       return {
         success: true,
         data: user,
-        message: '登入成功'
+        message: '登入成功',
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
     }
   }
 
-  const registerUser = async (userData: Omit<User, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<User>> => {
+  const registerUser = async (
+    userData: Omit<User, 'id' | 'created_at' | 'updated_at'>,
+  ): Promise<ApiResponse<User>> => {
     isLoading.value = true
     error.value = null
 
@@ -103,10 +121,10 @@ export const useMockApi = () => {
       }
 
       // 檢查郵箱是否已存在
-      if (mockUsers.find(u => u.email === userData.email)) {
+      if (mockUsers.find((u) => u.email === userData.email)) {
         return {
           success: false,
-          error: '此電子郵件已被註冊'
+          error: '此電子郵件已被註冊',
         }
       }
 
@@ -114,7 +132,7 @@ export const useMockApi = () => {
         ...userData,
         id: `user-${Date.now()}`,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       }
 
       mockUsers.push(newUser)
@@ -122,20 +140,23 @@ export const useMockApi = () => {
       return {
         success: true,
         data: newUser,
-        message: '註冊成功'
+        message: '註冊成功',
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
     }
   }
 
-  const updateUserProfile = async (userId: string, profileData: Partial<User['profile']>): Promise<ApiResponse<User>> => {
+  const updateUserProfile = async (
+    userId: string,
+    profileData: Partial<User['profile']>,
+  ): Promise<ApiResponse<User>> => {
     isLoading.value = true
     error.value = null
 
@@ -146,30 +167,33 @@ export const useMockApi = () => {
         throw new Error('更新失敗，請稍後再試')
       }
 
-      const userIndex = mockUsers.findIndex(u => u.id === userId)
+      const userIndex = mockUsers.findIndex((u) => u.id === userId)
       if (userIndex === -1) {
         return {
           success: false,
-          error: '用戶不存在'
+          error: '用戶不存在',
         }
       }
 
-      mockUsers[userIndex].profile = {
-        ...mockUsers[userIndex].profile,
-        ...profileData
+      const user = mockUsers[userIndex]
+      if (user) {
+        user.profile = {
+          ...user.profile,
+          ...profileData,
+        }
+        user.updated_at = new Date().toISOString()
       }
-      mockUsers[userIndex].updated_at = new Date().toISOString()
 
       return {
         success: true,
         data: mockUsers[userIndex],
-        message: '個人資料更新成功'
+        message: '個人資料更新成功',
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
@@ -180,7 +204,10 @@ export const useMockApi = () => {
   // 看護師相關 API
   // ===============================
 
-  const getCaregivers = async (page: number = 1, limit: number = 10): Promise<ApiResponse<PaginatedResponse<Caregiver>>> => {
+  const getCaregivers = async (
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<ApiResponse<PaginatedResponse<Caregiver>>> => {
     isLoading.value = true
     error.value = null
 
@@ -203,21 +230,23 @@ export const useMockApi = () => {
           page,
           limit,
           hasNext: endIndex < mockCaregivers.length,
-          hasPrev: page > 1
-        }
+          hasPrev: page > 1,
+        },
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
     }
   }
 
-  const searchCaregivers = async (query: string): Promise<ApiResponse<Caregiver[]>> => {
+  const searchCaregivers = async (
+    query: string,
+  ): Promise<ApiResponse<Caregiver[]>> => {
     isLoading.value = true
     error.value = null
 
@@ -229,31 +258,37 @@ export const useMockApi = () => {
       }
 
       const lowercaseQuery = query.toLowerCase()
-      const results = mockCaregivers.filter(caregiver =>
-        caregiver.name.toLowerCase().includes(lowercaseQuery) ||
-        caregiver.skills.toLowerCase().includes(lowercaseQuery) ||
-        caregiver.experience.toLowerCase().includes(lowercaseQuery) ||
-        caregiver.location?.toLowerCase().includes(lowercaseQuery) ||
-        caregiver.licenses.some(license => license.toLowerCase().includes(lowercaseQuery))
+      const displayCaregivers = mockCaregivers.map(toCaregiverDisplay)
+      const results = displayCaregivers.filter(
+        (caregiver) =>
+          caregiver.name.toLowerCase().includes(lowercaseQuery) ||
+          (caregiver.skills || '').toLowerCase().includes(lowercaseQuery) ||
+          (caregiver.experience || '').toLowerCase().includes(lowercaseQuery) ||
+          (caregiver.location || '').toLowerCase().includes(lowercaseQuery) ||
+          (caregiver.licenses || []).some((license) =>
+            license.toLowerCase().includes(lowercaseQuery),
+          ),
       )
 
       return {
         success: true,
         data: results,
-        message: `找到 ${results.length} 位相關看護師`
+        message: `找到 ${results.length} 位相關看護師`,
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
     }
   }
 
-  const getCaregiverById = async (id: number): Promise<ApiResponse<Caregiver>> => {
+  const getCaregiverById = async (
+    id: number,
+  ): Promise<ApiResponse<Caregiver>> => {
     isLoading.value = true
     error.value = null
 
@@ -264,24 +299,26 @@ export const useMockApi = () => {
         throw new Error('無法載入看護師詳細資料')
       }
 
-      const caregiver = mockCaregivers.find(c => c.id === id)
-      
+      const caregiver = mockCaregivers.find(
+        (c) => c.id === String(id) || c.id === `caregiver-${id}`,
+      )
+
       if (!caregiver) {
         return {
           success: false,
-          error: '看護師不存在'
+          error: '看護師不存在',
         }
       }
 
       return {
         success: true,
-        data: caregiver
+        data: caregiver,
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
@@ -305,42 +342,44 @@ export const useMockApi = () => {
         throw new Error('篩選服務暫時無法使用')
       }
 
-      let results = [...mockCaregivers]
+      let results = mockCaregivers.map(toCaregiverDisplay)
 
       if (filters.location) {
-        results = results.filter(c => c.location?.includes(filters.location!))
+        results = results.filter((c) => c.location?.includes(filters.location!))
       }
 
       if (filters.minRating) {
-        results = results.filter(c => c.rating >= filters.minRating!)
+        results = results.filter((c) => c.rating >= filters.minRating!)
       }
 
       if (filters.maxHourlyRate) {
-        results = results.filter(c => c.hourly_rate <= filters.maxHourlyRate!)
+        results = results.filter((c) => c.hourly_rate <= filters.maxHourlyRate!)
       }
 
       if (filters.maxShiftRate) {
-        results = results.filter(c => c.shift_rate <= filters.maxShiftRate!)
+        results = results.filter(
+          (c) => (c.shift_rate || c.hourly_rate * 12) <= filters.maxShiftRate!,
+        )
       }
 
       if (filters.skills && filters.skills.length > 0) {
-        results = results.filter(c =>
-          filters.skills!.some(skill =>
-            c.skills.toLowerCase().includes(skill.toLowerCase())
-          )
+        results = results.filter((c) =>
+          filters.skills!.some((skill) =>
+            (c.skills || '').toLowerCase().includes(skill.toLowerCase()),
+          ),
         )
       }
 
       return {
         success: true,
         data: results,
-        message: `找到 ${results.length} 位符合條件的看護師`
+        message: `找到 ${results.length} 位符合條件的看護師`,
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
@@ -351,7 +390,9 @@ export const useMockApi = () => {
   // 預約相關 API
   // ===============================
 
-  const createBooking = async (bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Booking>> => {
+  const createBooking = async (
+    bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>,
+  ): Promise<ApiResponse<Booking>> => {
     isLoading.value = true
     error.value = null
 
@@ -366,7 +407,7 @@ export const useMockApi = () => {
         ...bookingData,
         id: `booking-${Date.now()}`,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       }
 
       mockBookings.push(newBooking)
@@ -374,20 +415,22 @@ export const useMockApi = () => {
       return {
         success: true,
         data: newBooking,
-        message: '預約成功'
+        message: '預約成功',
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
     }
   }
 
-  const getBookingsByUser = async (userId: string): Promise<ApiResponse<Booking[]>> => {
+  const getBookingsByUser = async (
+    userId: string,
+  ): Promise<ApiResponse<Booking[]>> => {
     isLoading.value = true
     error.value = null
 
@@ -398,24 +441,29 @@ export const useMockApi = () => {
         throw new Error('無法載入預約記錄')
       }
 
-      const userBookings = bookingsWithIds.value.filter(b => b.user_id === userId)
+      const userBookings = bookingsWithIds.value.filter(
+        (b) => b.user_id === userId,
+      )
 
       return {
         success: true,
-        data: userBookings
+        data: userBookings,
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
     }
   }
 
-  const updateBookingStatus = async (bookingId: string, status: Booking['status']): Promise<ApiResponse<Booking>> => {
+  const updateBookingStatus = async (
+    bookingId: string,
+    status: Booking['status'],
+  ): Promise<ApiResponse<Booking>> => {
     isLoading.value = true
     error.value = null
 
@@ -426,28 +474,33 @@ export const useMockApi = () => {
         throw new Error('更新預約狀態失敗')
       }
 
-      const bookingIndex = bookingsWithIds.value.findIndex(b => b.id === bookingId)
-      
+      const bookingIndex = bookingsWithIds.value.findIndex(
+        (b) => b.id === bookingId,
+      )
+
       if (bookingIndex === -1) {
         return {
           success: false,
-          error: '預約不存在'
+          error: '預約不存在',
         }
       }
 
-      bookingsWithIds.value[bookingIndex].status = status
-      bookingsWithIds.value[bookingIndex].updated_at = new Date().toISOString()
+      const booking = bookingsWithIds.value[bookingIndex]
+      if (booking) {
+        booking.status = status
+        booking.updated_at = new Date().toISOString()
+      }
 
       return {
         success: true,
-        data: bookingsWithIds.value[bookingIndex],
-        message: '預約狀態更新成功'
+        data: booking,
+        message: '預約狀態更新成功',
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
@@ -481,10 +534,13 @@ export const useMockApi = () => {
 
       // 模擬信用卡驗證
       if (paymentData.method === 'credit_card') {
-        if (!paymentData.cardDetails?.number || paymentData.cardDetails.number.length < 16) {
+        if (
+          !paymentData.cardDetails?.number ||
+          paymentData.cardDetails.number.length < 16
+        ) {
           return {
             success: false,
-            error: '信用卡號碼無效'
+            error: '信用卡號碼無效',
           }
         }
       }
@@ -497,7 +553,7 @@ export const useMockApi = () => {
         status: 'completed',
         transaction_id: `txn-${Math.random().toString(36).substr(2, 9)}`,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       }
 
       mockPayments.push(payment)
@@ -505,20 +561,22 @@ export const useMockApi = () => {
       return {
         success: true,
         data: payment,
-        message: '支付成功'
+        message: '支付成功',
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
     }
   }
 
-  const getPaymentHistory = async (userId: string): Promise<ApiResponse<Payment[]>> => {
+  const getPaymentHistory = async (
+    userId: string,
+  ): Promise<ApiResponse<Payment[]>> => {
     isLoading.value = true
     error.value = null
 
@@ -531,20 +589,22 @@ export const useMockApi = () => {
 
       // 透過預約找到用戶的支付記錄
       const userBookingIds = bookingsWithIds.value
-        .filter(b => b.user_id === userId)
-        .map(b => b.id)
+        .filter((b) => b.user_id === userId)
+        .map((b) => b.id)
 
-      const userPayments = mockPayments.filter(p => userBookingIds.includes(p.booking_id))
+      const userPayments = mockPayments.filter((p) =>
+        userBookingIds.includes(p.booking_id),
+      )
 
       return {
         success: true,
-        data: userPayments
+        data: userPayments,
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
@@ -555,7 +615,9 @@ export const useMockApi = () => {
   // 評價相關 API
   // ===============================
 
-  const createReview = async (reviewData: Omit<Review, 'id' | 'created_at' | 'updated_at'>): Promise<ApiResponse<Review>> => {
+  const createReview = async (
+    reviewData: Omit<Review, 'id' | 'created_at' | 'updated_at'>,
+  ): Promise<ApiResponse<Review>> => {
     isLoading.value = true
     error.value = null
 
@@ -570,7 +632,7 @@ export const useMockApi = () => {
         ...reviewData,
         id: `review-${Date.now()}`,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       }
 
       mockReviews.push(newReview)
@@ -578,20 +640,22 @@ export const useMockApi = () => {
       return {
         success: true,
         data: newReview,
-        message: '評價提交成功'
+        message: '評價提交成功',
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
     }
   }
 
-  const getReviewsByCaregiver = async (caregiverId: number): Promise<ApiResponse<Review[]>> => {
+  const getReviewsByCaregiver = async (
+    caregiverId: number,
+  ): Promise<ApiResponse<Review[]>> => {
     isLoading.value = true
     error.value = null
 
@@ -602,17 +666,19 @@ export const useMockApi = () => {
         throw new Error('無法載入評價')
       }
 
-      const caregiverReviews = mockReviews.filter(r => r.caregiver_id === caregiverId)
+      const caregiverReviews = mockReviews.filter(
+        (r) => r.caregiver_id === caregiverId,
+      )
 
       return {
         success: true,
-        data: caregiverReviews
+        data: caregiverReviews,
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
@@ -623,15 +689,19 @@ export const useMockApi = () => {
   // 儀表板統計 API
   // ===============================
 
-  const getDashboardStats = async (userId: string): Promise<ApiResponse<{
-    totalBookings: number
-    completedBookings: number
-    pendingBookings: number
-    totalSpent: number
-    favoriteCaregiver?: Caregiver
-    recentBookings: Booking[]
-    upcomingBookings: Booking[]
-  }>> => {
+  const getDashboardStats = async (
+    userId: string,
+  ): Promise<
+    ApiResponse<{
+      totalBookings: number
+      completedBookings: number
+      pendingBookings: number
+      totalSpent: number
+      favoriteCaregiver?: Caregiver
+      recentBookings: Booking[]
+      upcomingBookings: Booking[]
+    }>
+  > => {
     isLoading.value = true
     error.value = null
 
@@ -642,54 +712,72 @@ export const useMockApi = () => {
         throw new Error('無法載入統計資料')
       }
 
-      const userBookings = bookingsWithIds.value.filter(b => b.user_id === userId)
-      const userPayments = mockPayments.filter(p => 
-        userBookings.some(b => b.id === p.booking_id)
+      const userBookings = bookingsWithIds.value.filter(
+        (b) => b.user_id === userId,
+      )
+      const userPayments = mockPayments.filter((p) =>
+        userBookings.some((b) => b.id === p.booking_id),
       )
 
       const totalSpent = userPayments.reduce((sum, p) => sum + p.amount, 0)
-      
+
       const now = new Date()
-      const upcomingBookings: Booking[] = userBookings.filter(b => {
+      const upcomingBookings: Booking[] = userBookings.filter((b) => {
         const bookingDate = new Date(b.start_date)
         return bookingDate >= now && ['confirmed', 'pending'].includes(b.status)
       })
 
       const recentBookings: Booking[] = userBookings
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        )
         .slice(0, 5)
 
       // 找出最常預約的看護師
-      const caregiverBookingCounts = userBookings.reduce((acc, booking) => {
-        acc[booking.caregiver_id] = (acc[booking.caregiver_id] || 0) + 1
-        return acc
-      }, {} as Record<number, number>)
+      const caregiverBookingCounts = userBookings.reduce(
+        (acc, booking) => {
+          acc[booking.caregiver_id] = (acc[booking.caregiver_id] || 0) + 1
+          return acc
+        },
+        {} as Record<number, number>,
+      )
 
-      const favoriteCaregiver = Object.keys(caregiverBookingCounts).length > 0
-        ? mockCaregivers.find(c => c.id === parseInt(
-            Object.keys(caregiverBookingCounts).reduce((a, b) =>
-              caregiverBookingCounts[parseInt(a)] > caregiverBookingCounts[parseInt(b)] ? a : b
+      const favoriteCaregiver =
+        Object.keys(caregiverBookingCounts).length > 0
+          ? mockCaregivers.find(
+              (c) =>
+                c.id ===
+                `caregiver-${Object.keys(caregiverBookingCounts).reduce(
+                  (a, b) => {
+                    const countA = caregiverBookingCounts[parseInt(a, 10)]
+                    const countB = caregiverBookingCounts[parseInt(b, 10)]
+                    return (countA || 0) > (countB || 0) ? a : b
+                  },
+                )}`,
             )
-          ))
-        : undefined
+          : undefined
 
       return {
         success: true,
         data: {
           totalBookings: userBookings.length,
-          completedBookings: userBookings.filter(b => b.status === 'completed').length,
-          pendingBookings: userBookings.filter(b => b.status === 'pending').length,
+          completedBookings: userBookings.filter(
+            (b) => b.status === 'completed',
+          ).length,
+          pendingBookings: userBookings.filter((b) => b.status === 'pending')
+            .length,
           totalSpent,
           favoriteCaregiver,
           recentBookings,
-          upcomingBookings
-        }
+          upcomingBookings,
+        },
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = err.message
       return {
         success: false,
-        error: err.message
+        error: err.message,
       }
     } finally {
       isLoading.value = false
@@ -729,6 +817,8 @@ export const useMockApi = () => {
     getDashboardStats,
 
     // 工具方法
-    clearError: () => { error.value = null }
+    clearError: () => {
+      error.value = null
+    },
   }
 }

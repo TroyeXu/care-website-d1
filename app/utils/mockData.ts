@@ -1,6 +1,49 @@
 import type { Caregiver } from '~/stores/caregivers'
 import type { Booking } from '~/stores/bookings'
 
+// 舊格式的 Caregiver 資料
+interface OldCaregiver {
+  id: number
+  name: string
+  experience: string
+  skills: string
+  licenses: string[]
+  rating: number
+  photo: string
+  available: string
+  hourly_rate: number
+  shift_rate: number
+  location: string
+  description: string
+  created_at: string
+  updated_at: string
+}
+
+// 轉換函數：將舊格式轉換為新格式
+function convertToNewCaregiver(old: OldCaregiver): Caregiver {
+  // 根據評分計算合理的評論數
+  const reviewCount = Math.floor((old.rating - 4) * 100 + Math.random() * 20)
+
+  return {
+    id: `caregiver-${old.id}`,
+    name: old.name,
+    avatar: old.photo,
+    rating: old.rating,
+    reviews_count: reviewCount,
+    hourly_rate: old.hourly_rate,
+    experience_years: parseInt(old.experience.match(/\d+/)?.[0] || '0'),
+    bio: old.description,
+    certifications: old.licenses,
+    languages: ['中文', '台語'],
+    specialties: old.skills.split('、'),
+    service_areas: [old.location],
+    created_at: old.created_at,
+    updated_at: old.updated_at,
+  }
+}
+
+// Types are imported from stores, no need to re-export
+
 export interface User {
   id: string
   name: string
@@ -20,7 +63,7 @@ export interface User {
   }
 }
 
-export const mockCaregivers: Caregiver[] = [
+const oldMockCaregivers: OldCaregiver[] = [
   {
     id: 1,
     name: '李美惠',
@@ -33,9 +76,10 @@ export const mockCaregivers: Caregiver[] = [
     hourly_rate: 280,
     shift_rate: 3200,
     location: '台北市中正區',
-    description: '專精於失智症照護，具備豐富的醫療背景，能提供專業的復健協助和心理支持。擅長與高齡患者溝通，具備耐心和愛心。',
+    description:
+      '專精於失智症照護，具備豐富的醫療背景，能提供專業的復健協助和心理支持。擅長與高齡患者溝通，具備耐心和愛心。',
     created_at: '2024-01-15T00:00:00Z',
-    updated_at: '2024-07-10T00:00:00Z'
+    updated_at: '2024-07-10T00:00:00Z',
   },
   {
     id: 2,
@@ -49,9 +93,10 @@ export const mockCaregivers: Caregiver[] = [
     hourly_rate: 260,
     shift_rate: 3000,
     location: '台北市大安區',
-    description: '男性照護員，力氣大適合協助行動不便患者。在術後照護方面經驗豐富，能協助復健訓練和傷口照護。',
+    description:
+      '男性照護員，力氣大適合協助行動不便患者。在術後照護方面經驗豐富，能協助復健訓練和傷口照護。',
     created_at: '2024-02-20T00:00:00Z',
-    updated_at: '2024-07-12T00:00:00Z'
+    updated_at: '2024-07-12T00:00:00Z',
   },
   {
     id: 3,
@@ -65,9 +110,10 @@ export const mockCaregivers: Caregiver[] = [
     hourly_rate: 320,
     shift_rate: 3800,
     location: '台北市信義區',
-    description: '前榮總護理師，具備最高等級的醫療照護能力。擅長慢性病管理和用藥指導，能處理各種緊急狀況。',
+    description:
+      '前榮總護理師，具備最高等級的醫療照護能力。擅長慢性病管理和用藥指導，能處理各種緊急狀況。',
     created_at: '2024-01-10T00:00:00Z',
-    updated_at: '2024-07-14T00:00:00Z'
+    updated_at: '2024-07-14T00:00:00Z',
   },
   {
     id: 4,
@@ -81,9 +127,10 @@ export const mockCaregivers: Caregiver[] = [
     hourly_rate: 250,
     shift_rate: 2800,
     location: '新北市板橋區',
-    description: '專精於兒童和青少年照護，對發展遲緩兒童有豐富經驗。個性活潑有耐心，能提供教育陪伴服務。',
+    description:
+      '專精於兒童和青少年照護，對發展遲緩兒童有豐富經驗。個性活潑有耐心，能提供教育陪伴服務。',
     created_at: '2024-03-05T00:00:00Z',
-    updated_at: '2024-07-08T00:00:00Z'
+    updated_at: '2024-07-08T00:00:00Z',
   },
   {
     id: 5,
@@ -97,9 +144,10 @@ export const mockCaregivers: Caregiver[] = [
     hourly_rate: 270,
     shift_rate: 3100,
     location: '台北市松山區',
-    description: '男性照護員，具備物理治療背景，專長復健訓練和肌力增強。適合需要復健協助的患者。',
+    description:
+      '男性照護員，具備物理治療背景，專長復健訓練和肌力增強。適合需要復健協助的患者。',
     created_at: '2024-02-28T00:00:00Z',
-    updated_at: '2024-07-11T00:00:00Z'
+    updated_at: '2024-07-11T00:00:00Z',
   },
   {
     id: 6,
@@ -113,10 +161,11 @@ export const mockCaregivers: Caregiver[] = [
     hourly_rate: 290,
     shift_rate: 3300,
     location: '台北市內湖區',
-    description: '具備精神科專業背景，擅長處理精神疾病患者的照護需求。能提供情緒支持和行為管理。',
+    description:
+      '具備精神科專業背景，擅長處理精神疾病患者的照護需求。能提供情緒支持和行為管理。',
     created_at: '2024-04-12T00:00:00Z',
-    updated_at: '2024-07-13T00:00:00Z'
-  }
+    updated_at: '2024-07-13T00:00:00Z',
+  },
 ]
 
 export const mockUsers: User[] = [
@@ -135,8 +184,8 @@ export const mockUsers: User[] = [
       address: '台北市中山區民生東路123號',
       emergencyContact: '0987-654-321',
       medicalHistory: ['糖尿病', '高血壓'],
-      preferences: ['女性照護員', '有護理師證照', '日間照護']
-    }
+      preferences: ['女性照護員', '有護理師證照', '日間照護'],
+    },
   },
   {
     id: 'user-002',
@@ -153,8 +202,8 @@ export const mockUsers: User[] = [
       address: '新北市板橋區中山路456號',
       emergencyContact: '0976-543-210',
       medicalHistory: ['失智症初期'],
-      preferences: ['專業護理師', '失智症照護經驗', '全天候服務']
-    }
+      preferences: ['專業護理師', '失智症照護經驗', '全天候服務'],
+    },
   },
   {
     id: 'user-003',
@@ -171,9 +220,9 @@ export const mockUsers: User[] = [
       address: '台北市信義區忠孝東路789號',
       emergencyContact: '0965-432-109',
       medicalHistory: ['中風康復期', '行動不便'],
-      preferences: ['男性照護員', '復健專長', '力氣大']
-    }
-  }
+      preferences: ['男性照護員', '復健專長', '力氣大'],
+    },
+  },
 ]
 
 export const mockBookings: Omit<Booking, 'id'>[] = [
@@ -193,10 +242,10 @@ export const mockBookings: Omit<Booking, 'id'>[] = [
       age: 45,
       gender: '男',
       medicalConditions: ['糖尿病', '高血壓'],
-      emergencyContact: '0987-654-321'
+      emergencyContact: '0987-654-321',
     },
     created_at: '2024-07-15T10:30:00Z',
-    updated_at: '2024-07-15T14:20:00Z'
+    updated_at: '2024-07-15T14:20:00Z',
   },
   {
     caregiver_id: 3,
@@ -213,10 +262,10 @@ export const mockBookings: Omit<Booking, 'id'>[] = [
       age: 78,
       gender: '女',
       medicalConditions: ['失智症初期', '行動緩慢'],
-      emergencyContact: '0976-543-210'
+      emergencyContact: '0976-543-210',
     },
     created_at: '2024-07-10T16:45:00Z',
-    updated_at: '2024-07-18T08:00:00Z'
+    updated_at: '2024-07-18T08:00:00Z',
   },
   {
     caregiver_id: 5,
@@ -234,10 +283,10 @@ export const mockBookings: Omit<Booking, 'id'>[] = [
       age: 52,
       gender: '男',
       medicalConditions: ['中風康復期', '左側肢體無力'],
-      emergencyContact: '0965-432-109'
+      emergencyContact: '0965-432-109',
     },
     created_at: '2024-07-14T09:15:00Z',
-    updated_at: '2024-07-14T09:15:00Z'
+    updated_at: '2024-07-14T09:15:00Z',
   },
   {
     caregiver_id: 2,
@@ -254,11 +303,11 @@ export const mockBookings: Omit<Booking, 'id'>[] = [
       age: 45,
       gender: '男',
       medicalConditions: ['膝關節手術後', '糖尿病'],
-      emergencyContact: '0987-654-321'
+      emergencyContact: '0987-654-321',
     },
     created_at: '2024-07-14T11:20:00Z',
-    updated_at: '2024-07-14T11:20:00Z'
-  }
+    updated_at: '2024-07-14T11:20:00Z',
+  },
 ]
 
 export interface Review {
@@ -290,9 +339,10 @@ export const mockReviews: Review[] = [
     user_id: 'user-001',
     caregiver_id: 1,
     rating: 5,
-    comment: '李護理師非常專業，對糖尿病照護很有經驗，也很細心提醒用藥時間。強力推薦！',
+    comment:
+      '李護理師非常專業，對糖尿病照護很有經驗，也很細心提醒用藥時間。強力推薦！',
     created_at: '2024-07-16T20:30:00Z',
-    updated_at: '2024-07-16T20:30:00Z'
+    updated_at: '2024-07-16T20:30:00Z',
   },
   {
     id: 'review-002',
@@ -300,9 +350,10 @@ export const mockReviews: Review[] = [
     user_id: 'user-002',
     caregiver_id: 3,
     rating: 5,
-    comment: '王護理師真的很棒！對失智症患者很有耐心，媽媽很喜歡她。專業度很高，值得信賴。',
+    comment:
+      '王護理師真的很棒！對失智症患者很有耐心，媽媽很喜歡她。專業度很高，值得信賴。',
     created_at: '2024-07-12T15:45:00Z',
-    updated_at: '2024-07-12T15:45:00Z'
+    updated_at: '2024-07-12T15:45:00Z',
   },
   {
     id: 'review-003',
@@ -310,10 +361,11 @@ export const mockReviews: Review[] = [
     user_id: 'user-003',
     caregiver_id: 5,
     rating: 4,
-    comment: '劉先生在復健指導方面很專業，力氣也夠協助移位。時間準時，服務態度良好。',
+    comment:
+      '劉先生在復健指導方面很專業，力氣也夠協助移位。時間準時，服務態度良好。',
     created_at: '2024-07-11T19:20:00Z',
-    updated_at: '2024-07-11T19:20:00Z'
-  }
+    updated_at: '2024-07-11T19:20:00Z',
+  },
 ]
 
 export const mockPayments: Payment[] = [
@@ -325,7 +377,7 @@ export const mockPayments: Payment[] = [
     status: 'completed',
     transaction_id: 'txn-abc123456',
     created_at: '2024-07-15T14:30:00Z',
-    updated_at: '2024-07-15T14:30:00Z'
+    updated_at: '2024-07-15T14:30:00Z',
   },
   {
     id: 'payment-002',
@@ -335,7 +387,7 @@ export const mockPayments: Payment[] = [
     status: 'completed',
     transaction_id: 'txn-def789012',
     created_at: '2024-07-10T17:00:00Z',
-    updated_at: '2024-07-10T17:00:00Z'
+    updated_at: '2024-07-10T17:00:00Z',
   },
   {
     id: 'payment-003',
@@ -344,8 +396,8 @@ export const mockPayments: Payment[] = [
     method: 'cash',
     status: 'pending',
     created_at: '2024-07-14T09:20:00Z',
-    updated_at: '2024-07-14T09:20:00Z'
-  }
+    updated_at: '2024-07-14T09:20:00Z',
+  },
 ]
 
 export interface ServiceType {
@@ -364,12 +416,7 @@ export const mockServiceTypes: ServiceType[] = [
     description: '靈活的時薪制服務，適合短期或不定期照護需求',
     basePrice: 250,
     unit: '小時',
-    features: [
-      '彈性時間安排',
-      '1小時起預約',
-      '適合短期照護',
-      '可選擇特定時段'
-    ]
+    features: ['彈性時間安排', '1小時起預約', '適合短期照護', '可選擇特定時段'],
   },
   {
     id: 'shift-12',
@@ -381,8 +428,8 @@ export const mockServiceTypes: ServiceType[] = [
       '連續12小時照護',
       '專業看護駐點',
       '適合日間或夜間照護',
-      '完整照護記錄'
-    ]
+      '完整照護記錄',
+    ],
   },
   {
     id: 'shift-24',
@@ -394,9 +441,9 @@ export const mockServiceTypes: ServiceType[] = [
       '24小時不間斷照護',
       '專業團隊輪班',
       '緊急狀況即時處理',
-      '家屬完全放心'
-    ]
-  }
+      '家屬完全放心',
+    ],
+  },
 ]
 
 export interface CostModifier {
@@ -415,7 +462,7 @@ export const mockCostModifiers: CostModifier[] = [
     description: '夜間時段（22:00-08:00）服務加成',
     amount: 20,
     type: 'fixed',
-    conditions: ['時間範圍 22:00-08:00']
+    conditions: ['時間範圍 22:00-08:00'],
   },
   {
     id: 'urgent-service',
@@ -423,7 +470,7 @@ export const mockCostModifiers: CostModifier[] = [
     description: '24小時內急件預約加成',
     amount: 30,
     type: 'fixed',
-    conditions: ['預約時間距離服務開始 < 24小時']
+    conditions: ['預約時間距離服務開始 < 24小時'],
   },
   {
     id: 'double-urgent',
@@ -431,7 +478,7 @@ export const mockCostModifiers: CostModifier[] = [
     description: '6小時內急件預約額外加成',
     amount: 30,
     type: 'fixed',
-    conditions: ['預約時間距離服務開始 < 6小時']
+    conditions: ['預約時間距離服務開始 < 6小時'],
   },
   {
     id: 'weekend-premium',
@@ -439,7 +486,7 @@ export const mockCostModifiers: CostModifier[] = [
     description: '週末及國定假日服務加成',
     amount: 10,
     type: 'percentage',
-    conditions: ['週六、週日或國定假日']
+    conditions: ['週六、週日或國定假日'],
   },
   {
     id: 'special-care',
@@ -447,9 +494,14 @@ export const mockCostModifiers: CostModifier[] = [
     description: '需要特殊醫療技能的照護加成',
     amount: 15,
     type: 'percentage',
-    conditions: ['失智症', '精神疾病', '重症照護']
-  }
+    conditions: ['失智症', '精神疾病', '重症照護'],
+  },
 ]
+
+// 轉換所有舊格式的 caregivers 為新格式
+export const mockCaregivers: Caregiver[] = oldMockCaregivers.map(
+  convertToNewCaregiver,
+)
 
 export const getMockDataForStore = () => ({
   caregivers: mockCaregivers,
@@ -458,5 +510,5 @@ export const getMockDataForStore = () => ({
   reviews: mockReviews,
   payments: mockPayments,
   serviceTypes: mockServiceTypes,
-  costModifiers: mockCostModifiers
+  costModifiers: mockCostModifiers,
 })
