@@ -103,8 +103,8 @@ export default defineNuxtConfig({
       cookieKey: 'i18n_redirected',
       redirectOn: 'root',
     },
-    // Nuxt 4：更新 i18n 檔案路徑（相對於 app 目錄）
-    langDir: 'locales/',
+    // Nuxt 4：更新 i18n 檔案路徑（相對於專案根目錄）
+    langDir: '../i18n/locales/',
   },
 
   quasar: {

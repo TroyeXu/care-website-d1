@@ -197,6 +197,7 @@ declare global {
   const useNitroOrigin: typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/useNitroOrigin')['useNitroOrigin']
   const useNuxtApp: typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']
   const useNuxtData: typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']
+  const useNuxtDevTools: typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']
   const usePageSeo: typeof import('../../app/composables/usePageSeo')['default']
   const useParticleEffects: typeof import('../../app/composables/useParticleEffects')['default']
   const usePaymentsStore: typeof import('../../app/stores/payments')['usePaymentsStore']
@@ -514,6 +515,7 @@ declare module 'vue' {
     readonly useNitroOrigin: UnwrapRef<typeof import('../../node_modules/nuxt-site-config/dist/runtime/nuxt/composables/useNitroOrigin')['useNitroOrigin']>
     readonly useNuxtApp: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/nuxt')['useNuxtApp']>
     readonly useNuxtData: UnwrapRef<typeof import('../../node_modules/nuxt/dist/app/composables/asyncData')['useNuxtData']>
+    readonly useNuxtDevTools: UnwrapRef<typeof import('../../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools')['useNuxtDevTools']>
     readonly usePageSeo: UnwrapRef<typeof import('../../app/composables/usePageSeo')['default']>
     readonly useParticleEffects: UnwrapRef<typeof import('../../app/composables/useParticleEffects')['default']>
     readonly usePaymentsStore: UnwrapRef<typeof import('../../app/stores/payments')['usePaymentsStore']>

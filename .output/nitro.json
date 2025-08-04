@@ -1,5 +1,5 @@
 {
-  "date": "2025-08-03T06:07:04.829Z",
+  "date": "2025-08-04T13:47:54.264Z",
   "preset": "cloudflare-module",
   "framework": {
     "name": "nuxt",
@@ -14,7 +14,6 @@
   },
   "config": {
     "cloudflare": {
-      "pages": false,
       "wrangler": {
         "configPath": "./wrangler.toml"
       }
