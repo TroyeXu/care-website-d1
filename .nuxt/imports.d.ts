@@ -66,5 +66,4 @@ export { useRouteBaseName, useLocalePath, useLocaleRoute, useSwitchLocalePath, u
 export { useDialogPluginComponent, useFormChild, useInterval, useMeta, useQuasar, useRenderCache, useSplitAttrs, useTick, useTimeout, Notify, Dialog, Loading } from 'quasar';
 export { useField, useFieldArray, useFieldError, useFieldValue, useForm, useFormContext, useFormErrors, useFormValues, useIsFieldDirty, useIsFieldTouched, useIsFieldValid, useIsFormDirty, useIsFormTouched, useIsFormValid, useIsSubmitting, useIsValidating, useResetForm, useSubmitCount, useSubmitForm, useValidateField, useValidateForm } from 'vee-validate';
 export { toTypedSchema } from '@vee-validate/yup';
-export { useNuxtDevTools } from '../node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';
