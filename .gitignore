@@ -19,6 +19,12 @@ dist-ssr
 .nitro
 .cache
 
+# 環境變數和機密檔案
+.dev.vars
+.env
+.env.local
+.env.*.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

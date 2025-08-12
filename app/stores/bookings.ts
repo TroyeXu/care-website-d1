@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { mockBookings } from '~/utils/mockData'
 
 export interface Booking {
   id: string
@@ -59,11 +58,8 @@ export const useBookingStore = defineStore('bookings', {
 
   actions: {
     loadMockData() {
-      const bookingsWithIds = mockBookings.map((booking, index) => ({
-        ...booking,
-        id: `booking-${String(index + 1).padStart(3, '0')}`,
-      }))
-      this.bookings = bookingsWithIds
+      // 暫時使用空陣列，等待 mockBookings 資料定義
+      this.bookings = []
     },
 
     async fetchBookings() {
@@ -106,22 +102,19 @@ export const useBookingStore = defineStore('bookings', {
 
     async updateBookingStatus(bookingId: string, status: Booking['status']) {
       try {
-        const updatedBooking = await $fetch<Booking>(
-          `/api/bookings/${bookingId}`,
-          {
-            method: 'PUT' as const,
-            body: { status },
-          },
-        )
-
+        // 直接在本地更新狀態
         const index = this.bookings.findIndex((b) => b.id === bookingId)
         if (index !== -1) {
-          this.bookings[index] = updatedBooking
+          this.bookings[index] = {
+            ...this.bookings[index],
+            status,
+            updated_at: new Date().toISOString(),
+          }
+          return this.bookings[index]
         }
-
-        return updatedBooking
-      } catch (err: unknown) {
-        this.error = err.data?.message || err.message || '更新預約狀態失敗'
+        throw new Error('找不到預約')
+      } catch (err: any) {
+        this.error = err.message || '更新預約狀態失敗'
         console.error('Error updating booking status:', err)
         throw new Error(this.error || '未知錯誤')
       }

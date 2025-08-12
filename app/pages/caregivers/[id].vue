@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page>
     <!-- 載入狀態 -->
     <div v-if="isLoading" class="text-center q-pa-lg">
       <q-spinner-grid size="50px" color="primary" />
@@ -17,10 +17,10 @@
     </div>
 
     <!-- 看護師詳情 -->
-    <div v-else-if="caregiver" class="row justify-center">
-      <div class="col-12 col-lg-10">
+    <div v-else-if="caregiver" class="caregiver-detail-container">
+      <div class="content-wrapper">
         <!-- 面包屑導航 -->
-        <q-breadcrumbs class="q-mb-lg">
+        <q-breadcrumbs class="breadcrumbs-nav q-mb-lg">
           <q-breadcrumbs-el icon="home" :to="'/'" label="首頁" />
           <q-breadcrumbs-el :to="'/caregivers'" label="看護師列表" />
           <q-breadcrumbs-el :label="caregiver.name" />
@@ -386,21 +386,6 @@
 
                   <q-btn
                     outline
-                    :color="isFavorite ? 'negative' : 'grey'"
-                    class="action-btn"
-                    rounded
-                    @click="toggleFavorite"
-                  >
-                    <q-icon
-                      :name="isFavorite ? 'favorite' : 'favorite_border'"
-                    />
-                    <q-tooltip>{{
-                      isFavorite ? '取消收藏' : '加入收藏'
-                    }}</q-tooltip>
-                  </q-btn>
-
-                  <q-btn
-                    outline
                     color="grey"
                     class="action-btn"
                     rounded
@@ -506,6 +491,7 @@ import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from '~/stores/auth'
 import usePageSeo from '~/composables/usePageSeo'
+import BookingDialog from '~/components/BookingDialog.vue'
 import {
   navigateTo,
   useFetch,
@@ -530,7 +516,6 @@ const authStore = useAuthStore()
 // 響應式資料
 const reviews = ref<Review[]>([])
 const isLoadingReviews = ref(false)
-const isFavorite = ref(false)
 
 // 計算屬性
 const caregiverId = computed(() => {
@@ -600,7 +585,7 @@ const loadReviews = async () => {
     // 從 server API 載入評價
     const response = (await $fetch('/api/reviews', {
       query: {
-        caregiver_id: `caregiver-${caregiverId.value}`,
+        caregiver_id: caregiverId.value,
       },
     })) as any
 
@@ -647,22 +632,38 @@ onMounted(() => {
 
 // 開始預約
 const startBooking = () => {
-  if (!authStore.currentUser) {
+  if (!caregiver.value) return
+
+  // 檢查是否已登入
+  const authStore = useAuthStore()
+  if (!authStore.isAuthenticated) {
+    // 未登入，提示並導航到登入頁面
     $q.notify({
-      type: 'warning',
-      message: '請先登入才能進行預約',
-      timeout: 3000,
+      type: 'info',
+      message: '請先登入才能預約服務',
+      timeout: 2000,
     })
-    navigateTo('/auth/login')
+    // 儲存當前頁面路徑，登入後可以返回
+    navigateTo(`/auth/login?redirect=${route.fullPath}`)
     return
   }
 
-  if (!caregiver.value) return
-
-  // 跳轉到預約頁面
-  navigateTo({
-    path: '/booking/create',
-    query: { caregiverId: caregiver.value.id },
+  // 顯示預約對話框
+  $q.dialog({
+    component: BookingDialog,
+    componentProps: {
+      caregiverId: caregiverId.value,
+      caregiverName: caregiver.value.name,
+      hourlyRate: caregiver.value.hourly_rate,
+    },
+  }).onOk((bookingId: string) => {
+    $q.notify({
+      type: 'positive',
+      message: '預約成功！',
+      timeout: 3000,
+    })
+    // 跳轉到預約詳情頁
+    navigateTo(`/bookings/${bookingId}`)
   })
 }
 
@@ -677,26 +678,6 @@ const contactCaregiver = () => {
       color: 'primary',
       label: '確定',
     },
-  })
-}
-
-// 切換收藏狀態
-const toggleFavorite = () => {
-  if (!authStore.currentUser) {
-    $q.notify({
-      type: 'warning',
-      message: '請先登入才能收藏看護師',
-      timeout: 3000,
-    })
-    return
-  }
-
-  isFavorite.value = !isFavorite.value
-
-  $q.notify({
-    type: 'positive',
-    message: isFavorite.value ? '已加入收藏' : '已取消收藏',
-    timeout: 2000,
   })
 }
 
@@ -774,6 +755,48 @@ watch(caregiver, (newCaregiver) => {
 </script>
 
 <style scoped>
+/* Container Styles */
+.caregiver-detail-container {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* 面包屑導航 */
+.breadcrumbs-nav {
+  padding: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* 手機版調整 */
+@media (max-width: 599px) {
+  .content-wrapper {
+    padding: 0;
+  }
+  
+  .breadcrumbs-nav {
+    border-radius: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* 為卡片在手機版添加間距 */
+  .info-card,
+  .section-card {
+    border-radius: 0;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .q-card-section {
+    padding: 1rem !important;
+  }
+}
 /* Hero Card Styles */
 .hero-card {
   position: relative;

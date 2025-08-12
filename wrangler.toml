@@ -9,6 +9,7 @@ binding = "DB"
 database_name = "care-platform-db"
 database_id = "f853a6b0-cb5b-4359-b7b5-c75494da8bfa"
 
-# 環境變數（如果需要）
+# 環境變數（非敏感）
 [vars]
-# API_KEY = "your-api-key"
+NODE_ENV = "production"
+# JWT_SECRET 應該使用 wrangler secret 或 Dashboard 設置，不要寫在這裡

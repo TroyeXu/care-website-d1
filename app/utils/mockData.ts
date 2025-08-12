@@ -1,514 +1,322 @@
+// 從 stores 導入介面，避免重複定義
 import type { Caregiver } from '~/stores/caregivers'
 import type { Booking } from '~/stores/bookings'
 
-// 舊格式的 Caregiver 資料
-interface OldCaregiver {
-  id: number
-  name: string
-  experience: string
-  skills: string
-  licenses: string[]
-  rating: number
-  photo: string
-  available: string
-  hourly_rate: number
-  shift_rate: number
-  location: string
-  description: string
-  created_at: string
-  updated_at: string
-}
-
-// 轉換函數：將舊格式轉換為新格式
-function convertToNewCaregiver(old: OldCaregiver): Caregiver {
-  // 根據評分計算合理的評論數
-  const reviewCount = Math.floor((old.rating - 4) * 100 + Math.random() * 20)
-
-  return {
-    id: `caregiver-${old.id}`,
-    name: old.name,
-    avatar: old.photo,
-    rating: old.rating,
-    reviews_count: reviewCount,
-    hourly_rate: old.hourly_rate,
-    experience_years: parseInt(old.experience.match(/\d+/)?.[0] || '0'),
-    bio: old.description,
-    certifications: old.licenses,
-    languages: ['中文', '台語'],
-    specialties: old.skills.split('、'),
-    service_areas: [old.location],
-    created_at: old.created_at,
-    updated_at: old.updated_at,
-  }
-}
-
-// Types are imported from stores, no need to re-export
-
-export interface User {
-  id: string
-  name: string
-  email: string
-  phone: string
-  role: 'patient' | 'caregiver' | 'admin'
-  avatar?: string
-  created_at: string
-  updated_at: string
-  profile?: {
-    age?: number
-    gender?: string
-    address?: string
-    emergencyContact?: string
-    medicalHistory?: string[]
-    preferences?: string[]
-  }
-}
-
-const oldMockCaregivers: OldCaregiver[] = [
+// 模擬資料
+export const mockCaregivers: Caregiver[] = [
   {
-    id: 1,
-    name: '李美惠',
-    experience: '8年專業照護經驗，曾在台大醫院工作',
-    skills: '失智症照護、復健協助、醫療護理、心理支持',
-    licenses: ['照服員結業證書', 'CPR證照', '護理師證照'],
-    rating: 4.9,
-    photo: '/images/caregivers/li-mei-hui.jpg',
-    available: '全天候',
-    hourly_rate: 280,
-    shift_rate: 3200,
-    location: '台北市中正區',
-    description:
-      '專精於失智症照護，具備豐富的醫療背景，能提供專業的復健協助和心理支持。擅長與高齡患者溝通，具備耐心和愛心。',
-    created_at: '2024-01-15T00:00:00Z',
-    updated_at: '2024-07-10T00:00:00Z',
-  },
-  {
-    id: 2,
-    name: '陳志強',
-    experience: '6年居家照護經驗，專長術後照護',
-    skills: '術後照護、傷口護理、復健陪伴、基礎醫療',
-    licenses: ['照服員結業證書', 'CPR證照'],
+    id: 'caregiver-001',
+    name: '張美麗',
+    avatar: 'https://i.pravatar.cc/150?img=1',
+    gender: 'female',
+    age: 35,
     rating: 4.8,
-    photo: '/images/caregivers/chen-zhi-qiang.jpg',
-    available: '週一至週五',
-    hourly_rate: 260,
-    shift_rate: 3000,
-    location: '台北市大安區',
-    description:
-      '男性照護員，力氣大適合協助行動不便患者。在術後照護方面經驗豐富，能協助復健訓練和傷口照護。',
-    created_at: '2024-02-20T00:00:00Z',
-    updated_at: '2024-07-12T00:00:00Z',
-  },
-  {
-    id: 3,
-    name: '王淑芬',
-    experience: '10年護理經驗，前榮總護理師',
-    skills: '專業護理、用藥管理、慢性病照護、緊急處理',
-    licenses: ['護理師證照', '照服員結業證書', 'CPR證照', 'BLS證照'],
-    rating: 4.95,
-    photo: '/images/caregivers/wang-shu-fen.jpg',
-    available: '全天候',
-    hourly_rate: 320,
-    shift_rate: 3800,
-    location: '台北市信義區',
-    description:
-      '前榮總護理師，具備最高等級的醫療照護能力。擅長慢性病管理和用藥指導，能處理各種緊急狀況。',
-    created_at: '2024-01-10T00:00:00Z',
-    updated_at: '2024-07-14T00:00:00Z',
-  },
-  {
-    id: 4,
-    name: '黃雅雯',
-    experience: '5年兒童及青少年照護經驗',
-    skills: '兒童照護、發展遲緩協助、特殊需求照護、教育陪伴',
-    licenses: ['照服員結業證書', 'CPR證照', '早期療育師證照'],
-    rating: 4.7,
-    photo: '/images/caregivers/huang-ya-wen.jpg',
-    available: '週一至週六',
-    hourly_rate: 250,
-    shift_rate: 2800,
-    location: '新北市板橋區',
-    description:
-      '專精於兒童和青少年照護，對發展遲緩兒童有豐富經驗。個性活潑有耐心，能提供教育陪伴服務。',
-    created_at: '2024-03-05T00:00:00Z',
-    updated_at: '2024-07-08T00:00:00Z',
-  },
-  {
-    id: 5,
-    name: '劉建國',
-    experience: '7年長照機構經驗，專長復健照護',
-    skills: '復健協助、物理治療、肌力訓練、日常生活協助',
-    licenses: ['照服員結業證書', 'CPR證照', '物理治療助理證照'],
-    rating: 4.6,
-    photo: '/images/caregivers/liu-jian-guo.jpg',
-    available: '週二至週日',
-    hourly_rate: 270,
-    shift_rate: 3100,
-    location: '台北市松山區',
-    description:
-      '男性照護員，具備物理治療背景，專長復健訓練和肌力增強。適合需要復健協助的患者。',
-    created_at: '2024-02-28T00:00:00Z',
-    updated_at: '2024-07-11T00:00:00Z',
-  },
-  {
-    id: 6,
-    name: '張慧君',
-    experience: '4年精神科照護經驗',
-    skills: '精神疾病照護、情緒支持、行為管理、藥物監督',
-    licenses: ['照服員結業證書', 'CPR證照', '精神科護理證照'],
-    rating: 4.8,
-    photo: '/images/caregivers/zhang-hui-jun.jpg',
-    available: '全天候',
-    hourly_rate: 290,
-    shift_rate: 3300,
-    location: '台北市內湖區',
-    description:
-      '具備精神科專業背景，擅長處理精神疾病患者的照護需求。能提供情緒支持和行為管理。',
-    created_at: '2024-04-12T00:00:00Z',
-    updated_at: '2024-07-13T00:00:00Z',
-  },
-]
-
-export const mockUsers: User[] = [
-  {
-    id: 'user-001',
-    name: '林志明',
-    email: 'zhiming.lin@email.com',
-    phone: '0912-345-678',
-    role: 'patient',
-    avatar: '/images/users/lin-zhi-ming.jpg',
-    created_at: '2024-05-01T00:00:00Z',
-    updated_at: '2024-07-14T00:00:00Z',
-    profile: {
-      age: 45,
-      gender: '男',
-      address: '台北市中山區民生東路123號',
-      emergencyContact: '0987-654-321',
-      medicalHistory: ['糖尿病', '高血壓'],
-      preferences: ['女性照護員', '有護理師證照', '日間照護'],
+    reviews_count: 124,
+    hourly_rate: 350,
+    experience_years: 8,
+    bio: '專業照護服務員，擁有8年以上照護經驗',
+    description: '我是一位充滿愛心與耐心的專業看護師，專精於老人照護和失智症照護。我相信每位長者都值得受到最好的照顧。',
+    skills: ['失智症照護', '復健協助', '傷口護理', '管灌餵食', '翻身拍背'],
+    certifications: ['照顧服務員證照', '急救證照', '失智症照護專業訓練'],
+    languages: ['中文', '台語', '英文'],
+    service_areas: ['台北市', '新北市'],
+    availability: {
+      weekdays: true,
+      weekends: true,
+      nights: false,
+      holidays: true,
     },
+    is_available: true,
+    total_service_hours: 12450,
+    response_rate: 95,
+    response_time: '1小時內',
+    created_at: '2020-03-15',
+    updated_at: '2024-01-10',
   },
   {
-    id: 'user-002',
-    name: '陳美玲',
-    email: 'meiling.chen@email.com',
-    phone: '0923-456-789',
-    role: 'patient',
-    avatar: '/images/users/chen-mei-ling.jpg',
-    created_at: '2024-05-15T00:00:00Z',
-    updated_at: '2024-07-10T00:00:00Z',
-    profile: {
-      age: 38,
-      gender: '女',
-      address: '新北市板橋區中山路456號',
-      emergencyContact: '0976-543-210',
-      medicalHistory: ['失智症初期'],
-      preferences: ['專業護理師', '失智症照護經驗', '全天候服務'],
-    },
-  },
-  {
-    id: 'user-003',
+    id: 'caregiver-002',
     name: '王大明',
-    email: 'daming.wang@email.com',
-    phone: '0934-567-890',
-    role: 'patient',
-    avatar: '/images/users/wang-da-ming.jpg',
-    created_at: '2024-06-01T00:00:00Z',
-    updated_at: '2024-07-12T00:00:00Z',
-    profile: {
-      age: 52,
-      gender: '男',
-      address: '台北市信義區忠孝東路789號',
-      emergencyContact: '0965-432-109',
-      medicalHistory: ['中風康復期', '行動不便'],
-      preferences: ['男性照護員', '復健專長', '力氣大'],
+    avatar: 'https://i.pravatar.cc/150?img=8',
+    gender: 'male',
+    age: 42,
+    rating: 4.9,
+    reviews_count: 98,
+    hourly_rate: 400,
+    experience_years: 12,
+    bio: '男性看護師，專精復健與行動輔助',
+    description: '擁有物理治療背景，專門協助術後復健和行動不便的患者。提供專業且細心的照護服務。',
+    skills: ['復健運動', '術後照護', '行動輔助', '肌力訓練', '關節活動'],
+    certifications: ['照顧服務員證照', '物理治療助理證照', 'BLS基本生命支持術'],
+    languages: ['中文', '台語'],
+    service_areas: ['台北市', '桃園市'],
+    availability: {
+      weekdays: true,
+      weekends: false,
+      nights: false,
+      holidays: false,
     },
+    is_available: true,
+    total_service_hours: 18200,
+    response_rate: 98,
+    response_time: '30分鐘內',
+    created_at: '2018-06-20',
+    updated_at: '2024-01-12',
   },
-]
-
-export const mockBookings: Omit<Booking, 'id'>[] = [
   {
-    caregiver_id: 1,
-    user_id: 'user-001',
-    service_type: 'hourly',
-    start_date: '2024-07-20',
-    end_date: '2024-07-20',
-    start_time: '09:00',
-    end_time: '17:00',
-    special_requests: '需要協助血糖監測和藥物提醒',
-    total_cost: 2240,
-    status: 'confirmed',
-    patient_info: {
-      name: '林志明',
-      age: 45,
-      gender: '男',
-      medicalConditions: ['糖尿病', '高血壓'],
-      emergencyContact: '0987-654-321',
+    id: 'caregiver-003',
+    name: '李秀英',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    gender: 'female',
+    age: 38,
+    rating: 4.7,
+    reviews_count: 156,
+    hourly_rate: 320,
+    experience_years: 6,
+    bio: '專業居家照護，擅長慢性病患者照護',
+    description: '細心負責的看護師，擅長糖尿病、高血壓等慢性病患者的日常照護和健康管理。',
+    skills: ['慢性病照護', '血糖監測', '藥物管理', '營養調配', '健康監測'],
+    certifications: ['照顧服務員證照', '糖尿病衛教師'],
+    languages: ['中文', '客語'],
+    service_areas: ['新北市', '基隆市'],
+    availability: {
+      weekdays: true,
+      weekends: true,
+      nights: true,
+      holidays: true,
     },
-    created_at: '2024-07-15T10:30:00Z',
-    updated_at: '2024-07-15T14:20:00Z',
+    is_available: true,
+    total_service_hours: 9800,
+    response_rate: 92,
+    response_time: '2小時內',
+    created_at: '2019-11-05',
+    updated_at: '2024-01-11',
   },
   {
-    caregiver_id: 3,
-    user_id: 'user-002',
-    service_type: 'shift',
-    start_date: '2024-07-18',
-    end_date: '2024-07-25',
-    start_time: '08:00',
-    special_requests: '失智症患者，需要特別耐心和關注',
-    total_cost: 30400,
-    status: 'in_progress',
-    patient_info: {
-      name: '陳美玲母親',
-      age: 78,
-      gender: '女',
-      medicalConditions: ['失智症初期', '行動緩慢'],
-      emergencyContact: '0976-543-210',
+    id: 'caregiver-004',
+    name: '陳淑芬',
+    avatar: 'https://i.pravatar.cc/150?img=9',
+    gender: 'female',
+    age: 45,
+    rating: 4.6,
+    reviews_count: 67,
+    hourly_rate: 380,
+    experience_years: 10,
+    bio: '安寧照護專家，提供臨終關懷服務',
+    description: '擁有安寧照護專業訓練，能夠提供病患和家屬心理支持，讓生命最後一程充滿尊嚴。',
+    skills: ['安寧照護', '疼痛管理', '心理支持', '家屬溝通', '臨終關懷'],
+    certifications: ['照顧服務員證照', '安寧照護專業訓練', '心理諮商證照'],
+    languages: ['中文', '台語', '日文'],
+    service_areas: ['台北市'],
+    availability: {
+      weekdays: true,
+      weekends: true,
+      nights: true,
+      holidays: true,
     },
-    created_at: '2024-07-10T16:45:00Z',
-    updated_at: '2024-07-18T08:00:00Z',
+    is_available: false,
+    total_service_hours: 15600,
+    response_rate: 88,
+    response_time: '3小時內',
+    created_at: '2017-02-18',
+    updated_at: '2024-01-09',
   },
   {
-    caregiver_id: 5,
-    user_id: 'user-003',
-    service_type: 'hourly',
-    start_date: '2024-07-22',
-    end_date: '2024-07-22',
-    start_time: '14:00',
-    end_time: '18:00',
-    special_requests: '需要復健協助和物理治療指導',
-    total_cost: 1080,
-    status: 'pending',
-    patient_info: {
-      name: '王大明',
-      age: 52,
-      gender: '男',
-      medicalConditions: ['中風康復期', '左側肢體無力'],
-      emergencyContact: '0965-432-109',
+    id: 'caregiver-005',
+    name: '林志成',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+    gender: 'male',
+    age: 28,
+    rating: 4.5,
+    reviews_count: 43,
+    hourly_rate: 300,
+    experience_years: 3,
+    bio: '年輕有活力，專注兒童特殊照護',
+    description: '專門照護發展遲緩和特殊需求兒童，有耐心且充滿愛心，深受家長信任。',
+    skills: ['兒童照護', '特殊教育', '復健遊戲', '行為管理', '感覺統合'],
+    certifications: ['照顧服務員證照', '兒童發展評估訓練'],
+    languages: ['中文', '英文'],
+    service_areas: ['台北市', '新竹市'],
+    availability: {
+      weekdays: true,
+      weekends: true,
+      nights: false,
+      holidays: true,
     },
-    created_at: '2024-07-14T09:15:00Z',
-    updated_at: '2024-07-14T09:15:00Z',
+    is_available: true,
+    total_service_hours: 4200,
+    response_rate: 90,
+    response_time: '1小時內',
+    created_at: '2021-04-10',
+    updated_at: '2024-01-13',
   },
   {
-    caregiver_id: 2,
-    user_id: 'user-001',
-    service_type: 'shift',
-    start_date: '2024-07-25',
-    end_date: '2024-07-27',
-    start_time: '20:00',
-    special_requests: '術後照護，需要傷口換藥',
-    total_cost: 9000,
-    status: 'pending',
-    patient_info: {
-      name: '林志明',
-      age: 45,
-      gender: '男',
-      medicalConditions: ['膝關節手術後', '糖尿病'],
-      emergencyContact: '0987-654-321',
+    id: 'caregiver-006',
+    name: '黃雅婷',
+    avatar: 'https://i.pravatar.cc/150?img=20',
+    gender: 'female',
+    age: 33,
+    rating: 4.8,
+    reviews_count: 89,
+    hourly_rate: 360,
+    experience_years: 7,
+    bio: '專業產後護理，新生兒照護專家',
+    description: '護理系畢業，專精產後護理和新生兒照護，協助新手媽媽順利度過產後恢復期。',
+    skills: ['產後護理', '新生兒照護', '母乳哺育', '嬰兒按摩', '產後運動'],
+    certifications: ['護理師證照', '國際泌乳顧問', '嬰兒按摩指導員'],
+    languages: ['中文', '英文'],
+    service_areas: ['台北市', '新北市'],
+    availability: {
+      weekdays: true,
+      weekends: false,
+      nights: true,
+      holidays: false,
     },
-    created_at: '2024-07-14T11:20:00Z',
-    updated_at: '2024-07-14T11:20:00Z',
+    is_available: true,
+    total_service_hours: 8900,
+    response_rate: 96,
+    response_time: '30分鐘內',
+    created_at: '2018-09-22',
+    updated_at: '2024-01-14',
+  },
+  {
+    id: 'caregiver-007',
+    name: '趙文華',
+    avatar: 'https://i.pravatar.cc/150?img=15',
+    gender: 'male',
+    age: 48,
+    rating: 4.7,
+    reviews_count: 112,
+    hourly_rate: 330,
+    experience_years: 15,
+    bio: '資深看護師，擅長重症照護',
+    description: '在醫院重症病房工作多年，對重症患者照護有豐富經驗，能處理各種緊急狀況。',
+    skills: ['重症照護', '呼吸器照護', '傷口護理', '管路護理', '緊急處理'],
+    certifications: ['護理師證照', 'ACLS高級心臟救命術', '重症照護證照'],
+    languages: ['中文', '台語', '客語'],
+    service_areas: ['台北市', '新北市', '桃園市'],
+    availability: {
+      weekdays: true,
+      weekends: true,
+      nights: true,
+      holidays: true,
+    },
+    is_available: true,
+    total_service_hours: 22800,
+    response_rate: 94,
+    response_time: '45分鐘內',
+    created_at: '2015-08-10',
+    updated_at: '2024-01-15',
+  },
+  {
+    id: 'caregiver-008',
+    name: '許玉珍',
+    avatar: 'https://i.pravatar.cc/150?img=23',
+    gender: 'female',
+    age: 52,
+    rating: 4.9,
+    reviews_count: 203,
+    hourly_rate: 370,
+    experience_years: 20,
+    bio: '資深護理師，專精老人照護',
+    description: '二十年護理經驗，專門照護高齡長者，對失智症、帕金森氏症等老年疾病有深入了解。',
+    skills: ['老人照護', '失智症照護', '帕金森氏症照護', '跌倒預防', '認知訓練'],
+    certifications: ['護理師證照', '老人照護專業證照', '失智症照護證照'],
+    languages: ['中文', '台語', '日文', '英文'],
+    service_areas: ['台北市', '新北市'],
+    availability: {
+      weekdays: true,
+      weekends: true,
+      nights: false,
+      holidays: true,
+    },
+    is_available: true,
+    total_service_hours: 31200,
+    response_rate: 97,
+    response_time: '30分鐘內',
+    created_at: '2012-03-25',
+    updated_at: '2024-01-16',
   },
 ]
 
-export interface Review {
-  id: string
-  booking_id: string
-  user_id: string
-  caregiver_id: number
-  rating: number
-  comment: string
-  created_at: string
-  updated_at: string
-}
-
-export interface Payment {
-  id: string
-  booking_id: string
-  amount: number
-  method: 'credit_card' | 'bank_transfer' | 'cash'
-  status: 'pending' | 'completed' | 'failed' | 'refunded'
-  transaction_id?: string
-  created_at: string
-  updated_at: string
-}
-
-export const mockReviews: Review[] = [
-  {
-    id: 'review-001',
-    booking_id: 'booking-001',
-    user_id: 'user-001',
-    caregiver_id: 1,
-    rating: 5,
-    comment:
-      '李護理師非常專業，對糖尿病照護很有經驗，也很細心提醒用藥時間。強力推薦！',
-    created_at: '2024-07-16T20:30:00Z',
-    updated_at: '2024-07-16T20:30:00Z',
-  },
-  {
-    id: 'review-002',
-    booking_id: 'booking-002',
-    user_id: 'user-002',
-    caregiver_id: 3,
-    rating: 5,
-    comment:
-      '王護理師真的很棒！對失智症患者很有耐心，媽媽很喜歡她。專業度很高，值得信賴。',
-    created_at: '2024-07-12T15:45:00Z',
-    updated_at: '2024-07-12T15:45:00Z',
-  },
-  {
-    id: 'review-003',
-    booking_id: 'booking-003',
-    user_id: 'user-003',
-    caregiver_id: 5,
-    rating: 4,
-    comment:
-      '劉先生在復健指導方面很專業，力氣也夠協助移位。時間準時，服務態度良好。',
-    created_at: '2024-07-11T19:20:00Z',
-    updated_at: '2024-07-11T19:20:00Z',
-  },
+// 地區選項
+export const locationOptions = [
+  '台北市',
+  '新北市',
+  '桃園市',
+  '台中市',
+  '台南市',
+  '高雄市',
+  '基隆市',
+  '新竹市',
 ]
 
-export const mockPayments: Payment[] = [
-  {
-    id: 'payment-001',
-    booking_id: 'booking-001',
-    amount: 2240,
-    method: 'credit_card',
-    status: 'completed',
-    transaction_id: 'txn-abc123456',
-    created_at: '2024-07-15T14:30:00Z',
-    updated_at: '2024-07-15T14:30:00Z',
-  },
-  {
-    id: 'payment-002',
-    booking_id: 'booking-002',
-    amount: 30400,
-    method: 'bank_transfer',
-    status: 'completed',
-    transaction_id: 'txn-def789012',
-    created_at: '2024-07-10T17:00:00Z',
-    updated_at: '2024-07-10T17:00:00Z',
-  },
-  {
-    id: 'payment-003',
-    booking_id: 'booking-003',
-    amount: 1080,
-    method: 'cash',
-    status: 'pending',
-    created_at: '2024-07-14T09:20:00Z',
-    updated_at: '2024-07-14T09:20:00Z',
-  },
+// 技能選項
+export const skillOptions = [
+  '失智症照護',
+  '復健協助',
+  '傷口護理',
+  '管灌餵食',
+  '翻身拍背',
+  '慢性病照護',
+  '安寧照護',
+  '兒童照護',
+  '產後護理',
+  '新生兒照護',
+  '重症照護',
+  '老人照護',
 ]
 
-export interface ServiceType {
-  id: string
-  name: string
-  description: string
-  basePrice: number
-  unit: string
-  features: string[]
-}
-
-export const mockServiceTypes: ServiceType[] = [
-  {
-    id: 'hourly',
-    name: '按小時計費',
-    description: '靈活的時薪制服務，適合短期或不定期照護需求',
-    basePrice: 250,
-    unit: '小時',
-    features: ['彈性時間安排', '1小時起預約', '適合短期照護', '可選擇特定時段'],
-  },
-  {
-    id: 'shift-12',
-    name: '12小時班',
-    description: '半天班照護服務，提供專業持續照護',
-    basePrice: 3000,
-    unit: '班',
-    features: [
-      '連續12小時照護',
-      '專業看護駐點',
-      '適合日間或夜間照護',
-      '完整照護記錄',
-    ],
-  },
-  {
-    id: 'shift-24',
-    name: '24小時班',
-    description: '全天候照護服務，提供最完整的照護保障',
-    basePrice: 5500,
-    unit: '班',
-    features: [
-      '24小時不間斷照護',
-      '專業團隊輪班',
-      '緊急狀況即時處理',
-      '家屬完全放心',
-    ],
-  },
+// 經驗年數選項
+export const experienceOptions = [
+  { label: '不限', value: 'all' },
+  { label: '1-3年', value: '1-3' },
+  { label: '3-5年', value: '3-5' },
+  { label: '5-10年', value: '5-10' },
+  { label: '10年以上', value: '10+' },
 ]
 
-export interface CostModifier {
-  id: string
-  name: string
-  description: string
-  amount: number
-  type: 'fixed' | 'percentage'
-  conditions: string[]
-}
-
-export const mockCostModifiers: CostModifier[] = [
-  {
-    id: 'night-shift',
-    name: '夜班加成',
-    description: '夜間時段（22:00-08:00）服務加成',
-    amount: 20,
-    type: 'fixed',
-    conditions: ['時間範圍 22:00-08:00'],
-  },
-  {
-    id: 'urgent-service',
-    name: '急件服務費',
-    description: '24小時內急件預約加成',
-    amount: 30,
-    type: 'fixed',
-    conditions: ['預約時間距離服務開始 < 24小時'],
-  },
-  {
-    id: 'double-urgent',
-    name: '雙重急件費',
-    description: '6小時內急件預約額外加成',
-    amount: 30,
-    type: 'fixed',
-    conditions: ['預約時間距離服務開始 < 6小時'],
-  },
-  {
-    id: 'weekend-premium',
-    name: '假日加成',
-    description: '週末及國定假日服務加成',
-    amount: 10,
-    type: 'percentage',
-    conditions: ['週六、週日或國定假日'],
-  },
-  {
-    id: 'special-care',
-    name: '特殊照護加成',
-    description: '需要特殊醫療技能的照護加成',
-    amount: 15,
-    type: 'percentage',
-    conditions: ['失智症', '精神疾病', '重症照護'],
-  },
+// 價格範圍建議
+export const priceRanges = [
+  { label: '不限', min: null, max: null },
+  { label: '$300以下', min: null, max: 300 },
+  { label: '$300-350', min: 300, max: 350 },
+  { label: '$350-400', min: 350, max: 400 },
+  { label: '$400以上', min: 400, max: null },
 ]
 
-// 轉換所有舊格式的 caregivers 為新格式
-export const mockCaregivers: Caregiver[] = oldMockCaregivers.map(
-  convertToNewCaregiver,
-)
+// 語言選項
+export const languageOptions = [
+  '中文',
+  '台語',
+  '客語',
+  '英文',
+  '日文',
+]
 
-export const getMockDataForStore = () => ({
-  caregivers: mockCaregivers,
-  users: mockUsers,
-  bookings: mockBookings,
-  reviews: mockReviews,
-  payments: mockPayments,
-  serviceTypes: mockServiceTypes,
-  costModifiers: mockCostModifiers,
-})
+// 證照選項
+export const certificationOptions = [
+  '照顧服務員證照',
+  '護理師證照',
+  '急救證照',
+  '失智症照護專業訓練',
+  '物理治療助理證照',
+  'BLS基本生命支持術',
+  'ACLS高級心臟救命術',
+  '重症照護證照',
+  '老人照護專業證照',
+]
+
+// 性別選項
+export const genderOptions = [
+  { label: '不限', value: 'all' },
+  { label: '男性', value: 'male' },
+  { label: '女性', value: 'female' },
+]
+
+// 可用時段選項
+export const availabilityOptions = [
+  { label: '平日', value: 'weekdays' },
+  { label: '週末', value: 'weekends' },
+  { label: '夜間', value: 'nights' },
+  { label: '假日', value: 'holidays' },
+]

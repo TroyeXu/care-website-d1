@@ -1,7 +1,16 @@
--- D1 資料庫架構設計
--- 用於 Cloudflare D1 SQLite 資料庫
+-- 遷移到新架構的腳本
+-- 先刪除舊表格（請確認已備份重要資料）
 
--- 使用者表
+-- 刪除舊表格
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS caregiver_service_areas;
+DROP TABLE IF EXISTS caregiver_specialties;
+DROP TABLE IF EXISTS caregiver_languages;
+DROP TABLE IF EXISTS caregiver_certifications;
+DROP TABLE IF EXISTS caregivers;
+
+-- 建立新的使用者表
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   email TEXT UNIQUE NOT NULL,
@@ -16,7 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- 看護師表
+-- 建立新的看護師表
 CREATE TABLE IF NOT EXISTS caregivers (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   user_id TEXT UNIQUE NOT NULL,
@@ -37,7 +46,7 @@ CREATE TABLE IF NOT EXISTS caregivers (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 看護師技能表
+-- 建立其他必要表格
 CREATE TABLE IF NOT EXISTS caregiver_skills (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   caregiver_id TEXT NOT NULL,
@@ -47,7 +56,6 @@ CREATE TABLE IF NOT EXISTS caregiver_skills (
   UNIQUE(caregiver_id, skill_name)
 );
 
--- 看護師證照表
 CREATE TABLE IF NOT EXISTS caregiver_certifications (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   caregiver_id TEXT NOT NULL,
@@ -58,7 +66,6 @@ CREATE TABLE IF NOT EXISTS caregiver_certifications (
   FOREIGN KEY (caregiver_id) REFERENCES caregivers(id) ON DELETE CASCADE
 );
 
--- 看護師語言表
 CREATE TABLE IF NOT EXISTS caregiver_languages (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   caregiver_id TEXT NOT NULL,
@@ -69,7 +76,6 @@ CREATE TABLE IF NOT EXISTS caregiver_languages (
   UNIQUE(caregiver_id, language)
 );
 
--- 看護師服務區域表
 CREATE TABLE IF NOT EXISTS caregiver_service_areas (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   caregiver_id TEXT NOT NULL,
@@ -79,7 +85,6 @@ CREATE TABLE IF NOT EXISTS caregiver_service_areas (
   UNIQUE(caregiver_id, area_name)
 );
 
--- 看護師可用時段表
 CREATE TABLE IF NOT EXISTS caregiver_availability (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   caregiver_id TEXT UNIQUE NOT NULL,
@@ -92,7 +97,7 @@ CREATE TABLE IF NOT EXISTS caregiver_availability (
   FOREIGN KEY (caregiver_id) REFERENCES caregivers(id) ON DELETE CASCADE
 );
 
--- 預約表
+-- 建立預約表
 CREATE TABLE IF NOT EXISTS bookings (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   caregiver_id TEXT NOT NULL,
@@ -116,25 +121,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- 病患資訊表
-CREATE TABLE IF NOT EXISTS patient_info (
-  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-  booking_id TEXT UNIQUE NOT NULL,
-  name TEXT NOT NULL,
-  age INTEGER,
-  gender TEXT CHECK(gender IN ('male', 'female', 'other')),
-  medical_conditions TEXT, -- JSON array stored as text
-  medications TEXT, -- JSON array stored as text
-  allergies TEXT, -- JSON array stored as text
-  emergency_contact_name TEXT,
-  emergency_contact_phone TEXT,
-  special_needs TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
-);
-
--- 評價表
+-- 建立評價表
 CREATE TABLE IF NOT EXISTS reviews (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   booking_id TEXT UNIQUE NOT NULL,
@@ -150,13 +137,10 @@ CREATE TABLE IF NOT EXISTS reviews (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- 建立索引以優化查詢效能
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_caregivers_user_id ON caregivers(user_id);
-CREATE INDEX idx_caregivers_rating ON caregivers(rating DESC);
-CREATE INDEX idx_caregivers_hourly_rate ON caregivers(hourly_rate);
-CREATE INDEX idx_bookings_user_id ON bookings(user_id);
-CREATE INDEX idx_bookings_caregiver_id ON bookings(caregiver_id);
-CREATE INDEX idx_bookings_status ON bookings(status);
-CREATE INDEX idx_bookings_start_date ON bookings(start_date);
-CREATE INDEX idx_reviews_caregiver_id ON reviews(caregiver_id);
+-- 建立索引
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_caregivers_user_id ON caregivers(user_id);
+CREATE INDEX IF NOT EXISTS idx_caregivers_rating ON caregivers(rating DESC);
+CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_caregiver_id ON bookings(caregiver_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);

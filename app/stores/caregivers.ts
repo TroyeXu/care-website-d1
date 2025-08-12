@@ -4,18 +4,30 @@ export interface Caregiver {
   id: string
   name: string
   avatar: string
+  gender: 'male' | 'female'
+  age: number
   rating: number
   reviews_count: number
   hourly_rate: number
   experience_years: number
   bio: string
+  description: string
+  skills: string[]
   certifications: string[]
   languages: string[]
-  specialties: string[]
   service_areas: string[]
-  availability?: string[]
-  created_at?: string
-  updated_at?: string
+  availability: {
+    weekdays: boolean
+    weekends: boolean
+    nights: boolean
+    holidays: boolean
+  }
+  is_available: boolean
+  total_service_hours: number
+  response_rate: number
+  response_time: string
+  created_at: string
+  updated_at: string
   reviews?: {
     id: string
     rating: number
@@ -27,15 +39,21 @@ export interface Caregiver {
 
 export interface CaregiverFilter {
   area?: string
-  specialty?: string
+  gender?: 'male' | 'female' | 'all'
+  skills?: string[]
+  languages?: string[]
+  certifications?: string[]
   minRating?: number
   minRate?: number
   maxRate?: number
-  maxHourlyRate?: number
-  maxShiftRate?: number
-  location?: string
-  requiredSkills?: string[]
-  skills?: string[]
+  minExperience?: number
+  availability?: {
+    weekdays?: boolean
+    weekends?: boolean
+    nights?: boolean
+    holidays?: boolean
+  }
+  onlyAvailable?: boolean
 }
 
 export const useCaregiverStore = defineStore('caregivers', {
@@ -78,7 +96,8 @@ export const useCaregiverStore = defineStore('caregivers', {
         (c) =>
           c.name.toLowerCase().includes(query) ||
           c.bio.toLowerCase().includes(query) ||
-          c.specialties.some((s) => s.toLowerCase().includes(query)) ||
+          c.description?.toLowerCase().includes(query) ||
+          c.skills.some((s) => s.toLowerCase().includes(query)) ||
           c.service_areas.some((a) => a.toLowerCase().includes(query)) ||
           c.certifications.some((cert) => cert.toLowerCase().includes(query)),
       )
@@ -90,22 +109,74 @@ export const useCaregiverStore = defineStore('caregivers', {
       if (state.currentFilter) {
         const filter = state.currentFilter
 
+        // 地區篩選
         if (filter.area) {
           result = result.filter((c) => c.service_areas.includes(filter.area!))
         }
+        
+        // 性別篩選
+        if (filter.gender && filter.gender !== 'all') {
+          result = result.filter((c) => c.gender === filter.gender)
+        }
+        
+        // 技能篩選
+        if (filter.skills && filter.skills.length > 0) {
+          result = result.filter((c) =>
+            filter.skills!.some(skill => c.skills.includes(skill))
+          )
+        }
+        
+        // 語言篩選
+        if (filter.languages && filter.languages.length > 0) {
+          result = result.filter((c) =>
+            filter.languages!.some(lang => c.languages.includes(lang))
+          )
+        }
+        
+        // 證照篩選
+        if (filter.certifications && filter.certifications.length > 0) {
+          result = result.filter((c) =>
+            filter.certifications!.some(cert => c.certifications.includes(cert))
+          )
+        }
+        
+        // 評分篩選
         if (filter.minRating) {
           result = result.filter((c) => c.rating >= filter.minRating!)
         }
+        
+        // 價格篩選
         if (filter.minRate) {
           result = result.filter((c) => c.hourly_rate >= filter.minRate!)
         }
         if (filter.maxRate) {
           result = result.filter((c) => c.hourly_rate <= filter.maxRate!)
         }
-        if (filter.specialty) {
-          result = result.filter((c) =>
-            c.specialties.includes(filter.specialty!),
-          )
+        
+        // 經驗年數篩選
+        if (filter.minExperience) {
+          result = result.filter((c) => c.experience_years >= filter.minExperience!)
+        }
+        
+        // 可用時段篩選
+        if (filter.availability) {
+          if (filter.availability.weekdays !== undefined) {
+            result = result.filter((c) => c.availability.weekdays === filter.availability!.weekdays)
+          }
+          if (filter.availability.weekends !== undefined) {
+            result = result.filter((c) => c.availability.weekends === filter.availability!.weekends)
+          }
+          if (filter.availability.nights !== undefined) {
+            result = result.filter((c) => c.availability.nights === filter.availability!.nights)
+          }
+          if (filter.availability.holidays !== undefined) {
+            result = result.filter((c) => c.availability.holidays === filter.availability!.holidays)
+          }
+        }
+        
+        // 只顯示可預約
+        if (filter.onlyAvailable) {
+          result = result.filter((c) => c.is_available)
         }
       }
 
@@ -115,7 +186,8 @@ export const useCaregiverStore = defineStore('caregivers', {
           (c) =>
             c.name.toLowerCase().includes(query) ||
             c.bio.toLowerCase().includes(query) ||
-            c.specialties.some((s) => s.toLowerCase().includes(query)) ||
+            c.description?.toLowerCase().includes(query) ||
+            c.skills.some((s) => s.toLowerCase().includes(query)) ||
             c.service_areas.some((a) => a.toLowerCase().includes(query)) ||
             c.certifications.some((cert) => cert.toLowerCase().includes(query)),
         )
@@ -144,18 +216,20 @@ export const useCaregiverStore = defineStore('caregivers', {
       this.error = null
 
       try {
-        const query = new URLSearchParams()
-        if (filter?.area) query.append('area', filter.area)
-        if (filter?.specialty) query.append('specialty', filter.specialty)
-        if (filter?.minRate) query.append('minRate', filter.minRate.toString())
-        if (filter?.maxRate) query.append('maxRate', filter.maxRate.toString())
-
-        const { caregivers } = await $fetch<{ caregivers: Caregiver[] }>(
-          `/api/caregivers?${query}`,
-        )
-        this.caregivers = caregivers || []
+        // 暫時使用模擬資料
+        const { mockCaregivers } = await import('~/utils/mockData')
+        
+        // 模擬 API 延遲
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
+        this.caregivers = mockCaregivers
+        
+        // 如果有篩選條件，設定篩選器
+        if (filter) {
+          this.currentFilter = filter
+        }
       } catch (err: unknown) {
-        this.error = err.data?.message || err.message || '載入照護員資料失敗'
+        this.error = '載入照護員資料失敗'
         console.error('Error fetching caregivers:', err)
       } finally {
         this.loading = false

@@ -1,43 +1,112 @@
 <template>
   <q-layout view="hHh Lpr lFf">
     <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
-        <!-- 左側按鈕 -->
-        <q-btn
-          v-if="canGoBack"
-          flat
-          dense
-          round
-          icon="arrow_back"
-          class="q-mr-sm"
-          aria-label="返回"
-          @click="goBack"
-        />
-        <q-btn
-          v-else
-          flat
-          dense
-          round
-          icon="menu"
-          class="q-mr-sm"
-          aria-label="選單"
-          @click="drawer = !drawer"
-        />
+      <q-toolbar class="header-toolbar">
+        <!-- 左側返回按鈕，首頁不顯示 -->
+        <div class="header-left">
+          <q-btn
+            v-if="route.path !== '/'"
+            flat
+            dense
+            round
+            icon="arrow_back"
+            aria-label="返回"
+            @click="goBack"
+          />
+        </div>
 
-        <!-- 頁面標題 -->
-        <q-toolbar-title class="text-h6">
+        <!-- 頁面標題 - 絕對定位置中 -->
+        <q-toolbar-title class="header-title text-h6">
           {{ currentPageTitle }}
         </q-toolbar-title>
 
         <!-- 右側操作 -->
-        <div class="row q-gutter-xs">
-          <!-- 聯絡我們 -->
-          <q-btn
-            flat
-            label="聯絡我們"
-            color="primary"
-            @click="router.push('/support/contact')"
-          />
+        <div class="header-right row q-gutter-xs items-center">
+          <!-- 用戶選單（已登入） -->
+          <div v-if="currentUser" class="row items-center q-gutter-sm">
+            <q-chip 
+              color="primary" 
+              text-color="white"
+              icon="verified_user"
+              class="gt-sm"
+              size="sm"
+            >
+              {{ currentUser.role === 'caregiver' ? '看護' : '客戶' }}
+            </q-chip>
+            
+            <q-btn
+              flat
+              round
+              dense
+              icon="notifications"
+              @click="showNotifications = true"
+            >
+              <q-badge color="red" floating v-if="unreadCount > 0">
+                {{ unreadCount }}
+              </q-badge>
+            </q-btn>
+            
+            <q-btn-dropdown
+              flat
+              dense
+              no-caps
+              class="text-weight-medium"
+            >
+              <template v-slot:label>
+                <q-avatar size="28px" class="q-mr-sm">
+                  <img :src="currentUser.avatar || 'https://cdn.quasar.dev/img/avatar.png'" />
+                </q-avatar>
+                {{ currentUser.name }}
+              </template>
+              <q-list>
+                <q-item clickable v-close-popup @click="router.push('/profile')">
+                  <q-item-section avatar>
+                    <q-icon name="person" />
+                  </q-item-section>
+                  <q-item-section>個人資料</q-item-section>
+                </q-item>
+                
+                <q-item clickable v-close-popup @click="router.push('/bookings')">
+                  <q-item-section avatar>
+                    <q-icon name="event_note" />
+                  </q-item-section>
+                  <q-item-section>我的預約</q-item-section>
+                </q-item>
+                
+                <q-separator />
+                
+                <q-item clickable v-close-popup @click="handleLogout">
+                  <q-item-section avatar>
+                    <q-icon name="logout" />
+                  </q-item-section>
+                  <q-item-section>登出</q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+          </div>
+          
+          <!-- 登入/註冊按鈕（未登入） -->
+          <div v-else class="row q-gutter-sm items-center">
+            <q-btn
+              flat
+              dense
+              no-caps
+              label="登入"
+              color="primary"
+              class="text-weight-medium"
+              @click="router.push('/auth/login')"
+            />
+            <q-separator vertical inset class="gt-xs" />
+            <q-btn
+              flat
+              dense
+              no-caps
+              label="註冊"
+              color="primary"
+              class="text-weight-medium"
+              @click="router.push('/auth/register')"
+            />
+          </div>
         </div>
       </q-toolbar>
     </q-header>
@@ -62,12 +131,8 @@
 
         <q-separator />
 
-        <!-- 主選單 -->
+        <!-- 主選單 - 直接顯示清單 -->
         <q-list padding>
-          <q-item-label header class="text-weight-medium text-grey-8">
-            主選單
-          </q-item-label>
-
           <q-item
             v-for="item in mainMenuItems"
             :key="item.to"
@@ -86,35 +151,6 @@
               <q-item-label caption>{{ item.caption }}</q-item-label>
             </q-item-section>
           </q-item>
-
-          <!-- 移除用戶中心區塊 -->
-
-          <q-separator class="q-my-md" />
-
-          <!-- 其他選項 -->
-          <q-item-label header class="text-weight-medium text-grey-8">
-            其他
-          </q-item-label>
-
-          <q-item
-            v-for="item in otherMenuItems"
-            :key="item.to"
-            v-ripple
-            clickable
-            :to="item.to"
-            exact
-            class="rounded-borders q-ma-xs"
-            @click="drawer = false"
-          >
-            <q-item-section avatar>
-              <q-icon :name="item.icon" color="grey-6" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ item.label }}</q-item-label>
-              <q-item-label caption>{{ item.caption }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -124,7 +160,7 @@
     </q-page-container>
 
     <!-- 底部快速選單 -->
-    <q-footer elevated class="bg-white border-t mobile-footer">
+    <q-footer v-if="showFooter" elevated class="bg-white border-t mobile-footer">
       <q-tabs
         v-model="activeTab"
         dense
@@ -155,6 +191,13 @@
           label="費用計算器"
           no-caps
           @click="router.push('/booking/calculator')"
+        />
+        <q-tab
+          name="menu"
+          icon="menu"
+          label="更多"
+          no-caps
+          @click="drawer = !drawer"
         />
       </q-tabs>
     </q-footer>
@@ -205,60 +248,6 @@
       </q-card>
     </q-dialog>
 
-    <!-- 用戶選單對話框 -->
-    <q-dialog v-model="showUserMenu">
-      <q-card style="min-width: 250px">
-        <q-card-section v-if="authStore.currentUser">
-          <div class="text-center">
-            <q-avatar size="60px" class="q-mb-md">
-              <img
-                v-if="authStore.currentUser.avatar"
-                :src="authStore.currentUser.avatar"
-                :alt="authStore.currentUser.name"
-              />
-              <q-icon v-else name="person" />
-            </q-avatar>
-            <div class="text-h6">{{ authStore.currentUser.name }}</div>
-            <div class="text-caption text-grey-6">
-              {{ authStore.currentUser.email }}
-            </div>
-          </div>
-        </q-card-section>
-
-        <q-separator />
-
-        <q-list>
-          <q-item
-            clickable
-            @click="router.push('/user/profile'); showUserMenu = false"
-          >
-            <q-item-section avatar>
-              <q-icon name="person" />
-            </q-item-section>
-            <q-item-section>個人資料</q-item-section>
-          </q-item>
-
-          <q-item
-            clickable
-            @click="router.push('/user/settings'); showUserMenu = false"
-          >
-            <q-item-section avatar>
-              <q-icon name="settings" />
-            </q-item-section>
-            <q-item-section>設定</q-item-section>
-          </q-item>
-
-          <q-separator />
-
-          <q-item clickable @click="handleLogout">
-            <q-item-section avatar>
-              <q-icon name="logout" color="negative" />
-            </q-item-section>
-            <q-item-section>登出</q-item-section>
-          </q-item>
-        </q-list>
-      </q-card>
-    </q-dialog>
   </q-layout>
 </template>
 
@@ -276,19 +265,29 @@ const $q = useQuasar()
 const drawer = ref(false)
 const activeTab = ref('home')
 const showNotifications = ref(false)
+const showUserMenu = ref(false)
+const currentUser = ref<any>(null)
+const unreadCount = ref(0)
+
+// 計算是否顯示 footer
+const showFooter = computed(() => {
+  // 所有頁面都顯示 footer
+  return true
+})
 
 // 頁面標題對應
 const pageTitles: Record<string, string> = {
   '/': '首頁',
-  '/caregivers': '看護師列表',
-  '/caregivers/search': '搜尋看護師',
+  '/caregivers': '看護師',
+  '/bookings': '我的預約',
   '/booking/calculator': '費用計算器',
   '/support/contact': '聯繫我們',
+  '/support/faq': '常見問題',
   '/info/about': '關於我們',
   '/join': '成為看護師',
 }
 
-// 主選單項目
+// 主選單項目 - 整合所有選項
 const mainMenuItems = [
   {
     to: '/',
@@ -299,14 +298,14 @@ const mainMenuItems = [
   {
     to: '/caregivers',
     icon: 'people',
-    label: '看護師列表',
-    caption: '瀏覽所有可用看護師',
+    label: '看護師',
+    caption: '瀏覽與搜尋專業看護師',
   },
   {
-    to: '/caregivers/search',
-    icon: 'search',
-    label: '搜尋看護師',
-    caption: '進階搜尋和篩選',
+    to: '/bookings',
+    icon: 'event_note',
+    label: '我的預約',
+    caption: '查看和管理您的預約',
   },
   {
     to: '/booking/calculator',
@@ -320,18 +319,17 @@ const mainMenuItems = [
     label: '成為看護師',
     caption: '加入我們的團隊',
   },
-]
-
-// 移除用戶功能選單，改為空陣列
-const userMenuItems: any[] = []
-
-// 其他選單項目
-const otherMenuItems = [
   {
     to: '/info/about',
     icon: 'business',
     label: '關於我們',
     caption: '了解我們的公司與服務',
+  },
+  {
+    to: '/support/faq',
+    icon: 'quiz',
+    label: '常見問題',
+    caption: '快速找到您需要的答案',
   },
   {
     to: '/support/contact',
@@ -353,17 +351,43 @@ const currentPageTitle = computed(() => {
   return pageTitles[route.path] || '護理服務平台'
 })
 
-const canGoBack = computed(() => {
-  if (typeof window === 'undefined') return false
-  return window.history.length > 1 && route.path !== '/'
-})
+// 移除 canGoBack 計算屬性，因為現在總是顯示返回按鈕
 
 // 方法
 const goBack = async () => {
-  if (canGoBack.value) {
+  // 檢查是否可以返回上一頁
+  if (typeof window !== 'undefined' && window.history.length > 1 && route.path !== '/') {
     router.go(-1)
   } else {
+    // 如果不能返回或在首頁，就返回首頁
     await router.push('/')
+  }
+}
+
+// 處理登出
+const handleLogout = async () => {
+  try {
+    await $fetch('/api/auth/logout', {
+      method: 'POST',
+    })
+    currentUser.value = null
+    $q.notify({
+      type: 'positive',
+      message: '已成功登出',
+    })
+    router.push('/')
+  } catch (error) {
+    console.error('Logout error:', error)
+  }
+}
+
+// 檢查認證狀態
+const checkAuth = async () => {
+  try {
+    const { user } = await $fetch('/api/auth/me')
+    currentUser.value = user
+  } catch (error) {
+    currentUser.value = null
   }
 }
 
@@ -379,7 +403,8 @@ watch(
     } else if (newPath.startsWith('/booking/calculator')) {
       activeTab.value = 'calculator'
     } else {
-      activeTab.value = 'home'
+      // 其他頁面不選中任何 tab
+      activeTab.value = ''
     }
   },
   { immediate: true },
@@ -387,6 +412,9 @@ watch(
 
 // 生命週期
 onMounted(() => {
+  // 檢查認證狀態
+  checkAuth()
+  
   // 監聽測試頁面的抽屜開關事件
   window.addEventListener('toggle-drawer', () => {
     drawer.value = !drawer.value
@@ -397,6 +425,58 @@ onMounted(() => {
 <style scoped>
 .border-t {
   border-top: 1px solid #e0e0e0;
+}
+
+/* Header 樣式優化 */
+.q-header {
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Header 佈局 - 實現標題置中 */
+.header-toolbar {
+  position: relative;
+  padding: 0 12px;
+}
+
+.header-left {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.header-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: auto;
+  max-width: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-right {
+  margin-left: auto;
+  z-index: 2;
+}
+
+.q-header .q-btn-dropdown {
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.q-header .q-btn-dropdown:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.q-header .q-avatar {
+  border: 2px solid #f5f5f5;
 }
 
 /* Mobile Footer 優化 */
@@ -438,8 +518,22 @@ onMounted(() => {
 
 /* 響應式優化 */
 @media (max-width: 768px) {
-  .q-header .q-toolbar {
-    padding: 0 12px;
+  .header-toolbar {
+    padding: 0 8px;
+    min-height: 56px;
+  }
+
+  .header-left {
+    left: 8px;
+  }
+
+  .header-title {
+    max-width: 50%;
+    font-size: 18px;
+  }
+
+  .header-right {
+    padding-right: 8px;
   }
 
   .q-footer {
@@ -477,8 +571,17 @@ onMounted(() => {
 }
 
 @media (max-width: 480px) {
-  .q-toolbar-title {
+  .header-title {
     font-size: 16px;
+    max-width: 45%;
+  }
+
+  .header-left {
+    left: 4px;
+  }
+
+  .header-right {
+    padding-right: 4px;
   }
 
   .q-footer .q-tab {
@@ -561,5 +664,21 @@ onMounted(() => {
 
 .q-avatar:hover {
   transform: scale(1.05);
+}
+
+/* 防止水平滾動 */
+:deep(.q-page) {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+:deep(.q-layout) {
+  overflow-x: hidden;
+}
+
+/* 修正 Quasar 的 row 可能造成的溢出 */
+:deep(.row.q-col-gutter-md) {
+  margin: 0;
+  padding: 0 1rem;
 }
 </style>

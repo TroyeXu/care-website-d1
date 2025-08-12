@@ -251,56 +251,6 @@
           </div>
         </div>
 
-        <!-- 常見問題快速連結 -->
-        <div class="faq-section">
-          <q-card class="faq-card">
-            <q-card-section class="card-header">
-              <h2 class="section-title">
-                <q-icon name="quiz" class="title-icon" />
-                常見問題
-              </h2>
-              <p class="section-desc">快速找到您需要的答案</p>
-            </q-card-section>
-
-            <q-card-section>
-              <div class="faq-grid">
-                <q-btn
-                  flat
-                  no-caps
-                  class="faq-btn"
-                  @click="() => navigateTo('/content/blog')"
-                >
-                  <div class="faq-content">
-                    <div class="faq-icon">
-                      <q-icon name="help_outline" size="24px" />
-                    </div>
-                    <div class="faq-text">
-                      <div class="faq-title">使用說明</div>
-                      <div class="faq-desc">如何使用平台服務</div>
-                    </div>
-                  </div>
-                </q-btn>
-
-                <q-btn
-                  flat
-                  no-caps
-                  class="faq-btn"
-                  @click="() => navigateTo('/info/pricing')"
-                >
-                  <div class="faq-content">
-                    <div class="faq-icon">
-                      <q-icon name="payment" size="24px" />
-                    </div>
-                    <div class="faq-text">
-                      <div class="faq-title">收費說明</div>
-                      <div class="faq-desc">服務費用與付款方式</div>
-                    </div>
-                  </div>
-                </q-btn>
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
       </div>
     </div>
   </q-page>
@@ -532,8 +482,7 @@ useHead({
 
 /* 卡片通用樣式 */
 .contact-info-card,
-.contact-form-card,
-.faq-card {
+.contact-form-card {
   border-radius: 20px;
   border: none;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
@@ -543,8 +492,7 @@ useHead({
 }
 
 .contact-info-card:hover,
-.contact-form-card:hover,
-.faq-card:hover {
+.contact-form-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
@@ -714,58 +662,6 @@ useHead({
   transform: translateY(0) !important;
 }
 
-/* FAQ 樣式 */
-.faq-section {
-  margin-top: 2rem;
-}
-
-.faq-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.faq-btn {
-  padding: 0 !important;
-  border-radius: 15px !important;
-  background: rgba(102, 126, 234, 0.02) !important;
-  border: 1px solid rgba(102, 126, 234, 0.1) !important;
-  transition: all 0.3s ease !important;
-  height: auto !important;
-}
-
-.faq-btn:hover {
-  background: rgba(102, 126, 234, 0.05) !important;
-  border-color: rgba(102, 126, 234, 0.2) !important;
-  transform: translateY(-2px) !important;
-}
-
-.faq-content {
-  display: flex;
-  align-items: center;
-  padding: 1.5rem;
-  text-align: left;
-  width: 100%;
-}
-
-.faq-icon {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  padding: 10px;
-  border-radius: 10px;
-  margin-right: 1rem;
-}
-
-.faq-title {
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 0.25rem;
-}
-
-.faq-desc {
-  font-size: 0.9rem;
-  color: #718096;
-}
 
 /* 動畫 */
 @keyframes fadeInUp {
@@ -780,17 +676,12 @@ useHead({
 }
 
 .contact-info-card,
-.contact-form-card,
-.faq-card {
+.contact-form-card {
   animation: fadeInUp 0.6s ease-out;
 }
 
 .contact-form-card {
   animation-delay: 0.2s;
-}
-
-.faq-card {
-  animation-delay: 0.4s;
 }
 
 /* 成功和錯誤訊息樣式 */
@@ -951,10 +842,6 @@ useHead({
   .form-row {
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
-
-  .faq-grid {
-    grid-template-columns: 1fr;
   }
 
   .card-header,

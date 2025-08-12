@@ -9,86 +9,153 @@
           @error="handleImageError"
         />
         <div class="availability-badge" :class="availabilityClass">
-          {{ caregiver.available }}
+          <q-icon v-if="isAvailable" name="check_circle" size="12px" />
+          {{ availabilityText }}
         </div>
       </div>
 
       <div class="basic-info">
         <h3 class="name">{{ caregiver.name }}</h3>
         <div class="rating">
-          <div class="stars">
-            <span
-              v-for="i in 5"
-              :key="i"
-              class="star"
-              :class="{ filled: i <= Math.floor(caregiver.rating) }"
-            >
-              ★
-            </span>
-          </div>
+          <q-rating
+            :model-value="caregiver.rating"
+            size="16px"
+            color="orange"
+            readonly
+          />
           <span class="rating-number">{{ caregiver.rating }}</span>
+          <span class="review-count">({{ caregiver.review_count || 0 }})</span>
         </div>
-        <p class="location">📍 {{ caregiver.location }}</p>
+        <p class="location">
+          <q-icon name="location_on" size="16px" color="grey" />
+          {{ caregiver.location }}
+        </p>
       </div>
 
       <div class="pricing">
-        <div class="price-item">
-          <span class="label">時薪</span>
+        <div class="price-main">
           <span class="price">NT$ {{ caregiver.hourly_rate }}</span>
+          <span class="label">/小時</span>
         </div>
-        <div class="price-item">
-          <span class="label">班次</span>
-          <span class="price">NT$ {{ caregiver.shift_rate }}</span>
+        <div class="quick-actions">
+          <q-btn
+            flat
+            round
+            icon="chat"
+            size="sm"
+            color="grey-7"
+            @click.stop="openChat"
+          >
+            <q-tooltip>私訊詢問</q-tooltip>
+          </q-btn>
+          <q-btn
+            flat
+            round
+            icon="favorite_border"
+            size="sm"
+            color="grey-7"
+            @click.stop="toggleFavorite"
+          >
+            <q-tooltip>收藏</q-tooltip>
+          </q-btn>
         </div>
       </div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body" v-if="!compact">
       <div class="experience">
-        <h4>經驗背景</h4>
+        <h4>
+          <q-icon name="work_history" size="18px" color="primary" />
+          經驗背景
+        </h4>
         <p>{{ caregiver.experience }}</p>
       </div>
 
       <div class="skills">
-        <h4>專業技能</h4>
+        <h4>
+          <q-icon name="psychology" size="18px" color="primary" />
+          專業技能
+        </h4>
         <div class="skills-tags">
-          <span v-for="skill in skillsArray" :key="skill" class="skill-tag">
+          <q-chip
+            v-for="skill in skillsArray"
+            :key="skill"
+            size="sm"
+            color="primary"
+            text-color="white"
+            dense
+          >
             {{ skill }}
-          </span>
+          </q-chip>
         </div>
       </div>
 
       <div class="licenses">
-        <h4>專業證照</h4>
+        <h4>
+          <q-icon name="verified" size="18px" color="primary" />
+          專業證照
+        </h4>
         <div class="licenses-list">
-          <span
+          <q-chip
             v-for="license in caregiver.licenses"
             :key="license"
-            class="license-badge"
+            size="sm"
+            color="green"
+            text-color="white"
+            icon="verified_user"
+            dense
           >
-            🏆 {{ license }}
-          </span>
+            {{ license }}
+          </q-chip>
         </div>
       </div>
-
-      <div v-if="caregiver.description" class="description">
-        <h4>詳細介紹</h4>
-        <p>{{ caregiver.description }}</p>
+    </div>
+    
+    <!-- 手機版精簡內容 -->
+    <div class="card-body-compact" v-else>
+      <div class="compact-info">
+        <div class="info-item">
+          <q-icon name="work_history" size="16px" color="grey-7" />
+          <span>{{ caregiver.experience }}</span>
+        </div>
+        <div class="skills-preview">
+          <q-chip
+            v-for="(skill, index) in skillsArray.slice(0, 2)"
+            :key="skill"
+            size="sm"
+            outline
+            color="primary"
+            dense
+          >
+            {{ skill }}
+          </q-chip>
+          <span v-if="skillsArray.length > 2" class="more-skills">
+            +{{ skillsArray.length - 2 }}
+          </span>
+        </div>
       </div>
     </div>
 
     <div class="card-footer">
       <div class="actions">
-        <button type="button" class="btn-secondary" @click.stop="goDetail">
+        <q-btn
+          outline
+          color="primary"
+          size="sm"
+          @click.stop="goDetail"
+          class="btn-detail"
+        >
           查看詳情
-        </button>
-        <button
-          type="button"
-          class="btn-primary"
+        </q-btn>
+        <q-btn
+          unelevated
+          color="primary"
+          size="sm"
           @click.stop="$emit('book', caregiver)"
+          class="btn-book"
         >
           立即預約
-        </button>
+        </q-btn>
       </div>
     </div>
   </div>
@@ -97,6 +164,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import type { CaregiverDisplay } from '~/types/caregiver'
 
 interface Props {
@@ -106,6 +174,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const router = useRouter()
+const $q = useQuasar()
 
 const emit = defineEmits<{
   select: [caregiver: CaregiverDisplay]
@@ -113,27 +182,39 @@ const emit = defineEmits<{
 }>()
 
 const skillsArray = computed(() => {
+  if (Array.isArray(props.caregiver.skills)) {
+    return props.caregiver.skills
+  }
   return (
     props.caregiver.skills?.split('、').filter((skill) => skill.trim()) || []
   )
 })
 
-const availabilityClass = computed(() => {
-  // 處理 available 可能是布林值或字串的情況
+const isAvailable = computed(() => {
+  if (props.caregiver.is_available !== undefined) {
+    return props.caregiver.is_available
+  }
   const available = props.caregiver.available
-
   if (typeof available === 'boolean') {
-    return available ? 'available-full' : 'available-limited'
+    return available
   }
-
   const availability = (available || '').toLowerCase()
-  if (availability.includes('全天') || availability.includes('24')) {
-    return 'available-full'
-  } else if (availability.includes('週')) {
-    return 'available-partial'
-  } else {
-    return 'available-limited'
+  return availability.includes('全天') || availability.includes('24') || availability.includes('可')
+})
+
+const availabilityClass = computed(() => {
+  return isAvailable.value ? 'available-full' : 'available-limited'
+})
+
+const availabilityText = computed(() => {
+  if (props.caregiver.is_available !== undefined) {
+    return props.caregiver.is_available ? '可預約' : '暫無檔期'
   }
+  const available = props.caregiver.available
+  if (typeof available === 'boolean') {
+    return available ? '可預約' : '暫無檔期'
+  }
+  return available || '暫無檔期'
 })
 
 const handleImageError = (event: Event) => {
@@ -144,6 +225,24 @@ const handleImageError = (event: Event) => {
 const goDetail = () => {
   router.push(`/caregivers/${props.caregiver.id}`)
 }
+
+const openChat = () => {
+  $q.notify({
+    message: `即將開放與 ${props.caregiver.name} 的私訊功能`,
+    color: 'info',
+    position: 'top',
+    timeout: 2000
+  })
+}
+
+const toggleFavorite = () => {
+  $q.notify({
+    message: '收藏功能即將開放',
+    color: 'info',
+    position: 'top',
+    timeout: 2000
+  })
+}
 </script>
 
 <style scoped>
@@ -151,24 +250,27 @@ const goDetail = () => {
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  margin-bottom: 20px;
+  padding: 20px;
+  margin-bottom: 16px;
   transition: all 0.3s ease;
   cursor: pointer;
   border: 2px solid transparent;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .caregiver-card:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  border-color: #3182ce;
+  border-color: var(--q-primary);
   transform: translateY(-2px);
 }
 
 .card-header {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 16px;
   align-items: start;
 }
 
@@ -177,35 +279,41 @@ const goDetail = () => {
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #e2e8f0;
+}
+
+.gender-chip {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 11px !important;
 }
 
 .availability-badge {
   position: absolute;
   bottom: -5px;
   right: -5px;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: white;
   border: 2px solid white;
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .available-full {
-  background: #38a169;
-}
-
-.available-partial {
-  background: #d69e2e;
+  background: var(--q-positive);
 }
 
 .available-limited {
-  background: #e53e3e;
+  background: var(--q-negative);
 }
 
 .basic-info {
@@ -213,79 +321,100 @@ const goDetail = () => {
 }
 
 .name {
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   color: #2d3748;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.age {
+  font-size: 14px;
+  font-weight: normal;
+  color: #718096;
+}
+
+.experience-years {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #718096;
+  margin-top: 4px;
 }
 
 .rating {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.stars {
-  display: flex;
-  gap: 2px;
-}
-
-.star {
-  color: #e2e8f0;
-  font-size: 16px;
-  transition: color 0.2s;
-}
-
-.star.filled {
-  color: #f6e05e;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .rating-number {
   font-weight: 600;
   color: #4a5568;
+  font-size: 0.875rem;
+}
+
+.review-count {
+  color: #718096;
+  font-size: 0.75rem;
 }
 
 .location {
   margin: 0;
   color: #718096;
-  font-size: 14px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .pricing {
-  text-align: right;
-}
-
-.price-item {
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
+  align-items: flex-end;
+  gap: 8px;
 }
 
-.price-item .label {
-  font-size: 12px;
-  color: #718096;
-  margin-bottom: 2px;
+.price-main {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
 }
 
-.price-item .price {
-  font-size: 16px;
+.price-main .price {
+  font-size: 1.125rem;
   font-weight: 700;
-  color: #3182ce;
+  color: var(--q-primary);
+}
+
+.price-main .label {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 4px;
 }
 
 .card-body {
   border-top: 1px solid #e2e8f0;
-  padding-top: 20px;
+  padding-top: 16px;
+  flex: 1;
 }
 
 .card-body h4 {
   margin: 0 0 8px 0;
   color: #2d3748;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .card-body > div {
@@ -296,102 +425,127 @@ const goDetail = () => {
   margin-bottom: 0;
 }
 
-.experience p,
-.description p {
+.experience p {
   margin: 0;
   color: #4a5568;
-  line-height: 1.5;
+  line-height: 1.4;
+  font-size: 0.875rem;
 }
 
-.skills-tags {
+.skills-tags,
+.licenses-list {
   display: flex;
   flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* 手機版精簡內容 */
+.card-body-compact {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 12px;
+  flex: 1;
+}
+
+.compact-info {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.skill-tag {
-  background: #edf2f7;
-  color: #4a5568;
-  padding: 4px 8px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.licenses-list {
+.info-item {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: #4a5568;
 }
 
-.license-badge {
-  color: #3182ce;
-  font-size: 14px;
+.skills-preview {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.more-skills {
+  font-size: 0.75rem;
+  color: #718096;
   font-weight: 500;
 }
 
 .card-footer {
   border-top: 1px solid #e2e8f0;
-  padding-top: 16px;
-  margin-top: 20px;
+  padding-top: 12px;
+  margin-top: auto;
 }
 
 .actions {
   display: flex;
-  gap: 12px;
-  justify-content: flex-end;
+  gap: 8px;
+  justify-content: space-between;
 }
 
-.btn-secondary {
-  padding: 8px 16px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #4a5568;
+.btn-detail,
+.btn-book {
+  flex: 1;
 }
 
-.btn-secondary:hover {
-  background: #f7fafc;
-  border-color: #cbd5e0;
-}
-
-.btn-primary {
-  padding: 8px 16px;
-  background: #3182ce;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-primary:hover {
-  background: #2c5282;
-}
-
-@media (max-width: 768px) {
-  .card-header {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    text-align: center;
+/* 手機版響應式設計 */
+@media (max-width: 600px) {
+  .caregiver-card {
+    padding: 16px;
+    margin-bottom: 12px;
   }
 
-  .pricing {
-    text-align: center;
+  .card-header {
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .name {
+    font-size: 1rem;
+  }
+
+  .availability-badge {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+
+  .price-main .price {
+    font-size: 1rem;
+  }
+
+  .quick-actions {
+    display: none; /* 在卡片上隱藏快速操作按鈕 */
+  }
+
+  .card-body h4 {
+    font-size: 0.8125rem;
   }
 
   .actions {
-    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .caregiver-card {
+    padding: 14px;
+    border-radius: 8px;
   }
 
-  .skills-tags {
-    justify-content: center;
+  .pricing {
+    align-items: center;
+  }
+
+  .price-main {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
   }
 }
 </style>

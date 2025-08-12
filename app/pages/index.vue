@@ -223,7 +223,7 @@
             <q-card
               class="caregiver-card cursor-pointer animate-fade-up"
               :style="`animation-delay: ${index * 0.1}s`"
-              @click="$router.push(`/caregivers/caregiver-${caregiver.id}`)"
+              @click="$router.push(`/caregivers/${caregiver.id}`)"
             >
               <div class="caregiver-image-wrapper">
                 <q-img
@@ -324,23 +324,28 @@
           swipeable
           navigation
           padding
-          height="300px"
-          class="bg-transparent"
+          :height="$q.screen.lt.md ? 'auto' : '400px'"
+          class="bg-transparent testimonial-carousel"
+          control-type="push"
+          control-color="primary"
         >
           <q-carousel-slide
             v-for="testimonial in testimonials"
             :key="testimonial.id"
             :name="testimonial.id"
+            class="q-pa-lg"
           >
-            <div class="row flex-center">
-              <div class="col-12 col-md-8 text-center">
+            <div class="row flex-center full-height">
+              <div class="col-12 col-md-10 col-lg-8 text-center">
                 <q-icon
                   name="format_quote"
                   size="48px"
                   color="primary"
-                  class="q-mb-md"
+                  class="q-mb-lg"
                 />
-                <p class="text-h6 q-mb-md">{{ testimonial.content }}</p>
+                <p class="text-body1 q-mb-lg testimonial-content">
+                  {{ testimonial.content }}
+                </p>
                 <q-avatar size="64px" class="q-mb-sm">
                   <img :src="testimonial.avatar" />
                 </q-avatar>
@@ -350,6 +355,13 @@
                 <div class="text-caption text-grey-7">
                   {{ testimonial.role }}
                 </div>
+                <q-rating
+                  :model-value="5"
+                  readonly
+                  color="primary"
+                  size="sm"
+                  class="q-mt-sm"
+                />
               </div>
             </div>
           </q-carousel-slide>
@@ -360,24 +372,15 @@
     <!-- CTA Section -->
     <div class="cta-section bg-primary text-white q-py-xl">
       <div class="container text-center">
-        <h2 class="text-h3 text-weight-bold q-mb-md">準備好開始了嗎？</h2>
-        <p class="text-h6 q-mb-lg">立即註冊，找到最適合的照護服務</p>
+        <h2 class="text-h3 text-weight-bold q-mb-md">想成為看護夥伴嗎？</h2>
+        <p class="text-h6 q-mb-lg">加入我們的專業團隊，開始您的照護職涯</p>
         <div class="q-gutter-md">
-          <q-btn
-            label="註冊成為會員"
-            color="white"
-            text-color="primary"
-            size="lg"
-            rounded
-            @click="$router.push('/auth/register')"
-          />
           <q-btn
             label="成為看護夥伴"
             color="white"
             text-color="primary"
             size="lg"
             rounded
-            outline
             @click="$router.push('/join')"
           />
         </div>
@@ -427,8 +430,8 @@ const featuredCaregivers = computed(() => {
   if (!caregiversData.value || !caregiversData.value.caregivers) return []
 
   // 轉換資料格式以符合頁面使用
-  return caregiversData.value.caregivers.map((caregiver) => ({
-    id: parseInt(caregiver.id.replace('caregiver-', '')),
+  return caregiversData.value.caregivers.map((caregiver, index) => ({
+    id: caregiver.id || `caregiver-${index}`, // 保持原始 ID 字串格式
     name: caregiver.name,
     photo: caregiver.avatar,
     rating: caregiver.rating,
@@ -720,6 +723,36 @@ useHead({
   font-size: 0.8rem;
   opacity: 0.9;
   line-height: 1.3;
+}
+
+/* Testimonial Styles */
+.testimonial-carousel {
+  min-height: 350px;
+}
+
+.testimonial-carousel .q-carousel__slide {
+  padding: 2rem 1rem;
+}
+
+.testimonial-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #424242;
+  max-width: 800px;
+  margin: 0 auto;
+  font-style: italic;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .testimonial-carousel {
+    min-height: auto;
+  }
+  
+  .testimonial-content {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
 }
 
 /* Service Card Styles */

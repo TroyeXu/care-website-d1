@@ -8,8 +8,8 @@
             <div class="hero-content">
               <div class="hero-badge q-mb-md">
                 <q-chip
-                  color="accent"
-                  text-color="dark"
+                  color="primary"
+                  text-color="white"
                   icon="star"
                   label="專業認證平台"
                   size="md"
@@ -18,7 +18,7 @@
               <h1 class="hero-title text-weight-bold q-mb-md">
                 成為專業照護員
                 <br />
-                <span class="text-accent glow-text">實現照護夢想</span>
+                <span class="text-cyan-3 glow-text">實現照護夢想</span>
               </h1>
               <p class="hero-subtitle text-weight-light q-mb-xl opacity-90">
                 發揮專業照護能力，提供溫暖服務，獲得穩定收入與成長機會
@@ -26,8 +26,8 @@
               <div class="cta-buttons row q-gutter-md">
                 <q-btn
                   size="lg"
-                  color="accent"
-                  text-color="dark"
+                  color="white"
+                  text-color="primary"
                   label="立即申請"
                   icon="arrow_forward"
                   unelevated
@@ -57,7 +57,7 @@
                 />
                 <div class="floating-elements">
                   <div class="floating-icon icon-1">
-                    <q-icon name="favorite" size="24px" color="accent" />
+                    <q-icon name="favorite" size="24px" color="red-4" />
                   </div>
                   <div class="floating-icon icon-2">
                     <q-icon
@@ -67,7 +67,7 @@
                     />
                   </div>
                   <div class="floating-icon icon-3">
-                    <q-icon name="groups" size="26px" color="accent" />
+                    <q-icon name="groups" size="26px" color="cyan-3" />
                   </div>
                 </div>
               </div>
@@ -275,7 +275,7 @@
               <q-card-section class="text-center">
                 <q-badge
                   v-if="salaryInfo.featured"
-                  color="accent"
+                  color="positive"
                   label="推薦"
                   class="q-mb-md"
                 />
@@ -347,8 +347,8 @@
         <div class="cta-content">
           <div class="cta-badge q-mb-md">
             <q-chip
-              color="accent"
-              text-color="dark"
+              color="primary"
+              text-color="white"
               icon="rocket_launch"
               label="現在加入"
               size="lg"
@@ -363,12 +363,12 @@
           <div class="cta-buttons row justify-center q-gutter-md">
             <q-btn
               size="xl"
-              color="accent"
-              text-color="dark"
+              color="primary"
+              text-color="white"
               label="開始申請"
               icon="person_add"
               unelevated
-              to="/auth/register"
+              to="/support/contact"
               class="cta-primary-btn q-px-xl"
             />
             <q-btn
@@ -495,7 +495,7 @@ const benefits = [
     icon: 'security',
     title: '保險保障',
     description: '完善工作保險與責任險保障，讓您安心專注於照護服務品質',
-    color: 'purple',
+    color: 'primary',
   },
   {
     icon: 'support_agent',

@@ -1,683 +1,832 @@
 <template>
-  <q-page class="q-pa-md">
-    <!-- 頁面標題與統計 -->
-    <div class="page-header q-mb-lg">
-      <div class="row items-center justify-between">
-        <div class="col">
-          <h1 class="text-h4 text-primary q-mb-sm">
-            <q-icon name="medical_services" class="q-mr-sm" />
-            專業看護師
-          </h1>
-          <p class="text-body1 text-grey-7">
-            瀏覽所有專業看護員，找到最合適的人選
-          </p>
-        </div>
-        <div class="col-auto text-right">
-          <div class="text-h6 text-primary">{{ caregivers?.length || 0 }}</div>
-          <div class="text-caption text-grey-6">位看護師</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 工具列 -->
-    <div class="toolbar-section q-mb-lg">
-      <div class="row items-center justify-between q-gutter-md">
-        <div class="col-12 col-md-6">
-          <q-input
-            v-model="searchQuery"
-            placeholder="搜尋看護師姓名或專業技能..."
-            outlined
-            dense
-            clearable
-            @input="filterCaregivers"
-          >
-            <template #prepend>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </div>
-        <div class="col-12 col-md-6">
-          <div class="row items-center justify-end q-gutter-sm">
-            <q-select
-              v-model="sortBy"
-              :options="sortOptions"
-              label="排序方式"
-              outlined
-              dense
-              emit-value
-              map-options
-              class="col-auto"
-              style="min-width: 120px"
-              @update:model-value="sortCaregivers"
-            />
-            <q-btn-toggle
-              v-model="viewMode"
-              :options="viewOptions"
-              outline
-              color="primary"
-              size="sm"
-            />
+  <q-page class="caregivers-page">
+    <!-- 固定頂部搜尋區域 -->
+    <div class="search-header">
+      <div class="search-container">
+        <q-input
+          v-model="searchQuery"
+          placeholder="搜尋看護師姓名或專業技能..."
+          filled
+          dense
+          class="search-input"
+          @input="handleSearch"
+        >
+          <template #prepend>
+            <q-icon name="search" size="20px" />
+          </template>
+          <template #append>
             <q-btn
+              v-if="searchQuery"
               flat
+              dense
               round
-              icon="tune"
-              :color="hasActiveFilters ? 'primary' : 'grey'"
-              @click="showFilters = !showFilters"
+              icon="close"
+              size="sm"
+              @click="searchQuery = ''"
+            />
+          </template>
+        </q-input>
+      </div>
+      
+      <!-- 快速篩選按鈕 -->
+      <div class="quick-filters">
+        <q-scroll-area horizontal style="height: 45px">
+          <div class="row no-wrap q-gutter-xs q-px-sm">
+            <q-chip
+              v-for="filter in quickFilters"
+              :key="filter.key"
+              :color="activeQuickFilter === filter.key ? 'primary' : 'grey-3'"
+              :text-color="activeQuickFilter === filter.key ? 'white' : 'grey-8'"
+              clickable
+              @click="toggleQuickFilter(filter.key)"
             >
-              <q-tooltip>篩選選項</q-tooltip>
-            </q-btn>
+              <q-icon :name="filter.icon" size="16px" class="q-mr-xs" />
+              {{ filter.label }}
+            </q-chip>
           </div>
-        </div>
+        </q-scroll-area>
       </div>
     </div>
 
-    <!-- 篩選面板 -->
-    <q-slide-transition>
-      <q-card v-show="showFilters" flat bordered class="q-mb-lg">
-        <q-card-section>
-          <div class="text-subtitle1 q-mb-md">篩選選項</div>
-          <div class="row q-gutter-md">
-            <div class="col-12 col-sm-6 col-md-3">
-              <q-select
-                v-model="filters.location"
-                :options="locationOptions"
-                label="服務地區"
-                outlined
-                dense
-                clearable
-              />
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-              <q-range
-                v-model="filters.priceRange"
-                :min="0"
-                :max="2000"
-                :step="50"
-                label
-                color="primary"
-                label-always
-                markers
-              />
-              <div class="text-caption text-center q-mt-sm">
-                價格範圍 (NT$/時)
-              </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-              <q-rating
-                v-model="filters.minRating"
-                :max="5"
-                size="1.5em"
-                color="orange"
-              />
-              <div class="text-caption text-center q-mt-sm">最低評分</div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-              <q-toggle
-                v-model="filters.availableOnly"
-                label="僅顯示可預約"
-                color="primary"
-              />
-            </div>
+    <!-- 排序和篩選欄 -->
+    <div class="filter-bar">
+      <div class="row items-center no-wrap">
+        <div class="col">
+          <div class="text-caption text-grey-6">
+            找到 {{ filteredCaregivers.length }} 位看護師
           </div>
-          <div class="row justify-end q-mt-md">
-            <q-btn flat class="q-mr-sm" @click="clearFilters">清除</q-btn>
-            <q-btn color="primary" @click="applyFilters">套用篩選</q-btn>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-slide-transition>
+        </div>
+        <div class="col-auto q-gutter-x-xs">
+          <q-btn
+            flat
+            dense
+            round
+            icon="sort"
+            :color="sortBy !== 'default' ? 'primary' : 'grey-7'"
+            @click="showSortMenu = true"
+          />
+          <q-btn
+            flat
+            dense
+            round
+            icon="filter_list"
+            :color="activeFilterCount > 0 ? 'primary' : 'grey-7'"
+            @click="showFilterDrawer = true"
+          />
+        </div>
+      </div>
+    </div>
 
     <!-- 載入狀態 -->
-    <div v-if="loading" class="loading-state text-center q-pa-xl">
-      <q-spinner-grid size="60px" color="primary" />
-      <div class="q-mt-md text-h6 text-grey-6">載入看護師資料中</div>
-      <q-linear-progress
-        :value="loadingProgress"
-        color="primary"
-        class="q-mt-md"
-        style="width: 200px; margin: 0 auto"
-      />
-      <div class="text-caption text-grey-5 q-mt-sm">
-        {{ (loadingProgress * 100) | 0 }}%
-      </div>
+    <div v-if="loading" class="loading-container">
+      <q-spinner-dots size="40px" color="primary" />
+      <div class="text-grey-6 q-mt-md">載入中...</div>
     </div>
 
     <!-- 看護師列表 -->
-    <div v-else-if="filteredCaregivers.length > 0">
-      <!-- 網格檢視 -->
-      <div v-if="viewMode === 'grid'" class="caregiver-grid">
-        <CaregiverCard
-          v-for="caregiver in filteredCaregivers"
-          :key="caregiver.id"
-          :caregiver="caregiver"
-          :compact="true"
-          @select="navigateToDetail"
-          @book="startBooking"
+    <div v-else class="caregiver-list">
+      <div v-if="filteredCaregivers.length === 0" class="empty-state">
+        <q-icon name="search_off" size="64px" color="grey-5" />
+        <div class="text-h6 text-grey-7 q-mt-md">沒有找到看護師</div>
+        <div class="text-body2 text-grey-6 q-mt-sm">請嘗試調整搜尋條件</div>
+        <q-btn
+          flat
+          color="primary"
+          label="清除篩選"
+          class="q-mt-md"
+          @click="clearAllFilters"
         />
       </div>
 
-      <!-- 列表檢視 -->
-      <div v-else class="caregiver-list-view">
-        <q-list separator>
-          <q-item
-            v-for="caregiver in filteredCaregivers"
-            :key="caregiver.id"
-            clickable
-            @click="navigateToDetail(caregiver)"
-          >
-            <q-item-section avatar>
-              <q-avatar size="60px">
-                <img :src="caregiver.avatar" :alt="caregiver.name" />
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label class="text-h6">{{ caregiver.name }}</q-item-label>
-              <q-item-label caption>
-                <q-icon name="location_on" size="16px" />
-                {{ caregiver.service_areas?.[0] || '未指定' }}
-              </q-item-label>
-              <q-item-label caption class="q-mt-xs">
-                <q-rating
-                  :model-value="caregiver.rating"
-                  size="sm"
-                  color="orange"
-                  readonly
-                />
-                <span class="q-ml-sm"
-                  >({{ caregiver.reviews_count || 0 }} 則評價)</span
-                >
-              </q-item-label>
-            </q-item-section>
-
-            <q-item-section side>
-              <div class="text-right">
-                <div class="text-h6 text-primary">
-                  NT$ {{ caregiver.hourly_rate }}
-                  <span class="text-caption">/小時</span>
-                </div>
-                <q-btn
-                  color="primary"
-                  size="sm"
-                  class="q-mt-sm"
-                  @click.stop="startBooking(caregiver)"
-                >
-                  立即預約
-                </q-btn>
+      <!-- 看護師卡片列表 -->
+      <div v-else class="cards-container">
+        <q-card
+          v-for="caregiver in paginatedCaregivers"
+          :key="caregiver.id"
+          flat
+          class="caregiver-card"
+          @click="navigateToDetail(caregiver)"
+        >
+          <q-card-section class="q-pa-sm">
+            <div class="row items-start no-wrap">
+              <!-- 左側：頭像 -->
+              <div class="col-auto q-pr-sm">
+                <q-avatar size="60px">
+                  <img :src="caregiver.avatar" :alt="caregiver.name" />
+                </q-avatar>
               </div>
+
+              <!-- 中間：基本資訊 -->
+              <div class="col q-pr-xs">
+                <div class="text-subtitle1 text-weight-bold">
+                  {{ caregiver.name }}
+                </div>
+                
+                <!-- 評分 -->
+                <div class="row items-center q-mt-xs">
+                  <q-rating
+                    :model-value="caregiver.rating"
+                    size="14px"
+                    color="amber"
+                    readonly
+                  />
+                  <span class="text-caption text-grey-6 q-ml-xs">
+                    {{ caregiver.rating }} ({{ caregiver.reviews_count }})
+                  </span>
+                </div>
+
+                <!-- 資訊標籤 -->
+                <div class="info-tags q-mt-xs">
+                  <q-chip
+                    dense
+                    size="sm"
+                    color="grey-2"
+                    text-color="grey-8"
+                    class="q-ma-none q-mr-xs"
+                  >
+                    <q-icon name="work" size="12px" class="q-mr-xs" />
+                    {{ caregiver.experience_years }}年經驗
+                  </q-chip>
+                  <q-chip
+                    dense
+                    size="sm"
+                    color="grey-2"
+                    text-color="grey-8"
+                    class="q-ma-none"
+                  >
+                    <q-icon name="place" size="12px" class="q-mr-xs" />
+                    {{ caregiver.service_areas?.[0] || '未指定' }}
+                  </q-chip>
+                </div>
+
+                <!-- 專業技能 -->
+                <div class="skills-tags q-mt-xs">
+                  <q-chip
+                    v-for="(skill, index) in caregiver.specialties?.slice(0, 2)"
+                    :key="index"
+                    dense
+                    size="sm"
+                    color="primary"
+                    text-color="white"
+                    class="q-ma-none q-mr-xs"
+                  >
+                    {{ skill }}
+                  </q-chip>
+                  <span
+                    v-if="caregiver.specialties?.length > 2"
+                    class="text-caption text-grey-6"
+                  >
+                    +{{ caregiver.specialties.length - 2 }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 右側：價格 -->
+              <div class="col-auto text-right">
+                <div class="price-info">
+                  <div class="text-h6 text-primary text-weight-bold">
+                    ${{ caregiver.hourly_rate }}
+                  </div>
+                  <div class="text-caption text-grey-6">/小時</div>
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- 載入更多 -->
+        <div v-if="hasMore" class="load-more">
+          <q-btn
+            flat
+            color="primary"
+            label="載入更多"
+            class="full-width"
+            @click="loadMore"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- 排序選單 (Bottom Sheet) -->
+    <q-dialog v-model="showSortMenu" position="bottom">
+      <q-card class="sort-menu">
+        <q-card-section class="q-pb-none">
+          <div class="text-h6">排序方式</div>
+        </q-card-section>
+        <q-list>
+          <q-item
+            v-for="option in sortOptions"
+            :key="option.value"
+            clickable
+            v-close-popup
+            @click="setSortBy(option.value)"
+          >
+            <q-item-section>
+              <q-item-label>{{ option.label }}</q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-icon
+                v-if="sortBy === option.value"
+                name="check"
+                color="primary"
+              />
             </q-item-section>
           </q-item>
         </q-list>
-      </div>
-    </div>
+      </q-card>
+    </q-dialog>
 
-    <!-- 空狀態 -->
-    <div v-else class="empty-state text-center q-pa-xl">
-      <q-icon name="person_search" size="5rem" color="grey-4" class="q-mb-lg" />
-      <div class="text-h5 text-grey-6 q-mb-md">
-        {{
-          searchQuery || hasActiveFilters
-            ? '沒有找到符合條件的看護師'
-            : '目前沒有可用的看護師'
-        }}
-      </div>
-      <div class="text-body1 text-grey-5 q-mb-lg">
-        {{
-          searchQuery || hasActiveFilters
-            ? '請嘗試調整搜尋條件或篩選設定'
-            : '請稍後再試或聯絡客服'
-        }}
-      </div>
-      <div class="row justify-center q-gutter-sm">
-        <q-btn
-          v-if="searchQuery || hasActiveFilters"
-          flat
-          color="primary"
-          @click="clearAllFilters"
-        >
-          清除所有條件
-        </q-btn>
-        <q-btn
-          outline
-          color="primary"
-          icon="support_agent"
-          @click="contactSupport"
-        >
-          聯絡客服
-        </q-btn>
-      </div>
-    </div>
+    <!-- 篩選側邊欄 -->
+    <q-drawer
+      v-model="showFilterDrawer"
+      side="right"
+      overlay
+      elevated
+      :width="320"
+      :breakpoint="0"
+    >
+      <div class="filter-drawer">
+        <!-- 標題 -->
+        <div class="filter-header">
+          <div class="text-h6">篩選條件</div>
+          <q-btn
+            flat
+            dense
+            round
+            icon="close"
+            @click="showFilterDrawer = false"
+          />
+        </div>
 
-    <!-- 錯誤狀態 -->
-    <q-banner v-if="error" class="bg-red-1 text-red-8 q-mt-md rounded-borders">
-      <template #avatar>
-        <q-icon name="error_outline" color="red" />
-      </template>
-      <div class="text-weight-bold">載入失敗</div>
-      <div class="text-caption q-mt-xs">{{ error }}</div>
-      <template #action>
-        <q-btn
-          flat
-          color="red"
-          :loading="loading"
-          @click="() => loadCaregivers()"
-        >
-          重新載入
-        </q-btn>
-      </template>
-    </q-banner>
+        <!-- 篩選內容 -->
+        <q-scroll-area class="filter-content">
+          <!-- 服務地區 -->
+          <div class="filter-section">
+            <div class="filter-title">服務地區</div>
+            <q-select
+              v-model="filters.location"
+              :options="locationOptions"
+              filled
+              dense
+              clearable
+              placeholder="選擇地區"
+            />
+          </div>
 
-    <!-- 載入更多按鈕 -->
-    <div v-if="!loading && hasMore" class="text-center q-mt-lg">
-      <q-btn
-        outline
-        color="primary"
-        :loading="loadingMore"
-        @click="loadMoreCaregivers"
-      >
-        載入更多看護師
-      </q-btn>
-    </div>
+          <!-- 價格範圍 -->
+          <div class="filter-section">
+            <div class="filter-title">價格範圍 (時薪)</div>
+            <div class="price-range">
+              <q-input
+                v-model.number="filters.minPrice"
+                type="number"
+                filled
+                dense
+                placeholder="最低"
+                prefix="$"
+                class="col"
+              />
+              <span class="q-mx-sm">-</span>
+              <q-input
+                v-model.number="filters.maxPrice"
+                type="number"
+                filled
+                dense
+                placeholder="最高"
+                prefix="$"
+                class="col"
+              />
+            </div>
+          </div>
+
+          <!-- 評分 -->
+          <div class="filter-section">
+            <div class="filter-title">最低評分</div>
+            <div class="text-center q-pt-sm">
+              <q-rating
+                v-model="filters.minRating"
+                size="32px"
+                color="amber"
+                :max="5"
+              />
+              <div class="text-caption text-grey-6 q-mt-xs">
+                {{ filters.minRating || 0 }} 星以上
+              </div>
+            </div>
+          </div>
+
+          <!-- 經驗年數 -->
+          <div class="filter-section">
+            <div class="filter-title">經驗年數</div>
+            <q-option-group
+              v-model="filters.experience"
+              :options="experienceOptions"
+              color="primary"
+            />
+          </div>
+
+          <!-- 專業技能 -->
+          <div class="filter-section">
+            <div class="filter-title">專業技能</div>
+            <div class="skills-grid">
+              <q-checkbox
+                v-for="skill in skillOptions"
+                :key="skill"
+                v-model="filters.skills"
+                :val="skill"
+                :label="skill"
+                dense
+              />
+            </div>
+          </div>
+
+          <!-- 其他條件 -->
+          <div class="filter-section">
+            <div class="filter-title">其他條件</div>
+            <q-checkbox
+              v-model="filters.availableOnly"
+              label="只顯示可預約"
+              dense
+            />
+          </div>
+        </q-scroll-area>
+
+        <!-- 底部按鈕 -->
+        <div class="filter-footer">
+          <q-btn
+            flat
+            label="清除"
+            class="col"
+            @click="clearFilters"
+          />
+          <q-btn
+            unelevated
+            color="primary"
+            label="套用"
+            class="col"
+            @click="applyFilters"
+          />
+        </div>
+      </div>
+    </q-drawer>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, watchEffect } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { useFetch, useHead } from '#imports'
 import CaregiverCard from '~/components/CaregiverCard.vue'
-import type { Caregiver } from '~/stores/caregivers'
-import type { CaregiverDisplay } from '~/types/caregiver'
 
-// SEO 設定
-useHead({
-  title: '看護列表 - 護理服務平台',
-  meta: [
-    { name: 'description', content: '瀏覽所有專業看護員，找到最合適的人選' },
-  ],
-})
-
-// 組合式函數
 const router = useRouter()
-const _$q = useQuasar()
+const $q = useQuasar()
 
-// 使用 server 端資料載入看護師列表
-const {
-  data: caregiversData,
-  pending: loading,
-  error: fetchError,
-  refresh: loadCaregivers,
-} = await useFetch<{ caregivers: Caregiver[]; total: number }>(
-  '/api/caregivers',
-  {
-    query: {
-      limit: 50,
-      sortBy: 'rating',
-      sortOrder: 'desc',
-    },
-  },
-)
-
-// 轉換資料格式
-const caregivers = computed(() => {
-  if (!caregiversData.value || !caregiversData.value.caregivers) return []
-
-  return caregiversData.value.caregivers.map((c: Caregiver) => ({
-    id: parseInt((c.id || '0').toString().replace('caregiver-', '') || '0'),
-    name: c.name || '未提供姓名',
-    experience: `${c.experience_years || 5}年經驗`,
-    skills: Array.isArray(c.specialties)
-      ? c.specialties.join('，')
-      : '專業護理',
-    licenses: Array.isArray(c.certifications)
-      ? c.certifications
-      : ['護理師執照'],
-    rating: c.rating || 4.5,
-    photo: c.avatar || '/default-avatar.png',
-    avatar: c.avatar || '/default-avatar.png',
-    available: true,
-    availability_status: c.availability_status || '24小時',
-    hourly_rate: c.hourly_rate || 500,
-    shift_rate: (c.hourly_rate || 500) * 8,
-    location:
-      Array.isArray(c.service_areas) && c.service_areas.length > 0
-        ? c.service_areas[0]
-        : '台北市',
-    service_areas: Array.isArray(c.service_areas)
-      ? c.service_areas
-      : ['台北市'],
-    description: c.bio || '專業護理師',
-    bio: c.bio || '專業護理師',
-    review_count: c.reviews_count || 12,
-    reviews_count: c.reviews_count || 12,
-    experience_years: c.experience_years || 5,
-    created_at: c.created_at || new Date().toISOString(),
-    updated_at: c.updated_at || new Date().toISOString(),
-  })) as CaregiverDisplay[]
-})
-
-const error = computed(() => (fetchError.value ? '載入看護師資料失敗' : ''))
-const filteredCaregivers = ref<CaregiverDisplay[]>([])
-const loadingMore = ref(false)
-const loadingProgress = ref(0)
-const hasMore = ref(false)
-const _currentPage = ref(1)
-
-// UI 狀態
+// 響應式資料
 const searchQuery = ref('')
-const viewMode = ref('grid')
-const sortBy = ref('rating')
-const showFilters = ref(false)
+const loading = ref(false)
+const showSortMenu = ref(false)
+const showFilterDrawer = ref(false)
+const sortBy = ref('default')
+const activeQuickFilter = ref('')
+const currentPage = ref(1)
+const pageSize = 10
 
-// 篩選條件
-const filters = ref({
-  location: '',
-  priceRange: { min: 0, max: 2000 },
-  minRating: 0,
-  availableOnly: false,
-})
+// 模擬資料
+const caregivers = ref([
+  {
+    id: 'caregiver-1',
+    name: '林美玲',
+    avatar: 'https://i.pravatar.cc/150?img=1',
+    rating: 4.8,
+    reviews_count: 156,
+    experience_years: 8,
+    hourly_rate: 600,
+    service_areas: ['台北市', '新北市'],
+    specialties: ['長期照護', '失智照護', '復健協助'],
+    is_available: true,
+    is_verified: true,
+  },
+  {
+    id: 'caregiver-2', 
+    name: '陳淑芬',
+    avatar: 'https://i.pravatar.cc/150?img=2',
+    rating: 4.9,
+    reviews_count: 203,
+    experience_years: 12,
+    hourly_rate: 700,
+    service_areas: ['台北市'],
+    specialties: ['重症照護', '醫院看護', '居家照護'],
+    is_available: true,
+    is_verified: true,
+  },
+  {
+    id: 'caregiver-3',
+    name: '王雅婷',
+    avatar: 'https://i.pravatar.cc/150?img=3',
+    rating: 4.7,
+    reviews_count: 89,
+    experience_years: 5,
+    hourly_rate: 550,
+    service_areas: ['新北市'],
+    specialties: ['老人照護', '陪伴服務'],
+    is_available: false,
+    is_verified: true,
+  },
+  // 可以添加更多模擬資料
+])
 
-// 選項資料
+// 快速篩選選項
+const quickFilters = [
+  { key: 'available', label: '可預約', icon: 'event_available' },
+  { key: 'highRating', label: '高評分', icon: 'star' },
+  { key: 'experienced', label: '資深', icon: 'workspace_premium' },
+  { key: 'nearby', label: '附近', icon: 'near_me' },
+]
+
+// 排序選項
 const sortOptions = [
+  { label: '預設排序', value: 'default' },
   { label: '評分最高', value: 'rating' },
-  { label: '價格最低', value: 'price_low' },
-  { label: '價格最高', value: 'price_high' },
+  { label: '價格最低', value: 'price_asc' },
+  { label: '價格最高', value: 'price_desc' },
   { label: '經驗最多', value: 'experience' },
-  { label: '最新加入', value: 'newest' },
+  { label: '距離最近', value: 'distance' },
 ]
 
-const viewOptions = [
-  { label: '網格', value: 'grid', icon: 'grid_view' },
-  { label: '列表', value: 'list', icon: 'list' },
-]
-
+// 地區選項 - 台灣所有縣市
 const locationOptions = [
+  // 直轄市
   '台北市',
   '新北市',
   '桃園市',
   '台中市',
   '台南市',
   '高雄市',
+  // 縣
+  '基隆市',
+  '新竹市',
+  '新竹縣',
+  '苗栗縣',
+  '彰化縣',
+  '南投縣',
+  '雲林縣',
+  '嘉義市',
+  '嘉義縣',
+  '屏東縣',
+  '宜蘭縣',
+  '花蓮縣',
+  '台東縣',
+  // 外島
+  '澎湖縣',
+  '金門縣',
+  '連江縣',
 ]
 
+// 經驗選項
+const experienceOptions = [
+  { label: '不限', value: 'all' },
+  { label: '1-3年', value: '1-3' },
+  { label: '3-5年', value: '3-5' },
+  { label: '5-10年', value: '5-10' },
+  { label: '10年以上', value: '10+' },
+]
+
+// 技能選項
+const skillOptions = [
+  '長期照護',
+  '失智照護',
+  '重症照護',
+  '復健協助',
+  '居家照護',
+  '醫院看護',
+  '老人照護',
+  '陪伴服務',
+]
+
+// 篩選條件
+const filters = ref({
+  location: null,
+  minPrice: null,
+  maxPrice: null,
+  minRating: 0,
+  experience: 'all',
+  skills: [],
+  availableOnly: false,
+})
+
 // 計算屬性
-const hasActiveFilters = computed(() => {
-  return (
-    filters.value.location ||
-    filters.value.priceRange.min > 0 ||
-    filters.value.priceRange.max < 2000 ||
-    filters.value.minRating > 0 ||
-    filters.value.availableOnly
-  )
+const filteredCaregivers = computed(() => {
+  let result = [...caregivers.value]
+
+  // 搜尋
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(c => 
+      c.name.toLowerCase().includes(query) ||
+      c.specialties.some(s => s.toLowerCase().includes(query))
+    )
+  }
+
+  // 快速篩選
+  if (activeQuickFilter.value === 'available') {
+    result = result.filter(c => c.is_available)
+  } else if (activeQuickFilter.value === 'highRating') {
+    result = result.filter(c => c.rating >= 4.5)
+  } else if (activeQuickFilter.value === 'experienced') {
+    result = result.filter(c => c.experience_years >= 5)
+  }
+
+  // 套用篩選條件
+  if (filters.value.location) {
+    result = result.filter(c => c.service_areas.includes(filters.value.location))
+  }
+  if (filters.value.minPrice) {
+    result = result.filter(c => c.hourly_rate >= filters.value.minPrice)
+  }
+  if (filters.value.maxPrice) {
+    result = result.filter(c => c.hourly_rate <= filters.value.maxPrice)
+  }
+  if (filters.value.minRating > 0) {
+    result = result.filter(c => c.rating >= filters.value.minRating)
+  }
+  if (filters.value.availableOnly) {
+    result = result.filter(c => c.is_available)
+  }
+
+  // 排序
+  if (sortBy.value === 'rating') {
+    result.sort((a, b) => b.rating - a.rating)
+  } else if (sortBy.value === 'price_asc') {
+    result.sort((a, b) => a.hourly_rate - b.hourly_rate)
+  } else if (sortBy.value === 'price_desc') {
+    result.sort((a, b) => b.hourly_rate - a.hourly_rate)
+  } else if (sortBy.value === 'experience') {
+    result.sort((a, b) => b.experience_years - a.experience_years)
+  }
+
+  return result
+})
+
+const paginatedCaregivers = computed(() => {
+  const start = 0
+  const end = currentPage.value * pageSize
+  return filteredCaregivers.value.slice(start, end)
+})
+
+const hasMore = computed(() => {
+  return paginatedCaregivers.value.length < filteredCaregivers.value.length
+})
+
+const activeFilterCount = computed(() => {
+  let count = 0
+  if (filters.value.location) count++
+  if (filters.value.minPrice || filters.value.maxPrice) count++
+  if (filters.value.minRating > 0) count++
+  if (filters.value.experience !== 'all') count++
+  if (filters.value.skills.length > 0) count++
+  if (filters.value.availableOnly) count++
+  return count
 })
 
 // 方法
-// loadCaregivers 函數已經由 useFetch 的 refresh 提供
-
-const loadMoreCaregivers = async () => {
-  // 目前暫不支援載入更多（因為我們一次載入所有資料）
-  hasMore.value = false
+const handleSearch = () => {
+  currentPage.value = 1
 }
 
-const filterCaregivers = () => {
-  let filtered = [...caregivers.value] as CaregiverDisplay[]
-
-  // 文字搜尋
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(
-      (caregiver) =>
-        caregiver.name.toLowerCase().includes(query) ||
-        ((caregiver as any).skills || '').toLowerCase().includes(query) ||
-        ((caregiver as any).location || '').toLowerCase().includes(query),
-    )
+const toggleQuickFilter = (key: string) => {
+  if (activeQuickFilter.value === key) {
+    activeQuickFilter.value = ''
+  } else {
+    activeQuickFilter.value = key
   }
-
-  // 地區篩選
-  if (filters.value.location) {
-    filtered = filtered.filter((caregiver) =>
-      ((caregiver as any).location || '').includes(filters.value.location),
-    )
-  }
-
-  // 價格範圍篩選
-  filtered = filtered.filter(
-    (caregiver) =>
-      caregiver.hourly_rate >= filters.value.priceRange.min &&
-      caregiver.hourly_rate <= filters.value.priceRange.max,
-  )
-
-  // 最低評分篩選
-  if (filters.value.minRating > 0) {
-    filtered = filtered.filter(
-      (caregiver) => caregiver.rating >= filters.value.minRating,
-    )
-  }
-
-  // 僅顯示可預約
-  if (filters.value.availableOnly) {
-    filtered = filtered.filter(
-      (caregiver) => (caregiver as any).available === true,
-    )
-  }
-
-  filteredCaregivers.value = filtered
-  sortCaregivers()
+  currentPage.value = 1
 }
 
-const sortCaregivers = () => {
-  const sorted = [...filteredCaregivers.value]
-
-  switch (sortBy.value) {
-    case 'rating':
-      sorted.sort((a, b) => b.rating - a.rating)
-      break
-    case 'price_low':
-      sorted.sort((a, b) => a.hourly_rate - b.hourly_rate)
-      break
-    case 'price_high':
-      sorted.sort((a, b) => b.hourly_rate - a.hourly_rate)
-      break
-    case 'experience':
-      sorted.sort(
-        (a, b) =>
-          ((b as any).experience_years || 0) -
-          ((a as any).experience_years || 0),
-      )
-      break
-    case 'newest':
-      sorted.sort(
-        (a, b) =>
-          new Date(b.created_at || '').getTime() -
-          new Date(a.created_at || '').getTime(),
-      )
-      break
-  }
-
-  filteredCaregivers.value = sorted
+const setSortBy = (value: string) => {
+  sortBy.value = value
+  currentPage.value = 1
 }
 
 const applyFilters = () => {
-  filterCaregivers()
-  showFilters.value = false
+  showFilterDrawer.value = false
+  currentPage.value = 1
 }
 
 const clearFilters = () => {
   filters.value = {
-    location: '',
-    priceRange: { min: 0, max: 2000 },
+    location: null,
+    minPrice: null,
+    maxPrice: null,
     minRating: 0,
+    experience: 'all',
+    skills: [],
     availableOnly: false,
   }
-  filterCaregivers()
 }
 
 const clearAllFilters = () => {
   searchQuery.value = ''
+  activeQuickFilter.value = ''
+  sortBy.value = 'default'
   clearFilters()
+  currentPage.value = 1
 }
 
-const navigateToDetail = (caregiver: Caregiver) => {
+const loadMore = () => {
+  currentPage.value++
+}
+
+const navigateToDetail = (caregiver: any) => {
   router.push(`/caregivers/${caregiver.id}`)
 }
 
-const startBooking = (caregiver: Caregiver) => {
-  router.push({
-    path: '/booking/create',
-    query: { caregiverId: caregiver.id },
-  })
-}
 
-const contactSupport = () => {
-  router.push('/support/contact')
-}
-
-// 監聽搜尋查詢變化
-// 使用手動 debounce
-let debounceTimer: NodeJS.Timeout | null = null
-watch(searchQuery, () => {
-  if (debounceTimer) clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => {
-    filterCaregivers()
-  }, 300)
-})
-
-// 頁面載入時執行
+// 生命週期
 onMounted(() => {
-  // 資料已經透過 useFetch 自動載入
-  filterCaregivers()
-})
-
-// 監聽資料變化
-watchEffect(() => {
-  if (caregivers.value.length > 0 && filteredCaregivers.value.length === 0) {
-    filteredCaregivers.value = [...caregivers.value]
-  }
+  // 載入資料
 })
 </script>
 
 <style scoped>
-.page-header {
-  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-  border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+.caregivers-page {
+  background: #f5f7fa;
+  min-height: 100vh;
 }
 
-.toolbar-section .q-input {
+/* 搜尋區域 */
+.search-header {
   background: white;
-  border-radius: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.caregiver-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+.search-container {
+  padding: 12px;
 }
 
-.caregiver-list-view {
-  background: white;
+.search-input {
+  background: #f5f7fa;
+}
+
+.search-input :deep(.q-field__control) {
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.loading-state {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* 快速篩選 */
+.quick-filters {
+  border-top: 1px solid #f0f0f0;
+  padding: 8px 0;
 }
 
-.empty-state {
+/* 篩選欄 */
+.filter-bar {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  min-height: 300px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 載入狀態 */
+.loading-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+  min-height: 300px;
 }
 
-@media (max-width: 768px) {
-  .page-header {
-    padding: 1.5rem;
-  }
-
-  .caregiver-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .toolbar-section .row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .toolbar-section .col-12:last-child .row {
-    justify-content: center;
-    margin-top: 1rem;
-  }
+/* 空狀態 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 32px;
 }
 
-@media (max-width: 480px) {
-  .caregiver-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-
-  .q-page {
-    padding: 0.75rem;
-  }
+/* 看護師卡片 */
+.cards-container {
+  padding: 12px;
 }
 
-/* 改善篩選面板的響應式設計 */
-.q-card .row.q-gutter-md > div {
-  min-width: 0;
-}
-
-/* 改善按鈕群組在小螢幕上的顯示 */
-@media (max-width: 600px) {
-  .q-btn-toggle {
-    width: 100%;
-  }
-
-  .toolbar-section .q-select {
-    min-width: 100px;
-  }
-}
-
-/* 載入進度條動畫 */
-.q-linear-progress {
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* 篩選卡片動畫 */
-.q-slide-transition-enter-active,
-.q-slide-transition-leave-active {
+.caregiver-card {
+  margin-bottom: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
-.q-slide-transition-enter-from {
-  transform: translateY(-20px);
-  opacity: 0;
+.caregiver-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-.q-slide-transition-leave-to {
-  transform: translateY(-20px);
-  opacity: 0;
+.info-tags,
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.price-info {
+  min-width: 60px;
+}
+
+/* 載入更多 */
+.load-more {
+  padding: 16px;
+}
+
+/* 排序選單 */
+.sort-menu {
+  border-radius: 12px 12px 0 0;
+  max-height: 50vh;
+}
+
+/* 篩選側邊欄 */
+.filter-drawer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+.filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.filter-content {
+  flex: 1;
+  padding: 16px;
+}
+
+.filter-section {
+  margin-bottom: 24px;
+}
+
+.filter-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #2c3e50;
+}
+
+.price-range {
+  display: flex;
+  align-items: center;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.filter-footer {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* 響應式調整 */
+@media (min-width: 768px) {
+  .cards-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .load-more {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cards-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 動畫 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.caregiver-card {
+  animation: fadeIn 0.3s ease-out;
 }
 </style>

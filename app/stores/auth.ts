@@ -1,5 +1,17 @@
 import { defineStore } from 'pinia'
-import { mockUsers, type User } from '~/utils/mockData'
+
+export interface User {
+  id: string
+  email: string
+  name: string
+  phone?: string
+  role: 'user' | 'caregiver' | 'admin'
+  avatar_url?: string
+  email_verified: boolean
+  phone_verified: boolean
+  created_at: string
+  updated_at: string
+}
 
 export interface AuthState {
   currentUser: User | null
@@ -57,9 +69,10 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     loadMockData() {
-      this.users = mockUsers
-      this.currentUser = mockUsers.find((u) => u.id === '1') || null
-      this.isAuthenticated = true
+      // 暫時移除 mock 資料，使用 API
+      this.users = []
+      this.currentUser = null
+      this.isAuthenticated = false
     },
 
     async login(credentials: LoginCredentials) {
@@ -67,23 +80,17 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        const response = await $fetch<{ user: User; token?: string }>(
-          '/api/auth/login',
-          {
-            method: 'POST' as const,
-            body: credentials,
-          },
-        )
+        // 呼叫登入 API
+        const response = await $fetch('/api/auth/login', {
+          method: 'POST',
+          body: credentials
+        })
 
-        this.currentUser = response.user
-        this.isAuthenticated = true
-
-        // 更新本地用戶列表
-        const userIndex = this.users.findIndex((u) => u.id === response.user.id)
-        if (userIndex !== -1) {
-          this.users[userIndex] = response.user
+        if (response.success && response.data) {
+          this.currentUser = response.data.user
+          this.isAuthenticated = true
         } else {
-          this.users.push(response.user)
+          throw new Error(response.error || '登入失敗')
         }
       } catch (err: any) {
         this.error = err.data?.message || err.message || '登入失敗'
@@ -99,18 +106,31 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        const response = await $fetch<{ user: User }>('/api/auth/register', {
-          method: 'POST' as const,
-          body: userData,
-        })
+        // 檢查 email 是否已存在
+        if (this.users.find((u) => u.email === userData.email)) {
+          throw new Error('此電子郵件已被註冊')
+        }
 
-        this.currentUser = response.user
+        // 建立新用戶
+        const newUser: User = {
+          id: `user-${Date.now()}`,
+          name: userData.name,
+          email: userData.email,
+          password: userData.password,
+          phone: userData.phone,
+          role: userData.role,
+          profile: userData.profile || {},
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
+
+        this.users.push(newUser)
+        this.currentUser = newUser
         this.isAuthenticated = true
-        this.users.push(response.user)
 
-        return response.user
+        return newUser
       } catch (err: any) {
-        this.error = err.data?.message || err.message || '註冊失敗'
+        this.error = err.message || '註冊失敗'
         console.error('Registration error:', err)
         throw new Error(this.error || '未知錯誤')
       } finally {
@@ -122,16 +142,12 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
 
       try {
-        await $fetch('/api/auth/logout', {
-          method: 'POST',
-        })
-      } catch (err: unknown) {
-        console.error('Logout error:', err)
-      } finally {
+        // 直接清除本地狀態
         this.currentUser = null
         this.isAuthenticated = false
-        this.loading = false
         this.error = null
+      } finally {
+        this.loading = false
       }
     },
 
@@ -141,15 +157,12 @@ export const useAuthStore = defineStore('auth', {
       }
 
       try {
-        const updatedUser = await $fetch<User>(
-          `/api/users/${this.currentUser.id}`,
-          {
-            method: 'PUT',
-            body: { profile: updates },
-          },
-        )
-
-        this.currentUser = updatedUser
+        // 直接更新本地資料
+        this.currentUser.profile = {
+          ...this.currentUser.profile,
+          ...updates,
+        }
+        this.currentUser.updated_at = new Date().toISOString()
 
         const userIndex = this.users.findIndex(
           (u) => u.id === this.currentUser!.id,
@@ -160,7 +173,7 @@ export const useAuthStore = defineStore('auth', {
 
         return this.currentUser
       } catch (err: any) {
-        this.error = err.data?.message || err.message || '更新失敗'
+        this.error = err.message || '更新失敗'
         console.error('Profile update error:', err)
         throw new Error(this.error || '未知錯誤')
       }
@@ -171,13 +184,17 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        const response = await $fetch('/api/auth/reset-password', {
-          method: 'POST',
-          body: { email }
-        })
-        return response
+        // 檢查 email 是否存在
+        const user = this.users.find((u) => u.email === email)
+        if (!user) {
+          throw new Error('找不到此電子郵件帳號')
+        }
+
+        // 模擬發送重設密碼郵件
+        console.log(`已發送重設密碼郵件至: ${email}`)
+        return { success: true, message: '重設密碼郵件已發送' }
       } catch (err: any) {
-        this.error = err.data?.message || err.message || '重設密碼失敗'
+        this.error = err.message || '重設密碼失敗'
         console.error('Password reset error:', err)
         throw new Error(this.error || '未知錯誤')
       } finally {

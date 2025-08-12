@@ -1,16 +1,9 @@
 import { ref, readonly } from 'vue'
 import {
   mockCaregivers,
-  mockUsers,
-  mockBookings,
-  mockReviews,
-  mockPayments,
-  type Caregiver,
-  type User,
-  type Booking,
-  type Review,
-  type Payment,
 } from '~/utils/mockData'
+import type { Caregiver } from '~/stores/caregivers'
+import type { Booking } from '~/stores/bookings'
 import { toCaregiverDisplay, type CaregiverDisplay } from '~/types/caregiver'
 
 export interface ApiResponse<T> {
@@ -34,12 +27,7 @@ export const useMockApi = () => {
   const error = ref<string | null>(null)
 
   // Internal state for bookings with IDs
-  const bookingsWithIds = ref<Booking[]>(
-    mockBookings.map((booking, index) => ({
-      ...booking,
-      id: `booking-${String(index + 1).padStart(3, '0')}`,
-    })),
-  )
+  const bookingsWithIds = ref<Booking[]>([])
 
   // Helper function to convert Omit<Booking, 'id'>[] to Booking[]
   const addBookingIds = (bookings: Omit<Booking, 'id'>[]): Booking[] => {
@@ -410,7 +398,7 @@ export const useMockApi = () => {
         updated_at: new Date().toISOString(),
       }
 
-      mockBookings.push(newBooking)
+      bookingsWithIds.value.push(newBooking)
 
       return {
         success: true,
