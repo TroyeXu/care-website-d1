@@ -216,20 +216,58 @@ export const useCaregiverStore = defineStore('caregivers', {
       this.error = null
 
       try {
-        // 暫時使用模擬資料
-        const { mockCaregivers } = await import('~/utils/mockData')
+        // 使用真實 API
+        const response = await $fetch('/api/caregivers', {
+          query: {
+            city: filter?.area,
+            gender: filter?.gender !== 'all' ? filter?.gender : undefined,
+            minRate: filter?.minRate,
+            maxRate: filter?.maxRate,
+            minRating: filter?.minRating,
+            experienceYears: filter?.minExperience,
+            page: 1,
+            limit: 50
+          }
+        })
         
-        // 模擬 API 延遲
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
-        this.caregivers = mockCaregivers
+        // 轉換資料格式
+        this.caregivers = response.caregivers.map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          avatar: c.avatar || 'https://i.pravatar.cc/150',
+          gender: c.gender || 'female',
+          age: new Date().getFullYear() - new Date(c.birth_date || '1990-01-01').getFullYear(),
+          rating: c.rating || 0,
+          reviews_count: c.total_reviews || 0,
+          hourly_rate: c.hourly_rate || 300,
+          experience_years: c.experience_years || 0,
+          bio: c.bio || '',
+          description: c.bio || '',
+          skills: c.specialties?.map((s: any) => s.name) || [],
+          certifications: c.certifications?.map((cert: any) => cert.name) || [],
+          languages: ['中文', '台語'], // API 尚未提供語言資料
+          service_areas: c.service_areas?.map((area: any) => `${area.city}${area.district || ''}`) || [],
+          availability: {
+            weekdays: true,
+            weekends: true,
+            nights: false,
+            holidays: false
+          },
+          is_available: c.status === 'active',
+          total_service_hours: 0,
+          response_rate: c.response_rate || 0,
+          response_time: '1小時內',
+          created_at: c.created_at,
+          updated_at: c.updated_at,
+          reviews: c.recent_reviews || []
+        }))
         
         // 如果有篩選條件，設定篩選器
         if (filter) {
           this.currentFilter = filter
         }
-      } catch (err: unknown) {
-        this.error = '載入照護員資料失敗'
+      } catch (err: any) {
+        this.error = err.data?.message || err.message || '載入照護員資料失敗'
         console.error('Error fetching caregivers:', err)
       } finally {
         this.loading = false
@@ -241,10 +279,60 @@ export const useCaregiverStore = defineStore('caregivers', {
       this.error = null
 
       try {
-        const caregiver = await $fetch<Caregiver>(`/api/caregivers/${id}`)
+        const response = await $fetch(`/api/caregivers/${id}`)
+        
+        // 轉換資料格式
+        const caregiver: Caregiver = {
+          id: response.id,
+          name: response.name,
+          avatar: response.avatar || 'https://i.pravatar.cc/150',
+          gender: response.gender || 'female',
+          age: new Date().getFullYear() - new Date(response.birth_date || '1990-01-01').getFullYear(),
+          rating: response.rating || 0,
+          reviews_count: response.total_reviews || 0,
+          hourly_rate: response.hourly_rate || 300,
+          experience_years: response.experience_years || 0,
+          bio: response.bio || '',
+          description: response.bio || '',
+          skills: response.specialties?.map((s: any) => s.name || s) || [],
+          certifications: response.certifications?.map((cert: any) => cert.name || cert) || [],
+          languages: ['中文', '台語'],
+          service_areas: response.service_areas?.map((area: any) => 
+            typeof area === 'string' ? area : `${area.city}${area.district || ''}`
+          ) || [],
+          availability: {
+            weekdays: true,
+            weekends: true,
+            nights: false,
+            holidays: false
+          },
+          is_available: response.status === 'active',
+          total_service_hours: 0,
+          response_rate: response.response_rate || 0,
+          response_time: '1小時內',
+          created_at: response.created_at,
+          updated_at: response.updated_at,
+          reviews: response.recent_reviews?.map((r: any) => ({
+            id: `review-${Date.now()}`,
+            rating: r.rating,
+            comment: r.comment,
+            user_name: r.reviewer_name || '匿名用戶',
+            created_at: r.created_at
+          })) || []
+        }
+        
         this.selectedCaregiver = caregiver
+        
+        // 也更新列表中的資料
+        const index = this.caregivers.findIndex(c => c.id === id)
+        if (index !== -1) {
+          this.caregivers[index] = caregiver
+        } else {
+          this.caregivers.push(caregiver)
+        }
+        
         return caregiver
-      } catch (err: unknown) {
+      } catch (err: any) {
         this.error = err.data?.message || err.message || '載入照護員資料失敗'
         console.error('Error fetching caregiver:', err)
         throw err

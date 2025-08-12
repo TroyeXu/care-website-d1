@@ -1,55 +1,104 @@
-import { computed } from 'vue'
-import { useMockApi } from './useMockApi'
+import { ref, computed } from 'vue'
 import type { User, Review, Payment, Booking } from '~/utils/mockData'
 import type { CaregiverFilter } from '~/stores/caregivers'
 
 export const useApiService = () => {
-  const mockApi = useMockApi()
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
+
+  // 錯誤處理
+  const handleError = (err: any) => {
+    error.value = err.data?.message || err.message || '發生錯誤'
+    throw new Error(error.value)
+  }
+
+  const clearError = () => {
+    error.value = null
+  }
 
   // ===============================
   // 認證相關 API
   // ===============================
 
   const login = async (email: string, password: string) => {
-    const response = await mockApi.loginUser(email, password)
-    if (!response.success) {
-      throw new Error(response.error || '登入失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch('/api/auth/login', {
+        method: 'POST',
+        body: { email, password }
+      })
+      return response
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
   const register = async (
     userData: Omit<User, 'id' | 'created_at' | 'updated_at'>,
   ) => {
-    const response = await mockApi.registerUser(userData)
-    if (!response.success) {
-      throw new Error(response.error || '註冊失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch('/api/auth/register', {
+        method: 'POST',
+        body: userData
+      })
+      return response
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
-  const logout = () => {
-    return { success: true }
+  const logout = async () => {
+    try {
+      isLoading.value = true
+      await $fetch('/api/auth/logout', {
+        method: 'POST'
+      })
+      return { success: true }
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
+    }
   }
 
   // ===============================
   // 用戶相關 API
   // ===============================
 
-  const getUserProfile = (_userId: string) => {
-    // Mock API 中暫無此功能，返回空資料
-    return null
+  const getUserProfile = async (userId: string) => {
+    try {
+      isLoading.value = true
+      const response = await $fetch(`/api/users/${userId}`)
+      return response
+    } catch (err) {
+      // 如果 API 不存在，返回 null
+      return null
+    } finally {
+      isLoading.value = false
+    }
   }
 
   const updateUserProfile = async (
     userId: string,
     profileData: Partial<User['profile']>,
   ) => {
-    const response = await mockApi.updateUserProfile(userId, profileData)
-    if (!response.success) {
-      throw new Error(response.error || '更新失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch(`/api/users/${userId}`, {
+        method: 'PUT',
+        body: profileData
+      })
+      return response
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
   // ===============================
@@ -57,51 +106,114 @@ export const useApiService = () => {
   // ===============================
 
   const getCaregivers = async (page: number = 1, limit: number = 10) => {
-    const response = await mockApi.getCaregivers(page, limit)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch('/api/caregivers', {
+        query: { page, limit }
+      })
+      return {
+        data: response.caregivers,
+        total: response.total,
+        page: response.page,
+        totalPages: response.totalPages
+      }
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
   const searchCaregivers = async (query: string) => {
-    const response = await mockApi.searchCaregivers(query)
-    if (!response.success) {
-      throw new Error(response.error || '搜尋失敗')
+    try {
+      isLoading.value = true
+      // 使用篩選 API 進行搜尋
+      const response = await $fetch('/api/caregivers', {
+        query: { 
+          specialty: query,
+          limit: 50 
+        }
+      })
+      return response.caregivers
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
-  const getCaregiverById = async (id: number) => {
-    const response = await mockApi.getCaregiverById(id)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+  const getCaregiverById = async (id: number | string) => {
+    try {
+      isLoading.value = true
+      const response = await $fetch(`/api/caregivers/${id}`)
+      return response
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
   const filterCaregivers = async (filters: CaregiverFilter) => {
-    const response = await mockApi.filterCaregivers(filters)
-    if (!response.success) {
-      throw new Error(response.error || '篩選失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch('/api/caregivers', {
+        query: {
+          city: filters.location,
+          specialty: filters.specialty,
+          minRate: filters.minPrice,
+          maxRate: filters.maxPrice,
+          minRating: filters.minRating,
+          experienceYears: filters.experienceYears,
+          gender: filters.gender,
+          sortBy: filters.sortBy,
+          page: filters.page || 1,
+          limit: filters.limit || 20
+        }
+      })
+      return response.caregivers
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
   const getFeaturedCaregivers = async () => {
-    const response = await mockApi.getCaregivers(1, 6)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch('/api/caregivers', {
+        query: { 
+          page: 1, 
+          limit: 6,
+          sortBy: 'rating'
+        }
+      })
+      return response.caregivers.slice(0, 6)
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!.data
   }
 
   const getTopRatedCaregivers = async () => {
-    const response = await mockApi.getCaregivers(1, 5)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch('/api/caregivers', {
+        query: { 
+          page: 1, 
+          limit: 5,
+          sortBy: 'rating',
+          minRating: 4.5
+        }
+      })
+      return response.caregivers.slice(0, 5)
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!.data.sort((a, b) => b.rating - a.rating)
   }
 
   // ===============================
@@ -111,32 +223,59 @@ export const useApiService = () => {
   const createBooking = async (
     bookingData: Omit<Booking, 'id' | 'created_at' | 'updated_at'>,
   ) => {
-    const response = await mockApi.createBooking(bookingData)
-    if (!response.success) {
-      throw new Error(response.error || '預約失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch('/api/bookings', {
+        method: 'POST',
+        body: bookingData
+      })
+      return response
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
   const getBookingsByUser = async (userId: string) => {
-    const response = await mockApi.getBookingsByUser(userId)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+    try {
+      isLoading.value = true
+      const response = await $fetch('/api/bookings', {
+        query: { userId }
+      })
+      return response.bookings
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
-  const getBookingById = (_bookingId: string) => {
-    // Mock API 中暫無此功能
-    return null
+  const getBookingById = async (bookingId: string) => {
+    try {
+      isLoading.value = true
+      const response = await $fetch(`/api/bookings/${bookingId}`)
+      return response
+    } catch (err) {
+      return null
+    } finally {
+      isLoading.value = false
+    }
   }
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
-    const response = await mockApi.updateBookingStatus(bookingId, status as any)
-    if (!response.success) {
-      throw new Error(response.error || '更新失敗')
+    try {
+      isLoading.value = true
+      // 目前 API 還沒實作，先使用假資料
+      return {
+        success: true,
+        booking: { id: bookingId, status }
+      }
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
   const cancelBooking = async (bookingId: string) => {
@@ -154,33 +293,37 @@ export const useApiService = () => {
   const processPayment = async (
     paymentData: Omit<Payment, 'id' | 'created_at' | 'updated_at'>,
   ) => {
-    // 轉換為 mockApi 期望的格式
-    const apiPaymentData = {
-      bookingId: paymentData.booking_id,
-      amount: paymentData.amount,
-      method: paymentData.method,
-      ...(paymentData.method === 'credit_card' && {
-        cardDetails: (paymentData as any).cardDetails,
-      }),
+    try {
+      isLoading.value = true
+      // API 尚未實作，返回成功
+      return {
+        success: true,
+        payment: {
+          id: `pay-${Date.now()}`,
+          ...paymentData,
+          status: 'completed'
+        }
+      }
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-
-    const response = await mockApi.processPayment(apiPaymentData)
-    if (!response.success) {
-      throw new Error(response.error || '支付失敗')
-    }
-    return response.data!
   }
 
   const getPaymentHistory = async (userId: string) => {
-    const response = await mockApi.getPaymentHistory(userId)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+    try {
+      isLoading.value = true
+      // API 尚未實作，返回空陣列
+      return []
+    } catch (err) {
+      return []
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
-  const getPaymentById = (_paymentId: string) => {
-    // Mock API 中暫無此功能
+  const getPaymentById = async (paymentId: string) => {
     return null
   }
 
@@ -191,23 +334,37 @@ export const useApiService = () => {
   const createReview = async (
     reviewData: Omit<Review, 'id' | 'created_at' | 'updated_at'>,
   ) => {
-    const response = await mockApi.createReview(reviewData)
-    if (!response.success) {
-      throw new Error(response.error || '提交失敗')
+    try {
+      isLoading.value = true
+      // API 尚未實作
+      return {
+        success: true,
+        review: {
+          id: `rev-${Date.now()}`,
+          ...reviewData,
+          created_at: new Date().toISOString()
+        }
+      }
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
-  const getReviewsByCaregiver = async (caregiverId: number) => {
-    const response = await mockApi.getReviewsByCaregiver(caregiverId)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+  const getReviewsByCaregiver = async (caregiverId: number | string) => {
+    try {
+      isLoading.value = true
+      // API 尚未實作，返回空陣列
+      return []
+    } catch (err) {
+      return []
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
-  const getReviewsByUser = (_userId: string) => {
-    // Mock API 中暫無此功能
+  const getReviewsByUser = async (userId: string) => {
     return []
   }
 
@@ -216,20 +373,32 @@ export const useApiService = () => {
   // ===============================
 
   const getDashboardStats = async (userId: string) => {
-    const response = await mockApi.getDashboardStats(userId)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+    try {
+      isLoading.value = true
+      // API 尚未實作，返回預設值
+      return {
+        totalBookings: 0,
+        activeBookings: 0,
+        completedBookings: 0,
+        totalSpent: 0
+      }
+    } catch (err) {
+      return {
+        totalBookings: 0,
+        activeBookings: 0,
+        completedBookings: 0,
+        totalSpent: 0
+      }
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
-  const getRecentActivity = (_userId: string) => {
-    // Mock API 中暫無此功能
+  const getRecentActivity = async (userId: string) => {
     return []
   }
 
-  const getNotifications = (_userId: string) => {
-    // Mock API 中暫無此功能
+  const getNotifications = async (userId: string) => {
     return []
   }
 
@@ -237,8 +406,7 @@ export const useApiService = () => {
   // 搜尋相關 API
   // ===============================
 
-  const getSearchSuggestions = (_query: string) => {
-    // 返回搜尋建議
+  const getSearchSuggestions = async (query: string) => {
     return []
   }
 
@@ -251,46 +419,80 @@ export const useApiService = () => {
   // ===============================
 
   const findMatches = async (criteria: CaregiverFilter) => {
-    // 使用篩選功能來媒合
-    const response = await mockApi.filterCaregivers(criteria)
-    if (!response.success) {
-      throw new Error(response.error || '媒合失敗')
+    try {
+      isLoading.value = true
+      // 使用篩選 API 來媒合
+      const response = await $fetch('/api/caregivers', {
+        query: {
+          city: criteria.location,
+          specialty: criteria.specialty,
+          minRate: criteria.minPrice,
+          maxRate: criteria.maxPrice,
+          minRating: criteria.minRating,
+          experienceYears: criteria.experienceYears,
+          gender: criteria.gender,
+          sortBy: 'rating',
+          limit: 10
+        }
+      })
+      return response.caregivers
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
-    return response.data!
   }
 
-  const getRecommendations = async (_userId: string) => {
-    // 獲取推薦的看護師
-    const response = await mockApi.getCaregivers(1, 3)
-    if (!response.success) {
-      throw new Error(response.error || '載入失敗')
+  const getRecommendations = async (userId: string) => {
+    try {
+      isLoading.value = true
+      // 獲取推薦的看護師（高評分）
+      const response = await $fetch('/api/caregivers', {
+        query: { 
+          page: 1, 
+          limit: 3,
+          sortBy: 'rating',
+          minRating: 4.0
+        }
+      })
+      return response.caregivers
+    } catch (err) {
+      return []
+    } finally {
+      isLoading.value = false
     }
-    return response.data!.data
   }
 
   // ===============================
   // 聯絡表單相關 API
   // ===============================
 
-  const submitContactForm = (contactData: {
+  const submitContactForm = async (contactData: {
     name: string
     email: string
     phone?: string
     message: string
   }) => {
-    // 模擬提交聯絡表單
-    return {
-      id: `contact-${Date.now()}`,
-      ...contactData,
-      created_at: new Date().toISOString(),
-      message: '您的訊息已成功送出，我們會盡快回覆您',
+    try {
+      isLoading.value = true
+      // API 尚未實作，模擬成功
+      return {
+        id: `contact-${Date.now()}`,
+        ...contactData,
+        created_at: new Date().toISOString(),
+        message: '您的訊息已成功送出，我們會盡快回覆您',
+      }
+    } catch (err) {
+      handleError(err)
+    } finally {
+      isLoading.value = false
     }
   }
 
   return {
     // 狀態
-    isLoading: computed(() => mockApi.isLoading.value),
-    error: computed(() => mockApi.error.value),
+    isLoading: computed(() => isLoading.value),
+    error: computed(() => error.value),
 
     // 認證
     login,
@@ -344,6 +546,6 @@ export const useApiService = () => {
     submitContactForm,
 
     // 工具
-    clearError: () => mockApi.clearError(),
+    clearError,
   }
 }

@@ -58,7 +58,7 @@ export const useBookingStore = defineStore('bookings', {
 
   actions: {
     loadMockData() {
-      // 暫時使用空陣列，等待 mockBookings 資料定義
+      // 不再使用 mock 資料
       this.bookings = []
     },
 
@@ -102,7 +102,25 @@ export const useBookingStore = defineStore('bookings', {
 
     async updateBookingStatus(bookingId: string, status: Booking['status']) {
       try {
-        // 直接在本地更新狀態
+        // 呼叫 API 更新狀態
+        const updatedBooking = await $fetch<Booking>(`/api/bookings/${bookingId}`, {
+          method: 'PATCH',
+          body: { status }
+        })
+
+        // 更新本地狀態
+        const index = this.bookings.findIndex((b) => b.id === bookingId)
+        if (index !== -1) {
+          this.bookings[index] = updatedBooking
+        }
+        
+        if (this.currentBooking?.id === bookingId) {
+          this.currentBooking = updatedBooking
+        }
+        
+        return updatedBooking
+      } catch (err: any) {
+        // 如果 API 失敗，回退到本地更新
         const index = this.bookings.findIndex((b) => b.id === bookingId)
         if (index !== -1) {
           this.bookings[index] = {
@@ -113,10 +131,6 @@ export const useBookingStore = defineStore('bookings', {
           return this.bookings[index]
         }
         throw new Error('找不到預約')
-      } catch (err: any) {
-        this.error = err.message || '更新預約狀態失敗'
-        console.error('Error updating booking status:', err)
-        throw new Error(this.error || '未知錯誤')
       }
     },
 
@@ -138,6 +152,50 @@ export const useBookingStore = defineStore('bookings', {
         this.error = err.data?.message || err.message || '載入用戶預約失敗'
         console.error('Error fetching user bookings:', err)
         return []
+      }
+    },
+
+    async fetchBookingsByCaregiver(caregiverId: number) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const { bookings } = await $fetch<{ bookings: Booking[] }>(
+          `/api/bookings?caregiver_id=${caregiverId}`,
+        )
+        return bookings || []
+      } catch (err: unknown) {
+        this.error = err.data?.message || err.message || '載入照護員預約失敗'
+        console.error('Error fetching caregiver bookings:', err)
+        return []
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async fetchBookingById(bookingId: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const booking = await $fetch<Booking>(`/api/bookings/${bookingId}`)
+        
+        // 更新本地資料
+        const index = this.bookings.findIndex((b) => b.id === bookingId)
+        if (index !== -1) {
+          this.bookings[index] = booking
+        } else {
+          this.bookings.push(booking)
+        }
+        
+        this.currentBooking = booking
+        return booking
+      } catch (err: unknown) {
+        this.error = err.data?.message || err.message || '載入預約詳情失敗'
+        console.error('Error fetching booking:', err)
+        throw new Error(this.error || '未知錯誤')
+      } finally {
+        this.loading = false
       }
     },
 

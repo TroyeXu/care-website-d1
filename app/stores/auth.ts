@@ -45,7 +45,7 @@ export interface RegisterData {
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     currentUser: null,
-    users: mockUsers,
+    users: [],
     isAuthenticated: false,
     loading: false,
     error: null,
@@ -86,11 +86,17 @@ export const useAuthStore = defineStore('auth', {
           body: credentials
         })
 
-        if (response.success && response.data) {
-          this.currentUser = response.data.user
+        if (response && response.user) {
+          this.currentUser = response.user
           this.isAuthenticated = true
+          
+          // 儲存 token 到 cookie 或 localStorage
+          if (response.token) {
+            const cookie = useCookie('auth-token')
+            cookie.value = response.token
+          }
         } else {
-          throw new Error(response.error || '登入失敗')
+          throw new Error('登入失敗')
         }
       } catch (err: any) {
         this.error = err.data?.message || err.message || '登入失敗'
@@ -106,31 +112,28 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
 
       try {
-        // 檢查 email 是否已存在
-        if (this.users.find((u) => u.email === userData.email)) {
-          throw new Error('此電子郵件已被註冊')
+        // 呼叫註冊 API
+        const response = await $fetch('/api/auth/register', {
+          method: 'POST',
+          body: userData
+        })
+
+        if (response && response.user) {
+          this.currentUser = response.user
+          this.isAuthenticated = true
+          
+          // 儲存 token
+          if (response.token) {
+            const cookie = useCookie('auth-token')
+            cookie.value = response.token
+          }
+          
+          return response.user
+        } else {
+          throw new Error('註冊失敗')
         }
-
-        // 建立新用戶
-        const newUser: User = {
-          id: `user-${Date.now()}`,
-          name: userData.name,
-          email: userData.email,
-          password: userData.password,
-          phone: userData.phone,
-          role: userData.role,
-          profile: userData.profile || {},
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }
-
-        this.users.push(newUser)
-        this.currentUser = newUser
-        this.isAuthenticated = true
-
-        return newUser
       } catch (err: any) {
-        this.error = err.message || '註冊失敗'
+        this.error = err.data?.message || err.message || '註冊失敗'
         console.error('Registration error:', err)
         throw new Error(this.error || '未知錯誤')
       } finally {
@@ -142,10 +145,21 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
 
       try {
-        // 直接清除本地狀態
+        // 呼叫登出 API
+        await $fetch('/api/auth/logout', {
+          method: 'POST'
+        })
+        
+        // 清除本地狀態
         this.currentUser = null
         this.isAuthenticated = false
         this.error = null
+        
+        // 清除 token
+        const cookie = useCookie('auth-token')
+        cookie.value = null
+      } catch (err: any) {
+        console.error('Logout error:', err)
       } finally {
         this.loading = false
       }
@@ -204,14 +218,16 @@ export const useAuthStore = defineStore('auth', {
 
     async checkAuthStatus() {
       try {
-        // 在 mock 環境中，簡單檢查本地狀態
-        if (this.currentUser && this.isAuthenticated) {
-          // 可以在這裡添加 token 驗證邏輯
-          return
+        // 呼叫 API 檢查認證狀態
+        const response = await $fetch('/api/auth/me')
+        
+        if (response && response.user) {
+          this.currentUser = response.user
+          this.isAuthenticated = true
+        } else {
+          this.currentUser = null
+          this.isAuthenticated = false
         }
-
-        this.currentUser = null
-        this.isAuthenticated = false
       } catch (err: unknown) {
         console.error('Auth status check error:', err)
         this.currentUser = null
