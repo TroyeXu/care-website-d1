@@ -68,12 +68,6 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    loadMockData() {
-      // 暫時移除 mock 資料，使用 API
-      this.users = []
-      this.currentUser = null
-      this.isAuthenticated = false
-    },
 
     async login(credentials: LoginCredentials) {
       this.loading = true

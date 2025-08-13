@@ -57,10 +57,6 @@ export const useBookingStore = defineStore('bookings', {
   },
 
   actions: {
-    loadMockData() {
-      // 不再使用 mock 資料
-      this.bookings = []
-    },
 
     async fetchBookings() {
       this.loading = true
@@ -74,7 +70,8 @@ export const useBookingStore = defineStore('bookings', {
       } catch (err: unknown) {
         this.error = err.data?.message || err.message || '載入預約資料失敗'
         console.error('Error fetching bookings:', err)
-        this.loadMockData()
+        // 保持空陣列，不回退到 mock 資料
+        this.bookings = []
       } finally {
         this.loading = false
       }

@@ -1,6 +1,60 @@
 import { ref, computed } from 'vue'
-import type { User, Review, Payment, Booking } from '~/utils/mockData'
 import type { CaregiverFilter } from '~/stores/caregivers'
+
+// 定義本地的型別
+interface User {
+  id: string
+  email: string
+  name: string
+  phone?: string
+  role: 'user' | 'caregiver' | 'admin' | 'patient'
+  avatar_url?: string
+  email_verified?: boolean
+  phone_verified?: boolean
+  created_at: string
+  updated_at: string
+  profile?: any
+}
+
+interface Booking {
+  id: string
+  caregiver_id: number | string
+  user_id: string
+  service_type: 'hourly' | 'shift'
+  service_date?: string
+  start_date?: string
+  end_date?: string
+  start_time: string
+  end_time?: string
+  special_requests?: string
+  total_cost?: number
+  total_amount?: number
+  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'
+  patient_info?: any
+  created_at: string
+  updated_at: string
+}
+
+interface Payment {
+  id: string
+  booking_id: string
+  amount: number
+  status: string
+  payment_method: string
+  created_at: string
+  updated_at: string
+}
+
+interface Review {
+  id: string
+  caregiver_id: string | number
+  user_id: string
+  booking_id: string
+  rating: number
+  comment: string
+  created_at: string
+  updated_at: string
+}
 
 export const useApiService = () => {
   const isLoading = ref(false)

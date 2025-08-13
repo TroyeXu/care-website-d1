@@ -196,10 +196,7 @@ onMounted(async () => {
   loading.value = true
   try {
     await bookingStore.fetchBookings()
-    // 載入模擬資料（如果 API 失敗）
-    if (bookingStore.bookings.length === 0) {
-      bookingStore.loadMockData()
-    }
+    // 如果 API 失敗，保持空陣列
   } finally {
     loading.value = false
   }
