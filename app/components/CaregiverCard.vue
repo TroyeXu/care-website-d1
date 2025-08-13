@@ -24,7 +24,7 @@
             readonly
           />
           <span class="rating-number">{{ caregiver.rating }}</span>
-          <span class="review-count">({{ caregiver.review_count || 0 }})</span>
+          <span class="review-count">({{ caregiver.reviews_count || 0 }})</span>
         </div>
         <p class="location">
           <q-icon name="location_on" size="16px" color="grey" />

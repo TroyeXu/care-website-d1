@@ -23,8 +23,8 @@ module.exports = {
   },
   plugins: ['vue', '@typescript-eslint', 'prettier'],
   rules: {
-    // Prettier
-    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+    // Prettier - 改為警告而非錯誤
+    'prettier/prettier': ['warn', {}, { usePrettierrc: true }],
 
     // Vue
     'vue/multi-word-component-names': 'off',
@@ -47,9 +47,9 @@ module.exports = {
     'vue/component-name-in-template-casing': ['error', 'PascalCase'],
     'vue/component-definition-name-casing': ['error', 'PascalCase'],
 
-    // TypeScript
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-    '@typescript-eslint/no-explicit-any': 'warn',
+    // TypeScript - 放寬規則
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
 

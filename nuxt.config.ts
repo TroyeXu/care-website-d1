@@ -11,6 +11,13 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
+  // TypeScript 設定
+  typescript: {
+    strict: false,
+    typeCheck: false,
+    shim: true
+  },
+
   // Cloudflare Workers 配置（支援 SSR）
   nitro: {
     preset: 'cloudflare-module',

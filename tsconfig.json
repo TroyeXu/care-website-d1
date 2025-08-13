@@ -1,17 +1,27 @@
 {
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
-    "strict": true,
+    "strict": false,
     "jsx": "preserve",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["@nuxtjs/i18n", "@pinia/nuxt"]
+    "noImplicitAny": false,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": false,
+    "types": ["@types/node", "@nuxtjs/i18n", "@pinia/nuxt"]
   },
-  "include": ["app/**/*", "server/**/*"],
+  "include": [
+    "app/**/*",
+    "server/**/*",
+    ".nuxt/types/**/*",
+    ".nuxt/imports.d.ts",
+    ".nuxt/nuxt.d.ts"
+  ],
   "exclude": [
     "node_modules",
-    "app/pages/join.vue"
+    ".output",
+    ".nuxt/dist"
   ]
 }

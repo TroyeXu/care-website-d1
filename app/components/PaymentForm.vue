@@ -229,7 +229,7 @@ const submit = async () => {
     const paymentData = {
       booking_id: bookingId.value,
       amount: amount.value,
-      method: method.value as 'credit_card' | 'bank_transfer' | 'cash',
+      payment_method: method.value as 'credit_card' | 'bank_transfer' | 'cash',
       status: 'pending' as const,
       ...(method.value === 'credit_card' && { cardDetails: cardDetails.value }),
     }
