@@ -182,7 +182,7 @@
               no-caps
               color="primary"
               label="立即登入"
-              @click="$router.push('/auth/login')"
+              @click="router.push('/auth/login')"
             />
           </div>
         </q-card-section>

@@ -18,13 +18,19 @@ export default defineNuxtConfig({
     shim: true
   },
 
-  // Cloudflare Workers 配置（支援 SSR）
+  // Cloudflare Workers 配置（支援混合渲染）
   nitro: {
     preset: 'cloudflare-module',
-    // 不預渲染，使用完整 SSR
+    // 預渲染靜態頁面
     prerender: {
-      crawlLinks: false,
-      routes: [],
+      crawlLinks: true,
+      routes: [
+        '/',
+        '/info/about',
+        '/support/faq',
+        '/support/contact',
+        '/join',
+      ],
     },
     // 設定公共資源路徑
     publicAssets: [
@@ -42,8 +48,33 @@ export default defineNuxtConfig({
     },
   },
 
-  // SSR 設定
+  // 混合渲染設定
   ssr: true,
+  
+  // 路由規則設定
+  routeRules: {
+    // 靜態生成 (SSG) - 靜態內容頁面
+    '/': { prerender: true },
+    '/info/about': { prerender: true },
+    '/support/faq': { prerender: true },
+    '/support/contact': { prerender: true },
+    '/join': { prerender: true },
+    
+    // 伺服器端渲染 (SSR) - 需要 SEO 的動態內容
+    '/caregivers': { ssr: true, index: true },
+    '/caregivers/**': { ssr: true, isr: 3600 }, // ISR: 每小時重新生成
+    '/bookings': { ssr: true, index: true },
+    '/bookings/**': { ssr: true },
+    
+    // 客戶端渲染 (SPA) - 需要高互動性的頁面
+    '/auth/**': { ssr: false, prerender: false, index: false },
+    '/booking/calculator': { ssr: false, prerender: false },
+    '/user/**': { ssr: false, prerender: false, index: false },
+    '/admin/**': { ssr: false, prerender: false, index: false },
+    
+    // API 路由不需要渲染
+    '/api/**': { cors: true, headers: { 'cache-control': 's-maxage=60' } },
+  },
 
   site: {
     url: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3333',

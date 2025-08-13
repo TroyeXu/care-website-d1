@@ -1,13 +1,6 @@
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-
-interface User {
-  id: string
-  email: string
-  name: string
-  role: 'patient' | 'caregiver' | 'admin'
-  created_at: string
-}
+import type { User, ApiResponse } from '~/shared/types'
 
 interface AuthState {
   user: Ref<User | null>
@@ -24,7 +17,12 @@ interface RegisterData {
   password: string
   name: string
   phone?: string
-  role?: 'patient' | 'caregiver'
+  role?: 'user' | 'caregiver'
+}
+
+interface LoginResponse {
+  user: User
+  token: string
 }
 
 // 全域認證狀態
@@ -37,13 +35,13 @@ export const useAuth = (): AuthState => {
   const login = async (email: string, password: string) => {
     isLoading.value = true
     try {
-      const { data } = await $fetch('/api/auth/login', {
+      const response = await $fetch<ApiResponse<LoginResponse>>('/api/auth/login', {
         method: 'POST',
         body: { email, password },
       })
       
-      if (data?.user) {
-        user.value = data.user
+      if (response?.data?.user) {
+        user.value = response.data.user
         // 導航到首頁或之前的頁面
         await navigateTo('/')
       }
@@ -59,13 +57,13 @@ export const useAuth = (): AuthState => {
   const register = async (data: RegisterData) => {
     isLoading.value = true
     try {
-      const response = await $fetch('/api/auth/register', {
+      const response = await $fetch<ApiResponse<LoginResponse>>('/api/auth/register', {
         method: 'POST',
         body: data,
       })
       
-      if (response?.user) {
-        user.value = response.user
+      if (response?.data?.user) {
+        user.value = response.data.user
         // 導航到首頁
         await navigateTo('/')
       }
@@ -98,8 +96,10 @@ export const useAuth = (): AuthState => {
   const fetchUser = async () => {
     isLoading.value = true
     try {
-      const { user: currentUser } = await $fetch('/api/auth/me')
-      user.value = currentUser
+      const response = await $fetch<ApiResponse<User>>('/api/auth/me')
+      if (response?.data) {
+        user.value = response.data
+      }
     } catch (error) {
       console.error('Fetch user error:', error)
       user.value = null

@@ -57,7 +57,7 @@
                 no-caps
                 color="primary"
                 label="忘記密碼？"
-                @click="$router.push('/auth/forgot-password')"
+                @click="navigateTo('/auth/forgot-password')"
               />
             </div>
 
@@ -114,7 +114,7 @@
               no-caps
               color="primary"
               label="立即註冊"
-              @click="$router.push('/auth/register')"
+              @click="navigateTo('/auth/register')"
             />
           </div>
         </q-card-section>

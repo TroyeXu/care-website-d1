@@ -373,67 +373,72 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import CaregiverCard from '~/components/CaregiverCard.vue'
+import type { Caregiver } from '~/shared/types'
 
 const router = useRouter()
 const $q = useQuasar()
 
 // 響應式資料
 const searchQuery = ref('')
-const loading = ref(false)
 const showSortMenu = ref(false)
 const showFilterDrawer = ref(false)
-const sortBy = ref('default')
+const sortBy = ref('rating')
 const activeQuickFilter = ref('')
 const currentPage = ref(1)
-const pageSize = 10
+const pageSize = 20
 
-// 模擬資料
-const caregivers = ref([
+// 篩選條件
+const filters = ref({
+  location: null as string | null,
+  minPrice: null as number | null,
+  maxPrice: null as number | null,
+  minRating: 0,
+  experience: 'all',
+  skills: [] as string[],
+  availableOnly: false,
+})
+
+// 使用 useAsyncData 支援 SSR
+const { data: caregiversResponse, pending: loading, refresh } = await useAsyncData(
+  'caregivers',
+  () => $fetch('/api/caregivers', {
+    query: {
+      city: filters.value.location,
+      minRate: filters.value.minPrice,
+      maxRate: filters.value.maxPrice,
+      minRating: filters.value.minRating,
+      sortBy: sortBy.value,
+      page: currentPage.value,
+      limit: pageSize,
+    },
+  }),
   {
-    id: 'caregiver-1',
-    name: '林美玲',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    rating: 4.8,
-    reviews_count: 156,
-    experience_years: 8,
-    hourly_rate: 600,
-    service_areas: ['台北市', '新北市'],
-    specialties: ['長期照護', '失智照護', '復健協助'],
-    is_available: true,
-    is_verified: true,
-  },
-  {
-    id: 'caregiver-2', 
-    name: '陳淑芬',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-    rating: 4.9,
-    reviews_count: 203,
-    experience_years: 12,
-    hourly_rate: 700,
-    service_areas: ['台北市'],
-    specialties: ['重症照護', '醫院看護', '居家照護'],
-    is_available: true,
-    is_verified: true,
-  },
-  {
-    id: 'caregiver-3',
-    name: '王雅婷',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    rating: 4.7,
-    reviews_count: 89,
-    experience_years: 5,
-    hourly_rate: 550,
-    service_areas: ['新北市'],
-    specialties: ['老人照護', '陪伴服務'],
-    is_available: false,
-    is_verified: true,
-  },
-  // 可以添加更多模擬資料
-])
+    watch: [filters, sortBy, currentPage],
+  }
+)
+
+// 轉換資料格式
+const caregivers = computed(() => {
+  if (!caregiversResponse.value?.caregivers) return []
+  
+  return caregiversResponse.value.caregivers.map((caregiver: Caregiver) => ({
+    id: caregiver.id,
+    name: caregiver.name,
+    avatar: caregiver.avatar || `https://i.pravatar.cc/150?u=${caregiver.id}`,
+    rating: caregiver.rating,
+    reviews_count: caregiver.total_reviews,
+    experience_years: caregiver.experience_years,
+    hourly_rate: caregiver.hourly_rate,
+    service_areas: caregiver.service_areas?.map(a => a.city) || [],
+    specialties: caregiver.specialties?.map(s => s.name) || [],
+    is_available: caregiver.status === 'active',
+    is_verified: caregiver.background_checked,
+  }))
+})
 
 // 快速篩選選項
 const quickFilters = [
@@ -503,16 +508,6 @@ const skillOptions = [
   '陪伴服務',
 ]
 
-// 篩選條件
-const filters = ref({
-  location: null,
-  minPrice: null,
-  maxPrice: null,
-  minRating: 0,
-  experience: 'all',
-  skills: [],
-  availableOnly: false,
-})
 
 // 計算屬性
 const filteredCaregivers = computed(() => {
@@ -589,8 +584,9 @@ const activeFilterCount = computed(() => {
 })
 
 // 方法
-const handleSearch = () => {
+const handleSearch = async () => {
   currentPage.value = 1
+  await refresh()
 }
 
 const toggleQuickFilter = (key: string) => {
@@ -602,14 +598,16 @@ const toggleQuickFilter = (key: string) => {
   currentPage.value = 1
 }
 
-const setSortBy = (value: string) => {
+const setSortBy = async (value: string) => {
   sortBy.value = value
   currentPage.value = 1
+  await refresh()
 }
 
-const applyFilters = () => {
+const applyFilters = async () => {
   showFilterDrawer.value = false
   currentPage.value = 1
+  await refresh()
 }
 
 const clearFilters = () => {
@@ -624,16 +622,18 @@ const clearFilters = () => {
   }
 }
 
-const clearAllFilters = () => {
+const clearAllFilters = async () => {
   searchQuery.value = ''
   activeQuickFilter.value = ''
-  sortBy.value = 'default'
+  sortBy.value = 'rating'
   clearFilters()
   currentPage.value = 1
+  await refresh()
 }
 
-const loadMore = () => {
+const loadMore = async () => {
   currentPage.value++
+  await refresh()
 }
 
 const navigateToDetail = (caregiver: any) => {
@@ -641,10 +641,6 @@ const navigateToDetail = (caregiver: any) => {
 }
 
 
-// 生命週期
-onMounted(() => {
-  // 載入資料
-})
 </script>
 
 <style scoped>
