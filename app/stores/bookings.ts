@@ -1,27 +1,4 @@
-import { defineStore } from 'pinia'
-
-export interface Booking {
-  id: string
-  caregiver_id: number
-  user_id: string
-  service_type: 'hourly' | 'shift'
-  start_date: string
-  end_date: string
-  start_time: string
-  end_time?: string
-  special_requests?: string
-  total_cost: number
-  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'
-  patient_info: {
-    name: string
-    age: number
-    gender: string
-    medicalConditions: string[]
-    emergencyContact: string
-  }
-  created_at: string
-  updated_at: string
-}
+import type { Booking } from '../../shared/types'
 
 export const useBookingStore = defineStore('bookings', {
   state: () => ({
@@ -38,8 +15,8 @@ export const useBookingStore = defineStore('bookings', {
     getBookingsByUserId: (state) => (userId: string) =>
       state.bookings.filter((b) => b.user_id === userId),
 
-    getBookingsByCaregiver: (state) => (caregiverId: number) =>
-      state.bookings.filter((b) => b.caregiver_id === caregiverId),
+    getBookingsByCaregiver: (state) => (caregiverId: number | string) =>
+      state.bookings.filter((b) => b.caregiver_id === String(caregiverId)),
 
     pendingBookings: (state) =>
       state.bookings.filter((b) => b.status === 'pending'),
@@ -57,7 +34,6 @@ export const useBookingStore = defineStore('bookings', {
   },
 
   actions: {
-
     async fetchBookings() {
       this.loading = true
       this.error = null
@@ -68,7 +44,10 @@ export const useBookingStore = defineStore('bookings', {
         )
         this.bookings = bookings || []
       } catch (err: unknown) {
-        this.error = err.data?.message || err.message || '載入預約資料失敗'
+        this.error =
+          (err as any)?.data?.message ||
+          (err as any)?.message ||
+          '載入預約資料失敗'
         console.error('Error fetching bookings:', err)
         // 保持空陣列，不回退到 mock 資料
         this.bookings = []
@@ -91,7 +70,8 @@ export const useBookingStore = defineStore('bookings', {
 
         return newBooking
       } catch (err: unknown) {
-        this.error = err.data?.message || err.message || '建立預約失敗'
+        this.error =
+          (err as any)?.data?.message || (err as any)?.message || '建立預約失敗'
         console.error('Error creating booking:', err)
         throw new Error(this.error || '未知錯誤')
       }
@@ -100,21 +80,24 @@ export const useBookingStore = defineStore('bookings', {
     async updateBookingStatus(bookingId: string, status: Booking['status']) {
       try {
         // 呼叫 API 更新狀態
-        const updatedBooking = await $fetch<Booking>(`/api/bookings/${bookingId}`, {
-          method: 'PATCH',
-          body: { status }
-        })
+        const updatedBooking = await $fetch<Booking>(
+          `/api/bookings/${bookingId}`,
+          {
+            method: 'PATCH',
+            body: { status },
+          },
+        )
 
         // 更新本地狀態
         const index = this.bookings.findIndex((b) => b.id === bookingId)
         if (index !== -1) {
           this.bookings[index] = updatedBooking
         }
-        
+
         if (this.currentBooking?.id === bookingId) {
           this.currentBooking = updatedBooking
         }
-        
+
         return updatedBooking
       } catch (err: any) {
         // 如果 API 失敗，回退到本地更新
@@ -131,11 +114,11 @@ export const useBookingStore = defineStore('bookings', {
       }
     },
 
-    async cancelBooking(bookingId: string) {
+    cancelBooking(bookingId: string) {
       return this.updateBookingStatus(bookingId, 'cancelled')
     },
 
-    async confirmBooking(bookingId: string) {
+    confirmBooking(bookingId: string) {
       return this.updateBookingStatus(bookingId, 'confirmed')
     },
 
@@ -146,7 +129,10 @@ export const useBookingStore = defineStore('bookings', {
         )
         return bookings || []
       } catch (err: unknown) {
-        this.error = err.data?.message || err.message || '載入用戶預約失敗'
+        this.error =
+          (err as any)?.data?.message ||
+          (err as any)?.message ||
+          '載入用戶預約失敗'
         console.error('Error fetching user bookings:', err)
         return []
       }
@@ -162,7 +148,10 @@ export const useBookingStore = defineStore('bookings', {
         )
         return bookings || []
       } catch (err: unknown) {
-        this.error = err.data?.message || err.message || '載入照護員預約失敗'
+        this.error =
+          (err as any)?.data?.message ||
+          (err as any)?.message ||
+          '載入照護員預約失敗'
         console.error('Error fetching caregiver bookings:', err)
         return []
       } finally {
@@ -176,7 +165,7 @@ export const useBookingStore = defineStore('bookings', {
 
       try {
         const booking = await $fetch<Booking>(`/api/bookings/${bookingId}`)
-        
+
         // 更新本地資料
         const index = this.bookings.findIndex((b) => b.id === bookingId)
         if (index !== -1) {
@@ -184,11 +173,14 @@ export const useBookingStore = defineStore('bookings', {
         } else {
           this.bookings.push(booking)
         }
-        
+
         this.currentBooking = booking
         return booking
       } catch (err: unknown) {
-        this.error = err.data?.message || err.message || '載入預約詳情失敗'
+        this.error =
+          (err as any)?.data?.message ||
+          (err as any)?.message ||
+          '載入預約詳情失敗'
         console.error('Error fetching booking:', err)
         throw new Error(this.error || '未知錯誤')
       } finally {

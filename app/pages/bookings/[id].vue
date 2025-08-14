@@ -11,7 +11,13 @@
       <q-icon name="error_outline" size="80px" color="negative" />
       <div class="text-h6 text-negative q-mt-md">載入失敗</div>
       <div class="text-body2 text-grey-6 q-mt-sm">{{ error }}</div>
-      <q-btn flat color="primary" label="返回預約列表" to="/bookings" class="q-mt-md" />
+      <q-btn
+        flat
+        color="primary"
+        label="返回預約列表"
+        to="/bookings"
+        class="q-mt-md"
+      />
     </div>
 
     <!-- 預約詳情 -->
@@ -21,9 +27,7 @@
         <q-icon :name="getStatusIcon(booking.status)" size="32px" />
         <div class="status-info">
           <div class="text-h6">{{ getStatusLabel(booking.status) }}</div>
-          <div class="text-caption">
-            預約編號：{{ booking.id }}
-          </div>
+          <div class="text-caption">預約編號：{{ booking.id }}</div>
         </div>
       </div>
 
@@ -43,7 +47,9 @@
                     <img :src="getCaregiverAvatar(booking.caregiver_id)" />
                   </q-avatar>
                   <div class="caregiver-details">
-                    <div class="text-h6">{{ getCaregiverName(booking.caregiver_id) }}</div>
+                    <div class="text-h6">
+                      {{ getCaregiverName(booking.caregiver_id) }}
+                    </div>
                     <div class="text-body2 text-grey-6">專業看護師</div>
                     <div class="contact-info q-mt-sm">
                       <q-chip dense icon="phone" color="grey-2">
@@ -65,7 +71,7 @@
                   <q-icon name="event" size="24px" color="primary" />
                   <span>服務資訊</span>
                 </div>
-                
+
                 <q-list dense>
                   <q-item>
                     <q-item-section avatar>
@@ -74,7 +80,11 @@
                     <q-item-section>
                       <q-item-label>服務類型</q-item-label>
                       <q-item-label caption>
-                        {{ booking.service_type === 'hourly' ? '按小時計費' : '按班次計費' }}
+                        {{
+                          booking.service_type === 'hourly'
+                            ? '按小時計費'
+                            : '按班次計費'
+                        }}
                       </q-item-label>
                     </q-item-section>
                   </q-item>
@@ -86,7 +96,7 @@
                     <q-item-section>
                       <q-item-label>服務日期</q-item-label>
                       <q-item-label caption>
-                        {{ formatFullDate(booking.start_date) }} 至 
+                        {{ formatFullDate(booking.start_date) }} 至
                         {{ formatFullDate(booking.end_date) }}
                       </q-item-label>
                     </q-item-section>
@@ -127,7 +137,7 @@
                   <q-icon name="accessible" size="24px" color="primary" />
                   <span>病患資訊</span>
                 </div>
-                
+
                 <q-list dense>
                   <q-item>
                     <q-item-section avatar>
@@ -135,7 +145,9 @@
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>姓名</q-item-label>
-                      <q-item-label caption>{{ booking.patient_info.name }}</q-item-label>
+                      <q-item-label caption>{{
+                        booking.patient_info.name
+                      }}</q-item-label>
                     </q-item-section>
                   </q-item>
 
@@ -145,7 +157,9 @@
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>年齡</q-item-label>
-                      <q-item-label caption>{{ booking.patient_info.age }} 歲</q-item-label>
+                      <q-item-label caption
+                        >{{ booking.patient_info.age }} 歲</q-item-label
+                      >
                     </q-item-section>
                   </q-item>
 
@@ -155,7 +169,9 @@
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>性別</q-item-label>
-                      <q-item-label caption>{{ booking.patient_info.gender }}</q-item-label>
+                      <q-item-label caption>{{
+                        booking.patient_info.gender
+                      }}</q-item-label>
                     </q-item-section>
                   </q-item>
 
@@ -165,7 +181,9 @@
                     </q-item-section>
                     <q-item-section>
                       <q-item-label>緊急聯絡人</q-item-label>
-                      <q-item-label caption>{{ booking.patient_info.emergencyContact }}</q-item-label>
+                      <q-item-label caption>{{
+                        booking.patient_info.emergencyContact
+                      }}</q-item-label>
                     </q-item-section>
                   </q-item>
 
@@ -176,7 +194,11 @@
                     <q-item-section>
                       <q-item-label>疾病史/特殊需求</q-item-label>
                       <q-item-label caption>
-                        <div v-for="condition in booking.patient_info.medicalConditions" :key="condition">
+                        <div
+                          v-for="condition in booking.patient_info
+                            .medicalConditions"
+                          :key="condition"
+                        >
                           • {{ condition }}
                         </div>
                       </q-item-label>
@@ -196,7 +218,7 @@
                   <q-icon name="payments" size="24px" color="primary" />
                   <span>費用資訊</span>
                 </div>
-                
+
                 <div class="price-display">
                   <div class="text-caption text-grey-6">總費用</div>
                   <div class="text-h4 text-primary text-weight-bold">
@@ -217,7 +239,7 @@
                     class="full-width q-mb-sm"
                     @click="confirmBooking"
                   />
-                  
+
                   <q-btn
                     v-if="booking.status === 'pending'"
                     outline
@@ -267,7 +289,7 @@
                   <q-icon name="timeline" size="24px" color="primary" />
                   <span>預約時間軸</span>
                 </div>
-                
+
                 <q-timeline color="primary" layout="dense">
                   <q-timeline-entry
                     title="建立預約"
@@ -275,15 +297,19 @@
                     icon="add_circle"
                     :color="getTimelineColor('created')"
                   />
-                  
+
                   <q-timeline-entry
-                    v-if="['confirmed', 'in_progress', 'completed'].includes(booking.status)"
+                    v-if="
+                      ['confirmed', 'in_progress', 'completed'].includes(
+                        booking.status,
+                      )
+                    "
                     title="確認預約"
                     subtitle="看護師已確認"
                     icon="check_circle"
                     :color="getTimelineColor('confirmed')"
                   />
-                  
+
                   <q-timeline-entry
                     v-if="['in_progress', 'completed'].includes(booking.status)"
                     title="服務開始"
@@ -291,7 +317,7 @@
                     icon="play_circle"
                     :color="getTimelineColor('in_progress')"
                   />
-                  
+
                   <q-timeline-entry
                     v-if="booking.status === 'completed'"
                     title="服務完成"
@@ -299,7 +325,7 @@
                     icon="check_circle"
                     :color="getTimelineColor('completed')"
                   />
-                  
+
                   <q-timeline-entry
                     v-if="booking.status === 'cancelled'"
                     title="預約取消"
@@ -319,7 +345,13 @@
     <div v-else class="text-center q-pa-xl">
       <q-icon name="search_off" size="80px" color="grey-5" />
       <div class="text-h6 text-grey-7 q-mt-md">找不到預約資訊</div>
-      <q-btn flat color="primary" label="返回預約列表" to="/bookings" class="q-mt-md" />
+      <q-btn
+        flat
+        color="primary"
+        label="返回預約列表"
+        to="/bookings"
+        class="q-mt-md"
+      />
     </div>
   </q-page>
 </template>
@@ -352,7 +384,7 @@ onMounted(async () => {
       await bookingStore.fetchBookings()
       // 如果 API 失敗，保持空陣列
     }
-    
+
     if (!booking.value) {
       error.value = '找不到預約資訊'
     }
@@ -365,12 +397,14 @@ onMounted(async () => {
 })
 
 // 輔助函數
-const getCaregiverName = (caregiverId: number) => {
+const getCaregiverName = (caregiverId: number | string) => {
   const names = ['張美玲', '陳淑芬', '王雅婷', '李秀蘭', '林惠珍']
-  return names[caregiverId % names.length] || `看護師 ${caregiverId}`
+  const id =
+    typeof caregiverId === 'string' ? parseInt(caregiverId) || 0 : caregiverId
+  return names[id % names.length] || `看護師 ${caregiverId}`
 }
 
-const getCaregiverAvatar = (caregiverId: number) => {
+const getCaregiverAvatar = (caregiverId: number | string) => {
   return `https://i.pravatar.cc/150?img=${caregiverId}`
 }
 
@@ -418,7 +452,7 @@ const getStatusLabel = (status: string) => {
 
 const getTimelineColor = (status: string) => {
   if (booking.value?.status === 'cancelled') return 'grey'
-  
+
   const colors = {
     created: 'blue',
     confirmed: 'green',

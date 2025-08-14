@@ -1,6 +1,14 @@
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
-import type { User, ApiResponse } from '~/shared/types'
+import type { User, ApiResponse } from '../../shared/types'
+
+interface RegisterData {
+  email: string
+  password: string
+  name: string
+  phone?: string
+  role?: 'user' | 'caregiver'
+}
 
 interface AuthState {
   user: Ref<User | null>
@@ -10,14 +18,6 @@ interface AuthState {
   register: (data: RegisterData) => Promise<void>
   logout: () => Promise<void>
   fetchUser: () => Promise<void>
-}
-
-interface RegisterData {
-  email: string
-  password: string
-  name: string
-  phone?: string
-  role?: 'user' | 'caregiver'
 }
 
 interface LoginResponse {
@@ -35,11 +35,14 @@ export const useAuth = (): AuthState => {
   const login = async (email: string, password: string) => {
     isLoading.value = true
     try {
-      const response = await $fetch<ApiResponse<LoginResponse>>('/api/auth/login', {
-        method: 'POST',
-        body: { email, password },
-      })
-      
+      const response = await $fetch<ApiResponse<LoginResponse>>(
+        '/api/auth/login',
+        {
+          method: 'POST',
+          body: { email, password },
+        },
+      )
+
       if (response?.data?.user) {
         user.value = response.data.user
         // 導航到首頁或之前的頁面
@@ -57,11 +60,14 @@ export const useAuth = (): AuthState => {
   const register = async (data: RegisterData) => {
     isLoading.value = true
     try {
-      const response = await $fetch<ApiResponse<LoginResponse>>('/api/auth/register', {
-        method: 'POST',
-        body: data,
-      })
-      
+      const response = await $fetch<ApiResponse<LoginResponse>>(
+        '/api/auth/register',
+        {
+          method: 'POST',
+          body: data,
+        },
+      )
+
       if (response?.data?.user) {
         user.value = response.data.user
         // 導航到首頁

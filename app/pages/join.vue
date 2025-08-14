@@ -226,7 +226,7 @@
               </div>
             </div>
 
-            <!-- @ts-expect-error - Quasar QStep navigation slot type definition issue -->
+            <!-- @vue-ignore -->
             <template #navigation>
               <q-stepper-navigation>
                 <q-btn
@@ -433,7 +433,6 @@
 </template>
 
 <script setup lang="ts">
-// @ts-expect-error Quasar QStep navigation slot type issue
 import { ref } from 'vue'
 import usePageSeo from '~/composables/usePageSeo'
 import { definePageMeta } from '#imports'

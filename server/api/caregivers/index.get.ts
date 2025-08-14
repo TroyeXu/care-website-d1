@@ -3,59 +3,60 @@ import { getD1 } from '../../utils/d1'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
-  const { 
-    city, 
-    district, 
-    specialty, 
-    minRate, 
-    maxRate, 
+  const {
+    city,
+    district,
+    specialty,
+    minRate,
+    maxRate,
     minRating,
     experienceYears,
     gender,
     sortBy = 'rating', // rating, price_low, price_high, experience
-    page = 1, 
-    limit = 20 
+    page = 1,
+    limit = 20,
   } = query
 
   try {
     const db = getD1(event)
-    
+
     // 建立查詢條件
     const conditions = ['c.status = "active"']
     const params = []
-    
+
     // 時薪範圍篩選
     if (minRate) {
       conditions.push('c.hourly_rate >= ?')
       params.push(Number(minRate))
     }
-    
+
     if (maxRate) {
       conditions.push('c.hourly_rate <= ?')
       params.push(Number(maxRate))
     }
-    
+
     // 評分篩選
     if (minRating) {
       conditions.push('c.rating >= ?')
       params.push(Number(minRating))
     }
-    
+
     // 經驗年數篩選
     if (experienceYears) {
       conditions.push('c.experience_years >= ?')
       params.push(Number(experienceYears))
     }
-    
+
     // 性別篩選
     if (gender) {
       conditions.push('u.gender = ?')
       params.push(gender)
     }
-    
+
     // 服務區域篩選（使用子查詢）
     if (city || district) {
-      let areaCondition = 'c.id IN (SELECT caregiver_id FROM service_areas WHERE 1=1'
+      let areaCondition =
+        'c.id IN (SELECT caregiver_id FROM service_areas WHERE 1=1'
       if (city) {
         areaCondition += ' AND city = ?'
         params.push(city)
@@ -67,15 +68,17 @@ export default defineEventHandler(async (event) => {
       areaCondition += ')'
       conditions.push(areaCondition)
     }
-    
+
     // 專長篩選（使用子查詢）
     if (specialty) {
-      conditions.push('c.id IN (SELECT caregiver_id FROM specialties WHERE name = ? OR category = ?)')
+      conditions.push(
+        'c.id IN (SELECT caregiver_id FROM specialties WHERE name = ? OR category = ?)',
+      )
       params.push(specialty, specialty)
     }
-    
+
     const whereClause = conditions.join(' AND ')
-    
+
     // 排序設定
     let orderBy = 'c.rating DESC, c.total_reviews DESC' // 預設按評分排序
     switch (sortBy) {
@@ -92,10 +95,10 @@ export default defineEventHandler(async (event) => {
         orderBy = 'c.total_reviews DESC'
         break
     }
-    
+
     // 計算分頁
     const offset = (Number(page) - 1) * Number(limit)
-    
+
     // 查詢總數
     const countQuery = `
       SELECT COUNT(DISTINCT c.id) as total 
@@ -103,11 +106,12 @@ export default defineEventHandler(async (event) => {
       LEFT JOIN users u ON c.user_id = u.id
       WHERE ${whereClause}
     `
-    const countStmt = params.length > 0
-      ? db.prepare(countQuery).bind(...params)
-      : db.prepare(countQuery)
-    const countResult = await countStmt.first() as { total: number }
-    
+    const countStmt =
+      params.length > 0
+        ? db.prepare(countQuery).bind(...params)
+        : db.prepare(countQuery)
+    const countResult = (await countStmt.first()) as { total: number }
+
     // 查詢看護列表
     const listQuery = `
       SELECT DISTINCT
@@ -124,49 +128,72 @@ export default defineEventHandler(async (event) => {
       ORDER BY ${orderBy}
       LIMIT ? OFFSET ?
     `
-    
-    const listStmt = db.prepare(listQuery).bind(...params, Number(limit), offset)
-    
+
+    const listStmt = db
+      .prepare(listQuery)
+      .bind(...params, Number(limit), offset)
+
     const results = await listStmt.all()
-    
+
     // 為每個看護查詢相關資料
     const caregiversWithDetails = await Promise.all(
       (results.results || []).map(async (caregiver: any) => {
         // 批量查詢相關資料
-        const [certifications, specialties, serviceAreas, recentReviews] = await Promise.all([
-          // 證照
-          db.prepare(`
+        const [certifications, specialties, serviceAreas, recentReviews] =
+          await Promise.all([
+            // 證照
+            db
+              .prepare(
+                `
             SELECT name, issuer, verified 
             FROM certifications 
             WHERE caregiver_id = ? AND verified = 1
             LIMIT 5
-          `).bind(caregiver.id).all(),
-          
-          // 專長
-          db.prepare(`
+          `,
+              )
+              .bind(caregiver.id)
+              .all(),
+
+            // 專長
+            db
+              .prepare(
+                `
             SELECT name, category 
             FROM specialties 
             WHERE caregiver_id = ?
             LIMIT 10
-          `).bind(caregiver.id).all(),
-          
-          // 服務區域
-          db.prepare(`
+          `,
+              )
+              .bind(caregiver.id)
+              .all(),
+
+            // 服務區域
+            db
+              .prepare(
+                `
             SELECT city, district 
             FROM service_areas 
             WHERE caregiver_id = ?
-          `).bind(caregiver.id).all(),
-          
-          // 最近評價
-          db.prepare(`
+          `,
+              )
+              .bind(caregiver.id)
+              .all(),
+
+            // 最近評價
+            db
+              .prepare(
+                `
             SELECT rating, comment, created_at 
             FROM reviews 
             WHERE caregiver_id = ?
             ORDER BY created_at DESC
             LIMIT 3
-          `).bind(caregiver.id).all()
-        ])
-        
+          `,
+              )
+              .bind(caregiver.id)
+              .all(),
+          ])
+
         return {
           id: caregiver.id,
           user_id: caregiver.user_id,
@@ -174,52 +201,56 @@ export default defineEventHandler(async (event) => {
           avatar: caregiver.avatar,
           gender: caregiver.gender,
           address: caregiver.address,
-          
+
           // 專業資訊
           hourly_rate: caregiver.hourly_rate,
           experience_years: caregiver.experience_years,
           bio: caregiver.bio,
-          
+
           // 評價與統計
           rating: caregiver.rating || 0,
           total_reviews: caregiver.total_reviews || 0,
           completion_rate: caregiver.completion_rate || 0,
           response_rate: caregiver.response_rate || 0,
-          
+
           // 驗證狀態
           background_checked: caregiver.background_checked,
           drug_test_passed: caregiver.drug_test_passed,
-          
+
           // 關聯資料
-          certifications: certifications.results?.map((c: any) => ({
-            name: c.name,
-            issuer: c.issuer,
-            verified: c.verified
-          })) || [],
-          
-          specialties: specialties.results?.map((s: any) => ({
-            name: s.name,
-            category: s.category
-          })) || [],
-          
-          service_areas: serviceAreas.results?.map((a: any) => ({
-            city: a.city,
-            district: a.district
-          })) || [],
-          
-          recent_reviews: recentReviews.results?.map((r: any) => ({
-            rating: r.rating,
-            comment: r.comment,
-            created_at: r.created_at
-          })) || [],
-          
+          certifications:
+            certifications.results?.map((c: any) => ({
+              name: c.name,
+              issuer: c.issuer,
+              verified: c.verified,
+            })) || [],
+
+          specialties:
+            specialties.results?.map((s: any) => ({
+              name: s.name,
+              category: s.category,
+            })) || [],
+
+          service_areas:
+            serviceAreas.results?.map((a: any) => ({
+              city: a.city,
+              district: a.district,
+            })) || [],
+
+          recent_reviews:
+            recentReviews.results?.map((r: any) => ({
+              rating: r.rating,
+              comment: r.comment,
+              created_at: r.created_at,
+            })) || [],
+
           // 狀態
           status: caregiver.status,
-          created_at: caregiver.created_at
+          created_at: caregiver.created_at,
         }
-      })
+      }),
     )
-    
+
     return {
       caregivers: caregiversWithDetails,
       total: countResult?.total || 0,
@@ -235,8 +266,8 @@ export default defineEventHandler(async (event) => {
         minRating,
         experienceYears,
         gender,
-        sortBy
-      }
+        sortBy,
+      },
     }
   } catch (error: any) {
     console.error('Database error:', error)

@@ -9,7 +9,6 @@ export interface RequestConfig {
   headers?: Record<string, string>
   timeout?: number
   retry?: number
-  mockDelay?: number
 }
 
 export interface ApiError {
@@ -45,26 +44,9 @@ export const useHttpClient = () => {
     return searchParams.toString()
   }
 
-  // 模擬延遲
+  // 延遲函數（用於重試機制）
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms))
-
-  // 模擬 API 響應
-  const mockResponse = async <T>(
-    data: T,
-    config: RequestConfig,
-  ): Promise<T> => {
-    if (config.mockDelay) {
-      await delay(config.mockDelay)
-    }
-
-    // 5% 機率模擬錯誤
-    if (Math.random() < 0.05) {
-      throw new Error('Mock API error')
-    }
-
-    return data
-  }
 
   // 處理請求錯誤
   const handleError = (error: unknown, url: string): ApiError => {
@@ -153,15 +135,15 @@ export const useHttpClient = () => {
 
         if (!isSuccessStatus(response.status)) {
           const errorData = await response.json().catch(() => ({}))
-          throw {
-            status: response.status,
-            message:
-              errorData.message ||
+          const error = new Error(
+            errorData.message ||
               errorMessages[response.status as keyof typeof errorMessages] ||
               'API 請求失敗',
-            code: errorData.code,
-            details: errorData.details,
-          }
+          )
+          ;(error as any).status = response.status
+          ;(error as any).code = errorData.code
+          ;(error as any).details = errorData.details
+          throw error
         }
 
         const data = await response.json()
@@ -171,8 +153,13 @@ export const useHttpClient = () => {
         throw fetchError
       }
     } catch (err: unknown) {
-      error.value = handleError(err, config.url)
-      throw error.value
+      const apiError = handleError(err, config.url)
+      error.value = apiError
+      const errorObj = new Error(apiError.message)
+      ;(errorObj as any).status = apiError.status
+      ;(errorObj as any).code = apiError.code
+      ;(errorObj as any).details = apiError.details
+      throw errorObj
     } finally {
       isLoading.value = false
       abortController.value = null
@@ -296,8 +283,5 @@ export const useHttpClient = () => {
     cancel,
     clearError,
     retry,
-
-    // 工具
-    mockResponse,
   }
 }

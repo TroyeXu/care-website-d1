@@ -748,7 +748,7 @@ useHead({
   .testimonial-carousel {
     min-height: auto;
   }
-  
+
   .testimonial-content {
     font-size: 1rem;
     line-height: 1.6;

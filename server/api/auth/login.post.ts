@@ -15,17 +15,17 @@ export default defineEventHandler(async (event) => {
 
   try {
     const result = await loginUser(event, email, password)
-    
+
     return {
       success: true,
-      data: result
+      data: result,
     }
   } catch (error: any) {
     // 如果是已知錯誤，直接拋出
     if (error.statusCode) {
       throw error
     }
-    
+
     // 未知錯誤
     console.error('Login error:', error)
     throw createError({

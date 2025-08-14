@@ -81,11 +81,7 @@
         <div class="advantages-section q-mb-xl">
           <h2 class="section-title">平台優勢</h2>
           <div class="advantages-grid">
-            <div
-              v-for="(adv, i) in advantages"
-              :key="i"
-              class="advantage-card"
-            >
+            <div v-for="(adv, i) in advantages" :key="i" class="advantage-card">
               <div class="advantage-icon">
                 <q-icon :name="adv.icon" />
               </div>
@@ -177,34 +173,19 @@ const services = [
     title: '居家照顧',
     description: '提供到府日常照料與生活協助，讓您在熟悉的環境中得到專業照護',
     icon: 'home',
-    features: [
-      '24小時專業照護',
-      '日常生活協助',
-      '藥物管理',
-      '健康監測',
-    ],
+    features: ['24小時專業照護', '日常生活協助', '藥物管理', '健康監測'],
   },
   {
     title: '醫院看護',
     description: '協助住院期間的照護需求，提供專業的醫療照護支援',
     icon: 'local_hospital',
-    features: [
-      '醫療程序協助',
-      '病房照護',
-      '家屬溝通',
-      '復健協助',
-    ],
+    features: ['醫療程序協助', '病房照護', '家屬溝通', '復健協助'],
   },
   {
     title: '外籍看護',
     description: '多語溝通、跨文化照護，提供國際化的專業服務',
     icon: 'translate',
-    features: [
-      '多國語言溝通',
-      '文化適應指導',
-      '專業技能培訓',
-      '長期穩定服務',
-    ],
+    features: ['多國語言溝通', '文化適應指導', '專業技能培訓', '長期穩定服務'],
   },
 ]
 
@@ -521,8 +502,8 @@ const safeties = [
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   border-top: 4px solid transparent;
-  background-image: linear-gradient(white, white),
-    linear-gradient(135deg, #667eea, #764ba2);
+  background-image:
+    linear-gradient(white, white), linear-gradient(135deg, #667eea, #764ba2);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }

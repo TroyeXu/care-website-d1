@@ -27,7 +27,7 @@
           </template>
         </q-input>
       </div>
-      
+
       <!-- 快速篩選按鈕 -->
       <div class="quick-filters">
         <q-scroll-area horizontal style="height: 45px">
@@ -36,7 +36,9 @@
               v-for="filter in quickFilters"
               :key="filter.key"
               :color="activeQuickFilter === filter.key ? 'primary' : 'grey-3'"
-              :text-color="activeQuickFilter === filter.key ? 'white' : 'grey-8'"
+              :text-color="
+                activeQuickFilter === filter.key ? 'white' : 'grey-8'
+              "
               clickable
               @click="toggleQuickFilter(filter.key)"
             >
@@ -121,7 +123,7 @@
                 <div class="text-subtitle1 text-weight-bold">
                   {{ caregiver.name }}
                 </div>
-                
+
                 <!-- 評分 -->
                 <div class="row items-center q-mt-xs">
                   <q-rating
@@ -217,8 +219,8 @@
           <q-item
             v-for="option in sortOptions"
             :key="option.value"
-            clickable
             v-close-popup
+            clickable
             @click="setSortBy(option.value)"
           >
             <q-item-section>
@@ -353,12 +355,7 @@
 
         <!-- 底部按鈕 -->
         <div class="filter-footer">
-          <q-btn
-            flat
-            label="清除"
-            class="col"
-            @click="clearFilters"
-          />
+          <q-btn flat label="清除" class="col" @click="clearFilters" />
           <q-btn
             unelevated
             color="primary"
@@ -376,8 +373,8 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import type { Caregiver } from '../../../shared/types'
 import CaregiverCard from '~/components/CaregiverCard.vue'
-import type { Caregiver } from '~/shared/types'
 
 const router = useRouter()
 const $q = useQuasar()
@@ -403,28 +400,33 @@ const filters = ref({
 })
 
 // 使用 useAsyncData 支援 SSR
-const { data: caregiversResponse, pending: loading, refresh } = await useAsyncData(
+const {
+  data: caregiversResponse,
+  pending: loading,
+  refresh,
+} = await useAsyncData(
   'caregivers',
-  () => $fetch('/api/caregivers', {
-    query: {
-      city: filters.value.location,
-      minRate: filters.value.minPrice,
-      maxRate: filters.value.maxPrice,
-      minRating: filters.value.minRating,
-      sortBy: sortBy.value,
-      page: currentPage.value,
-      limit: pageSize,
-    },
-  }),
+  () =>
+    $fetch<any>('/api/caregivers', {
+      query: {
+        city: filters.value.location,
+        minRate: filters.value.minPrice,
+        maxRate: filters.value.maxPrice,
+        minRating: filters.value.minRating,
+        sortBy: sortBy.value,
+        page: currentPage.value,
+        limit: pageSize,
+      },
+    }),
   {
     watch: [filters, sortBy, currentPage],
-  }
+  },
 )
 
 // 轉換資料格式
 const caregivers = computed(() => {
   if (!caregiversResponse.value?.caregivers) return []
-  
+
   return caregiversResponse.value.caregivers.map((caregiver: Caregiver) => ({
     id: caregiver.id,
     name: caregiver.name,
@@ -433,8 +435,8 @@ const caregivers = computed(() => {
     reviews_count: caregiver.total_reviews,
     experience_years: caregiver.experience_years,
     hourly_rate: caregiver.hourly_rate,
-    service_areas: caregiver.service_areas?.map(a => a.city) || [],
-    specialties: caregiver.specialties?.map(s => s.name) || [],
+    service_areas: caregiver.service_areas?.map((a) => a.city) || [],
+    specialties: caregiver.specialties?.map((s) => s.name) || [],
     is_available: caregiver.status === 'active',
     is_verified: caregiver.background_checked,
   }))
@@ -508,7 +510,6 @@ const skillOptions = [
   '陪伴服務',
 ]
 
-
 // 計算屬性
 const filteredCaregivers = computed(() => {
   let result = [...caregivers.value]
@@ -516,36 +517,39 @@ const filteredCaregivers = computed(() => {
   // 搜尋
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    result = result.filter(c => 
-      c.name.toLowerCase().includes(query) ||
-      c.specialties.some(s => s.toLowerCase().includes(query))
+    result = result.filter(
+      (c) =>
+        c.name.toLowerCase().includes(query) ||
+        c.specialties.some((s) => s.toLowerCase().includes(query)),
     )
   }
 
   // 快速篩選
   if (activeQuickFilter.value === 'available') {
-    result = result.filter(c => c.is_available)
+    result = result.filter((c) => c.is_available)
   } else if (activeQuickFilter.value === 'highRating') {
-    result = result.filter(c => c.rating >= 4.5)
+    result = result.filter((c) => c.rating >= 4.5)
   } else if (activeQuickFilter.value === 'experienced') {
-    result = result.filter(c => c.experience_years >= 5)
+    result = result.filter((c) => c.experience_years >= 5)
   }
 
   // 套用篩選條件
   if (filters.value.location) {
-    result = result.filter(c => c.service_areas.includes(filters.value.location))
+    result = result.filter((c) =>
+      c.service_areas.includes(filters.value.location),
+    )
   }
   if (filters.value.minPrice) {
-    result = result.filter(c => c.hourly_rate >= filters.value.minPrice)
+    result = result.filter((c) => c.hourly_rate >= filters.value.minPrice)
   }
   if (filters.value.maxPrice) {
-    result = result.filter(c => c.hourly_rate <= filters.value.maxPrice)
+    result = result.filter((c) => c.hourly_rate <= filters.value.maxPrice)
   }
   if (filters.value.minRating > 0) {
-    result = result.filter(c => c.rating >= filters.value.minRating)
+    result = result.filter((c) => c.rating >= filters.value.minRating)
   }
   if (filters.value.availableOnly) {
-    result = result.filter(c => c.is_available)
+    result = result.filter((c) => c.is_available)
   }
 
   // 排序
@@ -639,8 +643,6 @@ const loadMore = async () => {
 const navigateToDetail = (caregiver: any) => {
   router.push(`/caregivers/${caregiver.id}`)
 }
-
-
 </script>
 
 <style scoped>
@@ -798,7 +800,7 @@ const navigateToDetail = (caregiver: any) => {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
-  
+
   .load-more {
     grid-column: 1 / -1;
   }

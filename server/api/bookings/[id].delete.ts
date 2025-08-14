@@ -3,7 +3,7 @@ import { getD1 } from '../../utils/d1'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
-  
+
   if (!id) {
     throw createError({
       statusCode: 400,
@@ -13,31 +13,33 @@ export default defineEventHandler(async (event) => {
 
   try {
     const db = getD1(event)
-    
+
     // 檢查預約是否存在
     const existingBooking = await db
       .prepare('SELECT * FROM bookings WHERE id = ?')
       .bind(id)
       .first()
-    
+
     if (!existingBooking) {
       throw createError({
         statusCode: 404,
         statusMessage: '找不到該預約',
       })
     }
-    
+
     // 軟刪除：更新狀態為 cancelled
     await db
-      .prepare(`
+      .prepare(
+        `
         UPDATE bookings 
         SET status = 'cancelled', 
             updated_at = CURRENT_TIMESTAMP 
         WHERE id = ?
-      `)
+      `,
+      )
       .bind(id)
       .run()
-    
+
     return {
       success: true,
       message: '預約已取消',

@@ -11,7 +11,7 @@
 
         <!-- 註冊表單 -->
         <q-card-section class="q-px-lg">
-          <q-form @submit="handleRegister" class="q-gutter-md">
+          <q-form class="q-gutter-md" @submit="handleRegister">
             <!-- 帳號類型選擇 -->
             <div class="role-selector q-mb-md">
               <q-btn-toggle
@@ -23,8 +23,8 @@
                 color="white"
                 text-color="primary"
                 :options="[
-                  {label: '我要找看護', value: 'patient'},
-                  {label: '我要當看護', value: 'caregiver'}
+                  { label: '我要找看護', value: 'patient' },
+                  { label: '我要當看護', value: 'caregiver' },
                 ]"
               />
             </div>
@@ -35,9 +35,9 @@
               label="姓名"
               filled
               lazy-rules
-              :rules="[val => !!val || '請輸入姓名']"
+              :rules="[(val) => !!val || '請輸入姓名']"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="person" />
               </template>
             </q-input>
@@ -50,11 +50,11 @@
               filled
               lazy-rules
               :rules="[
-                val => !!val || '請輸入電子郵件',
-                val => isValidEmail(val) || '請輸入有效的電子郵件'
+                (val) => !!val || '請輸入電子郵件',
+                (val) => isValidEmail(val) || '請輸入有效的電子郵件',
               ]"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="email" />
               </template>
             </q-input>
@@ -66,9 +66,9 @@
               filled
               mask="####-###-###"
               lazy-rules
-              :rules="[val => !!val || '請輸入手機號碼']"
+              :rules="[(val) => !!val || '請輸入手機號碼']"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="phone" />
               </template>
             </q-input>
@@ -81,14 +81,14 @@
               filled
               lazy-rules
               :rules="[
-                val => !!val || '請輸入密碼',
-                val => val.length >= 8 || '密碼至少需要8個字元'
+                (val) => !!val || '請輸入密碼',
+                (val) => val.length >= 8 || '密碼至少需要8個字元',
               ]"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="lock" />
               </template>
-              <template v-slot:append>
+              <template #append>
                 <q-icon
                   :name="showPassword ? 'visibility_off' : 'visibility'"
                   class="cursor-pointer"
@@ -105,21 +105,18 @@
               filled
               lazy-rules
               :rules="[
-                val => !!val || '請確認密碼',
-                val => val === form.password || '密碼不相符'
+                (val) => !!val || '請確認密碼',
+                (val) => val === form.password || '密碼不相符',
               ]"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="lock" />
               </template>
             </q-input>
 
             <!-- 服務條款 -->
-            <q-checkbox
-              v-model="acceptTerms"
-              class="q-mb-md"
-            >
-              <template v-slot:default>
+            <q-checkbox v-model="acceptTerms" class="q-mb-md">
+              <template #default>
                 <span class="text-grey-7">
                   我同意
                   <a href="/terms" class="text-primary">服務條款</a>
@@ -242,13 +239,13 @@ const handleRegister = async () => {
       },
     })
 
-    if (response?.user) {
+    if (response?.data?.user) {
       $q.notify({
         type: 'positive',
         message: '註冊成功！歡迎加入我們',
         timeout: 3000,
       })
-      
+
       // 跳轉到首頁或個人資料頁
       if (form.value.role === 'caregiver') {
         router.push('/profile/caregiver')
@@ -333,7 +330,7 @@ const handleFacebookRegister = () => {
   .auth-container {
     max-width: 100%;
   }
-  
+
   .auth-card {
     border-radius: 12px;
   }

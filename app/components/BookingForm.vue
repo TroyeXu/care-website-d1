@@ -262,23 +262,29 @@ const handleSubmit = async () => {
   isSubmitting.value = true
 
   try {
+    // 計算總時數
+    const startDateTime = new Date(
+      `${form.value.startDate} ${form.value.startTime}`,
+    )
+    const endDateTime =
+      form.value.serviceType === 'hourly'
+        ? new Date(`${form.value.startDate} ${form.value.endTime}`)
+        : new Date(`${form.value.endDate || form.value.startDate} 20:00`)
+    const totalHours =
+      Math.abs(endDateTime.getTime() - startDateTime.getTime()) /
+      (1000 * 60 * 60)
+
     const bookingData = {
-      caregiver_id: parseInt(caregiver.value.id.replace('caregiver-', '')),
+      caregiver_id: caregiver.value.id,
       user_id: 'user-001', // 暫時使用固定用戶ID
-      service_type: form.value.serviceType,
-      start_date: form.value.startDate,
-      end_date: form.value.endDate,
+      service_date: form.value.startDate,
       start_time: form.value.startTime,
-      end_time: form.value.endTime,
-      special_requests: form.value.specialRequests,
-      total_cost: estimatedCost.value,
+      end_time: form.value.endTime || '20:00',
+      total_hours: totalHours,
+      hourly_rate: caregiver.value.hourly_rate || 500,
+      total_amount: estimatedCost.value,
       status: 'pending' as const,
-      patient_info: {
-        ...form.value.patientInfo,
-        medicalConditions: medicalConditionsText.value
-          .split('\n')
-          .filter((condition) => condition.trim()),
-      },
+      notes: form.value.specialRequests,
     }
 
     const newBooking = await bookingStore.createBooking(bookingData)

@@ -3,48 +3,50 @@ import { getD1 } from '../../utils/d1'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
+  /* eslint-disable camelcase */
   const { user_id, booking_id, status, page = 1, limit = 20 } = query
 
   try {
     const db = getD1(event)
-    
+
     // 建立查詢條件
     const conditions = []
     const params = []
-    
+
     if (user_id) {
       conditions.push('p.user_id = ?')
       params.push(user_id)
     }
-    
+
     if (booking_id) {
       conditions.push('p.booking_id = ?')
       params.push(booking_id)
     }
-    
+    /* eslint-enable camelcase */
+
     if (status) {
       conditions.push('p.status = ?')
       params.push(status)
     }
-    
-    const whereClause = conditions.length > 0 
-      ? `WHERE ${conditions.join(' AND ')}` 
-      : ''
-    
+
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
+
     // 計算分頁
     const offset = (Number(page) - 1) * Number(limit)
-    
+
     // 查詢總數
     const countQuery = `
       SELECT COUNT(*) as total 
       FROM payments p
       ${whereClause}
     `
-    const countStmt = params.length > 0
-      ? db.prepare(countQuery).bind(...params)
-      : db.prepare(countQuery)
-    const countResult = await countStmt.first() as { total: number }
-    
+    const countStmt =
+      params.length > 0
+        ? db.prepare(countQuery).bind(...params)
+        : db.prepare(countQuery)
+    const countResult = (await countStmt.first()) as { total: number }
+
     // 查詢付款記錄
     const listQuery = `
       SELECT 
@@ -65,14 +67,16 @@ export default defineEventHandler(async (event) => {
       ORDER BY p.created_at DESC
       LIMIT ? OFFSET ?
     `
-    
+
     const listParams = [...params, Number(limit), offset]
     const listStmt = db.prepare(listQuery).bind(...listParams)
     const results = await listStmt.all()
-    
+
     // 計算統計資料
     let stats = null
+    /* eslint-disable camelcase */
     if (user_id) {
+      /* eslint-enable camelcase */
       const statsQuery = `
         SELECT 
           COUNT(*) as total_payments,
@@ -86,7 +90,7 @@ export default defineEventHandler(async (event) => {
       `
       stats = await db.prepare(statsQuery).bind(user_id).first()
     }
-    
+
     return {
       success: true,
       data: {
@@ -95,7 +99,7 @@ export default defineEventHandler(async (event) => {
         page: Number(page),
         limit: Number(limit),
         totalPages: Math.ceil((countResult?.total || 0) / Number(limit)),
-        stats: stats,
+        stats,
       },
     }
   } catch (error: any) {

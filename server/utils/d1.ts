@@ -2,19 +2,33 @@
 import type { D1Database } from '@cloudflare/workers-types'
 import type { H3Event } from 'h3'
 
+// D1 Result 介面（如果 @cloudflare/workers-types 沒有提供）
+interface D1Result {
+  success: boolean
+  meta: {
+    duration: number
+    changes: number
+    last_row_id: number | string
+    rows_read: number
+    rows_written: number
+  }
+}
+
 // 獲取 D1 資料庫實例
 export function getD1(event: H3Event): D1Database {
   // 在 Cloudflare Workers 環境中，DB 會自動注入到 context
   const db = event.context.cloudflare?.env?.DB
-  
+
   if (!db) {
     // 開發環境使用 mock 或拋出錯誤
     if (process.dev) {
-      throw new Error('D1 database not configured for development. Please use wrangler dev.')
+      throw new Error(
+        'D1 database not configured for development. Please use wrangler dev.',
+      )
     }
     throw new Error('D1 database not available')
   }
-  
+
   return db as D1Database
 }
 
@@ -22,7 +36,7 @@ export function getD1(event: H3Event): D1Database {
 export async function query<T = any>(
   event: H3Event,
   sql: string,
-  params?: any[]
+  params?: any[],
 ): Promise<T[]> {
   const db = getD1(event)
   const stmt = params ? db.prepare(sql).bind(...params) : db.prepare(sql)
@@ -34,7 +48,7 @@ export async function query<T = any>(
 export async function queryFirst<T = any>(
   event: H3Event,
   sql: string,
-  params?: any[]
+  params?: any[],
 ): Promise<T | null> {
   const db = getD1(event)
   const stmt = params ? db.prepare(sql).bind(...params) : db.prepare(sql)
@@ -46,7 +60,7 @@ export async function queryFirst<T = any>(
 export async function execute(
   event: H3Event,
   sql: string,
-  params?: any[]
+  params?: any[],
 ): Promise<D1Result> {
   const db = getD1(event)
   const stmt = params ? db.prepare(sql).bind(...params) : db.prepare(sql)
@@ -56,11 +70,11 @@ export async function execute(
 // 批次執行多個語句
 export async function batch(
   event: H3Event,
-  statements: Array<{ sql: string; params?: any[] }>
+  statements: Array<{ sql: string; params?: any[] }>,
 ): Promise<D1Result[]> {
   const db = getD1(event)
   const batch = statements.map(({ sql, params }) =>
-    params ? db.prepare(sql).bind(...params) : db.prepare(sql)
+    params ? db.prepare(sql).bind(...params) : db.prepare(sql),
   )
   return await db.batch(batch)
 }
@@ -68,10 +82,10 @@ export async function batch(
 // 交易處理
 export async function transaction<T>(
   event: H3Event,
-  callback: (db: D1Database) => Promise<T>
+  callback: (db: D1Database) => Promise<T>,
 ): Promise<T> {
   const db = getD1(event)
-  
+
   try {
     await execute(event, 'BEGIN TRANSACTION')
     const result = await callback(db)
@@ -106,28 +120,28 @@ export async function paginate<T = any>(
   baseQuery: string,
   countQuery: string,
   options: PaginationOptions = {},
-  params?: any[]
+  params?: any[],
 ): Promise<PaginatedResult<T>> {
   const page = Math.max(1, options.page || 1)
   const limit = Math.min(100, Math.max(1, options.limit || 20))
   const offset = (page - 1) * limit
-  
+
   // 構建查詢
-  let query = baseQuery
+  let queryString = baseQuery
   if (options.orderBy) {
-    query += ` ORDER BY ${options.orderBy} ${options.orderDir || 'ASC'}`
+    queryString += ` ORDER BY ${options.orderBy} ${options.orderDir || 'ASC'}`
   }
-  query += ` LIMIT ? OFFSET ?`
-  
+  queryString += ` LIMIT ? OFFSET ?`
+
   // 執行查詢
   const [data, countResult] = await Promise.all([
-    query<T>(event, query, [...(params || []), limit, offset]),
-    queryFirst<{ count: number }>(event, countQuery, params)
+    query<T>(event, queryString, [...(params || []), limit, offset]),
+    queryFirst<{ count: number }>(event, countQuery, params),
   ])
-  
+
   const total = countResult?.count || 0
   const totalPages = Math.ceil(total / limit)
-  
+
   return {
     data,
     total,
@@ -135,7 +149,7 @@ export async function paginate<T = any>(
     limit,
     totalPages,
     hasNext: page < totalPages,
-    hasPrev: page > 1
+    hasPrev: page > 1,
   }
 }
 
@@ -149,7 +163,10 @@ export function generateId(): string {
 }
 
 // SQL 注入防護：驗證排序欄位
-export function validateOrderBy(field: string, allowedFields: string[]): string {
+export function validateOrderBy(
+  field: string,
+  allowedFields: string[],
+): string {
   if (!allowedFields.includes(field)) {
     throw new Error(`Invalid order by field: ${field}`)
   }
@@ -170,10 +187,10 @@ export function buildWhereClause(conditions: WhereCondition[]): {
   if (!conditions.length) {
     return { clause: '', params: [] }
   }
-  
+
   const clauses: string[] = []
   const params: any[] = []
-  
+
   for (const condition of conditions) {
     if (condition.operator === 'IN' || condition.operator === 'NOT IN') {
       const placeholders = Array(condition.value.length).fill('?').join(',')
@@ -184,21 +201,9 @@ export function buildWhereClause(conditions: WhereCondition[]): {
       params.push(condition.value)
     }
   }
-  
+
   return {
     clause: 'WHERE ' + clauses.join(' AND '),
-    params
-  }
-}
-
-// D1 Result 介面（如果 @cloudflare/workers-types 沒有提供）
-interface D1Result {
-  success: boolean
-  meta: {
-    duration: number
-    changes: number
-    last_row_id: number | string
-    rows_read: number
-    rows_written: number
+    params,
   }
 }

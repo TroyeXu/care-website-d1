@@ -1,5 +1,5 @@
 // 統一的使用者角色定義
-export type UserRole = 'user' | 'caregiver' | 'admin'
+export type UserRole = 'user' | 'caregiver' | 'admin' | 'patient'
 
 // 統一的使用者型別
 export interface User {
@@ -62,6 +62,17 @@ export interface Caregiver {
   }>
   status: string
   created_at: string
+  updated_at?: string
+  // 舊版相容屬性
+  description?: string // bio 的別名
+  skills?: string[] | string // specialties 的簡化版
+  languages?: string[] // 語言能力
+  availability?: {
+    weekday?: boolean
+    weekend?: boolean
+    overnight?: boolean
+  }
+  reviews_count?: number // total_reviews 的別名
 }
 
 // 預約型別
@@ -81,6 +92,21 @@ export interface Booking {
   updated_at: string
   caregiver?: Caregiver
   user?: User
+  // 舊版相容屬性
+  service_type?: string
+  start_date?: string // service_date 的別名
+  end_date?: string // 結束日期
+  special_requests?: string // notes 的別名
+  patient_info?: {
+    name?: string
+    age?: number
+    gender?: string
+    condition?: string
+    special_needs?: string
+    emergencyContact?: string
+    medicalConditions?: string[]
+  }
+  total_cost?: number // total_amount 的別名
 }
 
 // 評價型別
@@ -92,6 +118,9 @@ export interface Review {
   rating: number
   comment: string
   created_at: string
+  // 擴展屬性
+  user_name?: string
+  patient_id?: string
 }
 
 // 付款型別

@@ -6,9 +6,11 @@ export default defineEventHandler(async (event) => {
 
   try {
     const db = getD1(event)
-    
+
     // 查詢看護基本資料（包含使用者資料）
-    const caregiver = await db.prepare(`
+    const caregiver = await db
+      .prepare(
+        `
       SELECT 
         c.*,
         u.name,
@@ -23,7 +25,10 @@ export default defineEventHandler(async (event) => {
       FROM caregivers c
       LEFT JOIN users u ON c.user_id = u.id
       WHERE c.id = ?
-    `).bind(caregiverId).first()
+    `,
+      )
+      .bind(caregiverId)
+      .first()
 
     if (!caregiver) {
       throw createError({
@@ -33,29 +38,46 @@ export default defineEventHandler(async (event) => {
     }
 
     // 查詢證照
-    const certificationsResult = await db.prepare(`
+    const certificationsResult = await db
+      .prepare(
+        `
       SELECT name, issuer, issue_date, expiry_date, verified 
       FROM certifications 
       WHERE caregiver_id = ?
       ORDER BY issue_date DESC
-    `).bind(caregiverId).all()
+    `,
+      )
+      .bind(caregiverId)
+      .all()
 
     // 查詢專長
-    const specialtiesResult = await db.prepare(`
+    const specialtiesResult = await db
+      .prepare(
+        `
       SELECT name, category, years_experience 
       FROM specialties 
       WHERE caregiver_id = ?
-    `).bind(caregiverId).all()
+    `,
+      )
+      .bind(caregiverId)
+      .all()
 
     // 查詢服務區域
-    const serviceAreasResult = await db.prepare(`
+    const serviceAreasResult = await db
+      .prepare(
+        `
       SELECT city, district, coverage_type 
       FROM service_areas 
       WHERE caregiver_id = ?
-    `).bind(caregiverId).all()
+    `,
+      )
+      .bind(caregiverId)
+      .all()
 
     // 查詢評價統計
-    const reviewStats = await db.prepare(`
+    const reviewStats = await db
+      .prepare(
+        `
       SELECT 
         COUNT(*) as total_reviews,
         AVG(rating) as average_rating,
@@ -66,10 +88,15 @@ export default defineEventHandler(async (event) => {
         SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as one_star
       FROM reviews 
       WHERE caregiver_id = ?
-    `).bind(caregiverId).first()
+    `,
+      )
+      .bind(caregiverId)
+      .first()
 
     // 查詢最近的評價
-    const recentReviews = await db.prepare(`
+    const recentReviews = await db
+      .prepare(
+        `
       SELECT 
         r.*,
         u.name as reviewer_name,
@@ -79,10 +106,15 @@ export default defineEventHandler(async (event) => {
       WHERE r.caregiver_id = ?
       ORDER BY r.created_at DESC
       LIMIT 5
-    `).bind(caregiverId).all()
+    `,
+      )
+      .bind(caregiverId)
+      .all()
 
     // 查詢服務統計
-    const serviceStats = await db.prepare(`
+    const serviceStats = await db
+      .prepare(
+        `
       SELECT 
         COUNT(*) as total_bookings,
         SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_bookings,
@@ -90,7 +122,10 @@ export default defineEventHandler(async (event) => {
         AVG(service_hours) as avg_service_hours
       FROM bookings 
       WHERE caregiver_id = ?
-    `).bind(caregiverId).first()
+    `,
+      )
+      .bind(caregiverId)
+      .first()
 
     // 整理回傳格式
     return {
@@ -105,14 +140,14 @@ export default defineEventHandler(async (event) => {
       address: caregiver.address,
       emergency_contact: caregiver.emergency_contact,
       emergency_phone: caregiver.emergency_phone,
-      
+
       // 看護專業資訊
       hourly_rate: caregiver.hourly_rate,
       experience_years: caregiver.experience_years,
       bio: caregiver.bio,
       background_checked: caregiver.background_checked,
       drug_test_passed: caregiver.drug_test_passed,
-      
+
       // 狀態資訊
       status: caregiver.status,
       rating: caregiver.rating || reviewStats?.average_rating || 0,
@@ -121,12 +156,12 @@ export default defineEventHandler(async (event) => {
       acceptance_rate: caregiver.acceptance_rate,
       completion_rate: caregiver.completion_rate,
       on_time_rate: caregiver.on_time_rate,
-      
+
       // 關聯資料
       certifications: certificationsResult.results || [],
       specialties: specialtiesResult.results || [],
       service_areas: serviceAreasResult.results || [],
-      
+
       // 評價資訊
       review_stats: {
         total: reviewStats?.total_reviews || 0,
@@ -136,21 +171,21 @@ export default defineEventHandler(async (event) => {
           4: reviewStats?.four_star || 0,
           3: reviewStats?.three_star || 0,
           2: reviewStats?.two_star || 0,
-          1: reviewStats?.one_star || 0
-        }
+          1: reviewStats?.one_star || 0,
+        },
       },
       recent_reviews: recentReviews.results || [],
-      
+
       // 服務統計
       service_stats: {
         total_bookings: serviceStats?.total_bookings || 0,
         completed_bookings: serviceStats?.completed_bookings || 0,
         cancelled_bookings: serviceStats?.cancelled_bookings || 0,
-        avg_service_hours: serviceStats?.avg_service_hours || 0
+        avg_service_hours: serviceStats?.avg_service_hours || 0,
       },
-      
+
       created_at: caregiver.created_at,
-      updated_at: caregiver.updated_at
+      updated_at: caregiver.updated_at,
     }
   } catch (error: any) {
     if (error.statusCode === 404) {

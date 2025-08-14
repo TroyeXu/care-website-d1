@@ -4,7 +4,7 @@
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">預約看護服務</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn v-close-popup icon="close" flat round dense />
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -65,7 +65,7 @@
           v-model="form.patientName"
           filled
           label="病患姓名"
-          :rules="[val => !!val || '請輸入病患姓名']"
+          :rules="[(val) => !!val || '請輸入病患姓名']"
         />
 
         <div class="row q-gutter-sm">
@@ -92,7 +92,7 @@
           filled
           label="緊急聯絡人電話"
           mask="####-###-###"
-          :rules="[val => !!val || '請輸入緊急聯絡人電話']"
+          :rules="[(val) => !!val || '請輸入緊急聯絡人電話']"
         />
 
         <!-- 特殊需求 -->
@@ -115,7 +115,7 @@
       </q-card-section>
 
       <q-card-actions align="right" class="q-px-md q-pb-md">
-        <q-btn flat label="取消" color="grey" v-close-popup />
+        <q-btn v-close-popup flat label="取消" color="grey" />
         <q-btn
           unelevated
           label="確認預約"
@@ -141,7 +141,8 @@ const props = defineProps<{
 
 defineEmits([...useDialogPluginComponent.emits])
 
-const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
+const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
+  useDialogPluginComponent()
 
 const bookingStore = useBookingStore()
 const submitting = ref(false)
@@ -175,12 +176,19 @@ const minDate = computed(() => {
 // 預估費用
 const estimatedCost = computed(() => {
   if (!form.value.startDate) return 0
-  
+
   const startDate = new Date(form.value.startDate)
   const endDate = new Date(form.value.endDate || form.value.startDate)
-  const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1
-  
-  if (form.value.serviceType === 'hourly' && form.value.startTime && form.value.endTime) {
+  const days =
+    Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+    ) + 1
+
+  if (
+    form.value.serviceType === 'hourly' &&
+    form.value.startTime &&
+    form.value.endTime
+  ) {
     const startTime = new Date(`2000-01-01T${form.value.startTime}`)
     const endTime = new Date(`2000-01-01T${form.value.endTime}`)
     let hours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60)
@@ -189,41 +197,53 @@ const estimatedCost = computed(() => {
   } else if (form.value.serviceType === 'shift') {
     return props.hourlyRate * 12 * days // 12小時班
   }
-  
+
   return 0
 })
 
 // 提交預約
 const submitBooking = async () => {
   // 驗證必填欄位
-  if (!form.value.startDate || !form.value.startTime || !form.value.patientName || 
-      !form.value.patientAge || !form.value.patientGender || !form.value.emergencyContact) {
+  if (
+    !form.value.startDate ||
+    !form.value.startTime ||
+    !form.value.patientName ||
+    !form.value.patientAge ||
+    !form.value.patientGender ||
+    !form.value.emergencyContact
+  ) {
     return
   }
 
   submitting.value = true
-  
+
   try {
+    // 計算總時數
+    const startDateTime = new Date(
+      `${form.value.startDate} ${form.value.startTime}`,
+    )
+    const endDateTime =
+      form.value.serviceType === 'hourly'
+        ? new Date(`${form.value.startDate} ${form.value.endTime}`)
+        : new Date(`${form.value.endDate || form.value.startDate} 20:00`) // 班制假設到晚上8點
+    const totalHours =
+      Math.abs(endDateTime.getTime() - startDateTime.getTime()) /
+      (1000 * 60 * 60)
+
     const bookingData = {
-      caregiver_id: parseInt(props.caregiverId.replace('caregiver-', '')),
+      caregiver_id: props.caregiverId,
       user_id: 'user-001', // 暫時使用固定用戶ID
-      service_type: form.value.serviceType as 'hourly' | 'shift',
-      start_date: form.value.startDate,
-      end_date: form.value.endDate || form.value.startDate,
+      service_date: form.value.startDate,
       start_time: form.value.startTime,
-      end_time: form.value.serviceType === 'hourly' ? form.value.endTime : undefined,
-      special_requests: form.value.specialRequests,
-      total_cost: estimatedCost.value,
+      end_time:
+        form.value.serviceType === 'hourly' ? form.value.endTime : '20:00',
+      total_hours: totalHours,
+      hourly_rate: props.hourlyRate || 500, // 使用傳入的時薪或預設值
+      total_amount: estimatedCost.value,
       status: 'pending' as const,
-      patient_info: {
-        name: form.value.patientName,
-        age: form.value.patientAge,
-        gender: form.value.patientGender,
-        medicalConditions: [],
-        emergencyContact: form.value.emergencyContact,
-      },
+      notes: form.value.specialRequests,
     }
-    
+
     const newBooking = await bookingStore.createBooking(bookingData)
     if (newBooking && typeof newBooking === 'object' && 'id' in newBooking) {
       onDialogOK((newBooking as any).id)

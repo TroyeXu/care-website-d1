@@ -1,12 +1,5 @@
 import { computed, type Ref } from 'vue'
-
-interface CareItem {
-  code: string
-  name: string
-  price: number
-  category: string
-  subCategory: string
-}
+import type { CareItem } from '../types/care'
 
 interface ActiveFilters {
   price: number

@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { ref, computed } from 'vue'
 import type { CaregiverFilter } from '~/stores/caregivers'
 
@@ -79,7 +80,7 @@ export const useApiService = () => {
       isLoading.value = true
       const response = await $fetch('/api/auth/login', {
         method: 'POST',
-        body: { email, password }
+        body: { email, password },
       })
       return response
     } catch (err) {
@@ -96,7 +97,7 @@ export const useApiService = () => {
       isLoading.value = true
       const response = await $fetch('/api/auth/register', {
         method: 'POST',
-        body: userData
+        body: userData,
       })
       return response
     } catch (err) {
@@ -110,7 +111,7 @@ export const useApiService = () => {
     try {
       isLoading.value = true
       await $fetch('/api/auth/logout', {
-        method: 'POST'
+        method: 'POST',
       })
       return { success: true }
     } catch (err) {
@@ -145,7 +146,7 @@ export const useApiService = () => {
       isLoading.value = true
       const response = await $fetch(`/api/users/${userId}`, {
         method: 'PUT',
-        body: profileData
+        body: profileData,
       })
       return response
     } catch (err) {
@@ -163,13 +164,13 @@ export const useApiService = () => {
     try {
       isLoading.value = true
       const response = await $fetch('/api/caregivers', {
-        query: { page, limit }
+        query: { page, limit },
       })
       return {
         data: response.caregivers,
         total: response.total,
         page: response.page,
-        totalPages: response.totalPages
+        totalPages: response.totalPages,
       }
     } catch (err) {
       handleError(err)
@@ -183,10 +184,10 @@ export const useApiService = () => {
       isLoading.value = true
       // 使用篩選 API 進行搜尋
       const response = await $fetch('/api/caregivers', {
-        query: { 
+        query: {
           specialty: query,
-          limit: 50 
-        }
+          limit: 50,
+        },
       })
       return response.caregivers
     } catch (err) {
@@ -222,8 +223,8 @@ export const useApiService = () => {
           gender: filters.gender,
           sortBy: filters.sortBy,
           page: filters.page || 1,
-          limit: filters.limit || 20
-        }
+          limit: filters.limit || 20,
+        },
       })
       return response.caregivers
     } catch (err) {
@@ -237,11 +238,11 @@ export const useApiService = () => {
     try {
       isLoading.value = true
       const response = await $fetch('/api/caregivers', {
-        query: { 
-          page: 1, 
+        query: {
+          page: 1,
           limit: 6,
-          sortBy: 'rating'
-        }
+          sortBy: 'rating',
+        },
       })
       return response.caregivers.slice(0, 6)
     } catch (err) {
@@ -255,12 +256,12 @@ export const useApiService = () => {
     try {
       isLoading.value = true
       const response = await $fetch('/api/caregivers', {
-        query: { 
-          page: 1, 
+        query: {
+          page: 1,
           limit: 5,
           sortBy: 'rating',
-          minRating: 4.5
-        }
+          minRating: 4.5,
+        },
       })
       return response.caregivers.slice(0, 5)
     } catch (err) {
@@ -281,7 +282,7 @@ export const useApiService = () => {
       isLoading.value = true
       const response = await $fetch('/api/bookings', {
         method: 'POST',
-        body: bookingData
+        body: bookingData,
       })
       return response
     } catch (err) {
@@ -295,7 +296,7 @@ export const useApiService = () => {
     try {
       isLoading.value = true
       const response = await $fetch('/api/bookings', {
-        query: { userId }
+        query: { userId },
       })
       return response.bookings
     } catch (err) {
@@ -323,7 +324,7 @@ export const useApiService = () => {
       // 目前 API 還沒實作，先使用假資料
       return {
         success: true,
-        booking: { id: bookingId, status }
+        booking: { id: bookingId, status },
       }
     } catch (err) {
       handleError(err)
@@ -355,8 +356,8 @@ export const useApiService = () => {
         payment: {
           id: `pay-${Date.now()}`,
           ...paymentData,
-          status: 'completed'
-        }
+          status: 'completed',
+        },
       }
     } catch (err) {
       handleError(err)
@@ -396,8 +397,8 @@ export const useApiService = () => {
         review: {
           id: `rev-${Date.now()}`,
           ...reviewData,
-          created_at: new Date().toISOString()
-        }
+          created_at: new Date().toISOString(),
+        },
       }
     } catch (err) {
       handleError(err)
@@ -434,14 +435,14 @@ export const useApiService = () => {
         totalBookings: 0,
         activeBookings: 0,
         completedBookings: 0,
-        totalSpent: 0
+        totalSpent: 0,
       }
     } catch (err) {
       return {
         totalBookings: 0,
         activeBookings: 0,
         completedBookings: 0,
-        totalSpent: 0
+        totalSpent: 0,
       }
     } finally {
       isLoading.value = false
@@ -486,8 +487,8 @@ export const useApiService = () => {
           experienceYears: criteria.experienceYears,
           gender: criteria.gender,
           sortBy: 'rating',
-          limit: 10
-        }
+          limit: 10,
+        },
       })
       return response.caregivers
     } catch (err) {
@@ -502,12 +503,12 @@ export const useApiService = () => {
       isLoading.value = true
       // 獲取推薦的看護師（高評分）
       const response = await $fetch('/api/caregivers', {
-        query: { 
-          page: 1, 
+        query: {
+          page: 1,
           limit: 3,
           sortBy: 'rating',
-          minRating: 4.0
-        }
+          minRating: 4.0,
+        },
       })
       return response.caregivers
     } catch (err) {

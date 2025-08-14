@@ -1,16 +1,7 @@
 import { watch } from 'vue'
 import { gsap } from 'gsap'
 import type { Ref } from 'vue'
-
-interface CareItem {
-  code: string
-  name: string
-  price: number
-  category: string
-  color?: string
-  icon?: string
-  selectedByDefault?: boolean
-}
+import type { CareItem } from '../types/care'
 
 interface State {
   careItems: Ref<CareItem[]>

@@ -1,17 +1,4 @@
-import { defineStore } from 'pinia'
-
-export interface User {
-  id: string
-  email: string
-  name: string
-  phone?: string
-  role: 'user' | 'caregiver' | 'admin'
-  avatar_url?: string
-  email_verified: boolean
-  phone_verified: boolean
-  created_at: string
-  updated_at: string
-}
+import type { User } from '../../shared/types'
 
 export interface AuthState {
   currentUser: User | null
@@ -53,10 +40,12 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     userRole: (state) => state.currentUser?.role,
-    isPatient: (state) => state.currentUser?.role === 'patient',
+    isPatient: (state) =>
+      state.currentUser?.role === 'patient' ||
+      state.currentUser?.role === 'user',
     isCaregiver: (state) => state.currentUser?.role === 'caregiver',
     isAdmin: (state) => state.currentUser?.role === 'admin',
-    userProfile: (state) => state.currentUser?.profile,
+    userProfile: (state) => (state.currentUser as any)?.profile,
     userName: (state) => state.currentUser?.name,
     userEmail: (state) => state.currentUser?.email,
 
@@ -68,7 +57,6 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-
     async login(credentials: LoginCredentials) {
       this.loading = true
       this.error = null
@@ -77,17 +65,17 @@ export const useAuthStore = defineStore('auth', {
         // 呼叫登入 API
         const response = await $fetch('/api/auth/login', {
           method: 'POST',
-          body: credentials
+          body: credentials,
         })
 
-        if (response && response.user) {
-          this.currentUser = response.user
+        if (response && response.data?.user) {
+          this.currentUser = response.data.user
           this.isAuthenticated = true
-          
+
           // 儲存 token 到 cookie 或 localStorage
-          if (response.token) {
+          if (response.data.token) {
             const cookie = useCookie('auth-token')
-            cookie.value = response.token
+            cookie.value = response.data.token
           }
         } else {
           throw new Error('登入失敗')
@@ -109,20 +97,20 @@ export const useAuthStore = defineStore('auth', {
         // 呼叫註冊 API
         const response = await $fetch('/api/auth/register', {
           method: 'POST',
-          body: userData
+          body: userData,
         })
 
-        if (response && response.user) {
-          this.currentUser = response.user
+        if (response && response.data?.user) {
+          this.currentUser = response.data.user
           this.isAuthenticated = true
-          
+
           // 儲存 token
-          if (response.token) {
+          if (response.data.token) {
             const cookie = useCookie('auth-token')
-            cookie.value = response.token
+            cookie.value = response.data.token
           }
-          
-          return response.user
+
+          return response.data.user
         } else {
           throw new Error('註冊失敗')
         }
@@ -141,14 +129,14 @@ export const useAuthStore = defineStore('auth', {
       try {
         // 呼叫登出 API
         await $fetch('/api/auth/logout', {
-          method: 'POST'
+          method: 'POST',
         })
-        
+
         // 清除本地狀態
         this.currentUser = null
         this.isAuthenticated = false
         this.error = null
-        
+
         // 清除 token
         const cookie = useCookie('auth-token')
         cookie.value = null
@@ -159,15 +147,15 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async updateProfile(updates: Partial<User['profile']>) {
+    updateProfile(updates: Partial<any>) {
       if (!this.currentUser) {
         throw new Error('用戶未登入')
       }
 
       try {
         // 直接更新本地資料
-        this.currentUser.profile = {
-          ...this.currentUser.profile,
+        ;(this.currentUser as any).profile = {
+          ...(this.currentUser as any).profile,
           ...updates,
         }
         this.currentUser.updated_at = new Date().toISOString()
@@ -187,7 +175,7 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async resetPassword(email: string) {
+    resetPassword(email: string) {
       this.loading = true
       this.error = null
 
@@ -214,7 +202,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         // 呼叫 API 檢查認證狀態
         const response = await $fetch('/api/auth/me')
-        
+
         if (response && response.user) {
           this.currentUser = response.user
           this.isAuthenticated = true
@@ -235,7 +223,7 @@ export const useAuthStore = defineStore('auth', {
 
     switchRole(newRole: 'patient' | 'caregiver') {
       if (this.currentUser) {
-        this.currentUser.role = newRole
+        this.currentUser.role = newRole as any
         this.currentUser.updated_at = new Date().toISOString()
 
         const userIndex = this.users.findIndex(

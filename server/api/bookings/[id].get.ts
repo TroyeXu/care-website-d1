@@ -3,12 +3,14 @@ import { getD1 } from '../../utils/d1'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
-  
+
   try {
     const db = getD1(event)
-    
+
     // 查詢預約資料，包含相關的使用者和看護資訊
-    const booking = await db.prepare(`
+    const booking = await db
+      .prepare(
+        `
       SELECT 
         b.*,
         u.name as user_name,
@@ -23,7 +25,10 @@ export default defineEventHandler(async (event) => {
       LEFT JOIN caregivers c ON b.caregiver_id = c.id
       LEFT JOIN users cu ON c.user_id = cu.id
       WHERE b.id = ?
-    `).bind(id).first()
+    `,
+      )
+      .bind(id)
+      .first()
 
     if (!booking) {
       throw createError({
@@ -54,19 +59,19 @@ export default defineEventHandler(async (event) => {
       user: {
         name: booking.user_name,
         email: booking.user_email,
-        phone: booking.user_phone
+        phone: booking.user_phone,
       },
       caregiver: {
         id: booking.caregiver_id,
         name: booking.caregiver_name,
         email: booking.caregiver_email,
-        phone: booking.caregiver_phone
-      }
+        phone: booking.caregiver_phone,
+      },
     }
   } catch (error: any) {
     throw createError({
       statusCode: 500,
-      statusMessage: `無法取得預約資料: ${error.message}`
+      statusMessage: `無法取得預約資料: ${error.message}`,
     })
   }
 })

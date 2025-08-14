@@ -92,7 +92,7 @@
                       <div class="form-field">
                         <Field v-slot="{ field, errorMessage }" name="name">
                           <q-input
-                            v-bind="fieldProps(field)"
+                            v-bind="fieldProps(field as any)"
                             label="姓名"
                             outlined
                             :error="!!errorMessage"
@@ -109,7 +109,7 @@
                       <div class="form-field">
                         <Field v-slot="{ field, errorMessage }" name="email">
                           <q-input
-                            v-bind="fieldProps(field)"
+                            v-bind="fieldProps(field as any)"
                             label="電子郵件"
                             type="email"
                             outlined
@@ -130,7 +130,7 @@
                       <div class="form-field">
                         <Field v-slot="{ field, errorMessage }" name="phone">
                           <q-input
-                            v-bind="fieldProps(field)"
+                            v-bind="fieldProps(field as any)"
                             label="電話號碼"
                             outlined
                             :error="!!errorMessage"
@@ -147,7 +147,7 @@
                       <div class="form-field">
                         <Field v-slot="{ field, errorMessage }" name="subject">
                           <q-select
-                            v-bind="fieldProps(field)"
+                            v-bind="fieldProps(field as any)"
                             label="聯絡主題"
                             :options="subjectOptions"
                             outlined
@@ -169,7 +169,7 @@
                       <div class="form-field">
                         <Field v-slot="{ field, errorMessage }" name="message">
                           <q-input
-                            v-bind="fieldProps(field)"
+                            v-bind="fieldProps(field as any)"
                             label="詳細訊息"
                             type="textarea"
                             outlined
@@ -250,7 +250,6 @@
             </q-card>
           </div>
         </div>
-
       </div>
     </div>
   </q-page>
@@ -340,7 +339,7 @@ const handleSubmit = async (values: ContactFormValues) => {
   } catch (error: unknown) {
     console.error('送出聯絡表單失敗:', error)
 
-    submitError.value = error.message || '送出失敗，請稍後再試'
+    submitError.value = (error as any)?.message || '送出失敗，請稍後再試'
 
     $q.notify({
       type: 'negative',
@@ -661,7 +660,6 @@ useHead({
 .submit-btn:active {
   transform: translateY(0) !important;
 }
-
 
 /* 動畫 */
 @keyframes fadeInUp {

@@ -36,19 +36,19 @@ export default defineEventHandler(async (event) => {
       password,
       name,
       phone,
-      role: role || 'user'
+      role: role || 'user',
     })
-    
+
     return {
       success: true,
-      data: result
+      data: result,
     }
   } catch (error: any) {
     // 如果是已知錯誤，直接拋出
     if (error.statusCode) {
       throw error
     }
-    
+
     // 未知錯誤
     console.error('Registration error:', error)
     throw createError({

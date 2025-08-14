@@ -67,17 +67,25 @@
           >
             <template #header>
               <q-item-section avatar>
-                <q-icon :name="getCategoryIcon(item.category)" color="primary" />
+                <q-icon
+                  :name="getCategoryIcon(item.category)"
+                  color="primary"
+                />
               </q-item-section>
               <q-item-section>
                 <div class="faq-question">{{ item.question }}</div>
-                <div class="faq-category-label">{{ getCategoryLabel(item.category) }}</div>
+                <div class="faq-category-label">
+                  {{ getCategoryLabel(item.category) }}
+                </div>
               </q-item-section>
             </template>
             <q-card>
               <q-card-section class="faq-answer">
                 <div v-html="item.answer"></div>
-                <div v-if="item.links && item.links.length > 0" class="related-links">
+                <div
+                  v-if="item.links && item.links.length > 0"
+                  class="related-links"
+                >
                   <div class="links-title">相關連結：</div>
                   <div class="links-list">
                     <q-btn
@@ -88,7 +96,7 @@
                       no-caps
                       color="primary"
                       :label="link.text"
-                      @click="$router.push(link.url)"
+                      @click="() => router.push(link.url)"
                     />
                   </div>
                 </div>
@@ -101,11 +109,7 @@
             <q-icon name="search_off" size="64px" color="grey-5" />
             <h3>找不到相關問題</h3>
             <p>請嘗試使用其他關鍵字搜尋，或瀏覽不同的分類</p>
-            <q-btn
-              color="primary"
-              label="清除搜尋"
-              @click="clearSearch"
-            />
+            <q-btn color="primary" label="清除搜尋" @click="clearSearch" />
           </div>
         </div>
 
@@ -119,14 +123,16 @@
                 </div>
                 <div class="support-text">
                   <h3>還有其他問題嗎？</h3>
-                  <p>如果您在常見問題中找不到答案，歡迎直接聯繫我們的客服團隊</p>
+                  <p>
+                    如果您在常見問題中找不到答案，歡迎直接聯繫我們的客服團隊
+                  </p>
                 </div>
                 <div class="support-actions">
                   <q-btn
                     color="primary"
                     label="聯繫客服"
                     icon="contact_support"
-                    @click="$router.push('/support/contact')"
+                    @click="() => router.push('/support/contact')"
                   />
                 </div>
               </div>
@@ -140,6 +146,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // 響應式資料
 const searchQuery = ref('')
@@ -161,8 +170,8 @@ const faqData = [
       </ul>`,
     links: [
       { text: '查看服務詳情', url: '/info/services' },
-      { text: '瀏覽看護師', url: '/caregivers' }
-    ]
+      { text: '瀏覽看護師', url: '/caregivers' },
+    ],
   },
   {
     category: 'service',
@@ -175,7 +184,7 @@ const faqData = [
         <li>至少一年以上的實務經驗</li>
       </ul>
       我們會定期審核看護師的資格，確保服務品質。`,
-    links: []
+    links: [],
   },
   {
     category: 'service',
@@ -188,9 +197,7 @@ const faqData = [
         <li><strong>24小時看護</strong>：全天候照護服務</li>
       </ul>
       您可以根據實際需求選擇合適的服務時段。`,
-    links: [
-      { text: '費用計算器', url: '/booking/calculator' }
-    ]
+    links: [{ text: '費用計算器', url: '/booking/calculator' }],
   },
 
   // 預約相關
@@ -205,9 +212,7 @@ const faqData = [
         <li>等待看護師確認</li>
         <li>預約成功後，按時享受服務</li>
       </ol>`,
-    links: [
-      { text: '立即預約', url: '/caregivers' }
-    ]
+    links: [{ text: '立即預約', url: '/caregivers' }],
   },
   {
     category: 'booking',
@@ -218,7 +223,7 @@ const faqData = [
         <li>緊急需求：部分看護師提供即時服務，最快2小時內可到達</li>
         <li>長期照護：建議提前3-7天預約，以便安排最合適的看護師</li>
       </ul>`,
-    links: []
+    links: [],
   },
   {
     category: 'booking',
@@ -231,9 +236,7 @@ const faqData = [
         <li>臨時取消或未到：收取全額費用</li>
       </ul>
       如遇特殊情況，請聯繫客服協助處理。`,
-    links: [
-      { text: '聯繫客服', url: '/support/contact' }
-    ]
+    links: [{ text: '聯繫客服', url: '/support/contact' }],
   },
 
   // 費用與付款
@@ -250,8 +253,8 @@ const faqData = [
       您可以使用我們的費用計算器來估算服務費用。`,
     links: [
       { text: '費用計算器', url: '/booking/calculator' },
-      { text: '查看收費標準', url: '/info/pricing' }
-    ]
+      { text: '查看收費標準', url: '/info/pricing' },
+    ],
   },
   {
     category: 'payment',
@@ -265,7 +268,7 @@ const faqData = [
         <li>現金支付（僅限當面交易）</li>
       </ul>
       所有線上交易都經過加密保護，確保您的支付安全。`,
-    links: []
+    links: [],
   },
   {
     category: 'payment',
@@ -277,7 +280,7 @@ const faqData = [
         <li>可在會員中心查詢和下載歷史發票</li>
         <li>如需紙本發票，請聯繫客服申請</li>
       </ul>`,
-    links: []
+    links: [],
   },
 
   // 帳戶問題
@@ -292,7 +295,7 @@ const faqData = [
         <li>驗證電子郵件或手機號碼</li>
         <li>完成註冊，即可開始使用服務</li>
       </ol>`,
-    links: []
+    links: [],
   },
   {
     category: 'account',
@@ -305,7 +308,7 @@ const faqData = [
         <li>點擊連結，設定新密碼</li>
         <li>使用新密碼登入</li>
       </ol>`,
-    links: []
+    links: [],
   },
 
   // 其他
@@ -321,9 +324,7 @@ const faqData = [
         <li>完成註冊，開始接案</li>
       </ol>
       我們歡迎有愛心、專業的看護師加入！`,
-    links: [
-      { text: '成為看護師', url: '/join' }
-    ]
+    links: [{ text: '成為看護師', url: '/join' }],
   },
   {
     category: 'other',
@@ -336,7 +337,7 @@ const faqData = [
         <li><strong>客服支援</strong>：專業客服團隊隨時處理問題和投訴</li>
         <li><strong>服務保證</strong>：如服務不滿意，我們提供相應的補償機制</li>
       </ul>`,
-    links: []
+    links: [],
   },
   {
     category: 'other',
@@ -349,10 +350,8 @@ const faqData = [
         <li>定期進行安全性檢查和更新</li>
         <li>您可以隨時要求查看、修改或刪除個人資料</li>
       </ul>`,
-    links: [
-      { text: '隱私政策', url: '/legal/privacy' }
-    ]
-  }
+    links: [{ text: '隱私政策', url: '/legal/privacy' }],
+  },
 ]
 
 // 計算屬性
@@ -361,15 +360,16 @@ const filteredQuestions = computed(() => {
 
   // 根據分類篩選
   if (selectedCategory.value !== 'all') {
-    questions = questions.filter(q => q.category === selectedCategory.value)
+    questions = questions.filter((q) => q.category === selectedCategory.value)
   }
 
   // 根據搜尋關鍵字篩選
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    questions = questions.filter(q => 
-      q.question.toLowerCase().includes(query) ||
-      q.answer.toLowerCase().includes(query)
+    questions = questions.filter(
+      (q) =>
+        q.question.toLowerCase().includes(query) ||
+        q.answer.toLowerCase().includes(query),
     )
   }
 
@@ -396,7 +396,7 @@ const getCategoryIcon = (category: string) => {
     booking: 'event_available',
     payment: 'payment',
     account: 'account_circle',
-    other: 'help_outline'
+    other: 'help_outline',
   }
   return icons[category] || 'help_outline'
 }
@@ -407,7 +407,7 @@ const getCategoryLabel = (category: string) => {
     booking: '預約相關',
     payment: '費用與付款',
     account: '帳戶問題',
-    other: '其他'
+    other: '其他',
   }
   return labels[category] || '其他'
 }

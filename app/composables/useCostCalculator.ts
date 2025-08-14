@@ -43,38 +43,38 @@ export const useCostCalculator = () => {
       name: '夜間加成',
       type: 'percentage',
       amount: 20,
-      description: '夜間服務（22:00-08:00）加收 20%'
+      description: '夜間服務（22:00-08:00）加收 20%',
     },
     {
       id: 'weekend-premium',
       name: '假日加成',
       type: 'percentage',
       amount: 15,
-      description: '週末及國定假日加收 15%'
+      description: '週末及國定假日加收 15%',
     },
     {
       id: 'urgent-service',
       name: '緊急服務',
       type: 'percentage',
       amount: 30,
-      description: '24小時內緊急服務加收 30%'
+      description: '24小時內緊急服務加收 30%',
     },
     {
       id: 'double-urgent',
       name: '極緊急服務',
       type: 'percentage',
       amount: 50,
-      description: '6小時內極緊急服務加收 50%'
+      description: '6小時內極緊急服務加收 50%',
     },
     {
       id: 'special-care',
       name: '特殊照護',
       type: 'fixed',
       amount: 100,
-      description: '特殊照護需求每小時加收 NT$100'
-    }
+      description: '特殊照護需求每小時加收 NT$100',
+    },
   ]
-  
+
   const costModifiers = ref<CostModifier[]>(defaultCostModifiers)
 
   const isWeekend = (date: Date): boolean => {

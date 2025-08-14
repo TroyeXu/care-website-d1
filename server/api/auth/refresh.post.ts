@@ -1,10 +1,16 @@
 import { defineEventHandler, createError } from 'h3'
-import { getToken, verifyJWT, generateJWT, getJWTSecret, setAuthCookie } from '../../utils/auth'
+import {
+  getToken,
+  verifyJWT,
+  generateJWT,
+  getJWTSecret,
+  setAuthCookie,
+} from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
   // 獲取當前 token
   const token = getToken(event)
-  
+
   if (!token) {
     throw createError({
       statusCode: 401,
@@ -15,10 +21,10 @@ export default defineEventHandler(async (event) => {
   try {
     // 獲取 JWT secret
     const secret = getJWTSecret(event)
-    
+
     // 驗證 token
     const payload = await verifyJWT(token, secret)
-    
+
     if (!payload || !payload.userId) {
       throw createError({
         statusCode: 401,
@@ -30,9 +36,9 @@ export default defineEventHandler(async (event) => {
     const newPayload = {
       userId: payload.userId,
       email: payload.email,
-      role: payload.role
+      role: payload.role,
     }
-    
+
     const newToken = await generateJWT(newPayload, secret)
     setAuthCookie(event, newToken)
 
@@ -45,7 +51,7 @@ export default defineEventHandler(async (event) => {
     if (error.statusCode) {
       throw error
     }
-    
+
     throw createError({
       statusCode: 500,
       statusMessage: '更新 Token 失敗',

@@ -86,7 +86,7 @@
                   <div class="detail-item">
                     <q-icon name="event" size="20px" color="grey-7" />
                     <span>
-                      {{ formatDate(booking.start_date) }} - 
+                      {{ formatDate(booking.start_date) }} -
                       {{ formatDate(booking.end_date) }}
                     </span>
                   </div>
@@ -104,7 +104,11 @@
                   <div class="detail-item">
                     <q-icon name="category" size="20px" color="grey-7" />
                     <span>
-                      {{ booking.service_type === 'hourly' ? '按小時計費' : '按班次計費' }}
+                      {{
+                        booking.service_type === 'hourly'
+                          ? '按小時計費'
+                          : '按班次計費'
+                      }}
                     </span>
                   </div>
                 </div>
@@ -119,7 +123,7 @@
                 >
                   {{ getStatusLabel(booking.status) }}
                 </q-chip>
-                
+
                 <div class="price-display q-mb-md">
                   <div class="text-h6 text-primary">
                     NT$ {{ booking.total_cost.toLocaleString() }}
@@ -135,25 +139,25 @@
                     :to="`/bookings/${booking.id}`"
                     class="full-width q-mb-xs"
                   />
-                  
+
                   <q-btn
                     v-if="booking.status === 'pending'"
                     flat
                     dense
                     color="negative"
                     label="取消預約"
-                    @click="cancelBooking(booking.id)"
                     class="full-width"
+                    @click="cancelBooking(booking.id)"
                   />
-                  
+
                   <q-btn
                     v-if="booking.status === 'confirmed'"
                     flat
                     dense
                     color="grey"
                     label="聯絡看護師"
-                    @click="contactCaregiver(booking.caregiver_id)"
                     class="full-width"
+                    @click="contactCaregiver(booking.caregiver_id)"
                   />
                 </div>
               </div>
@@ -165,12 +169,7 @@
 
     <!-- 建立新預約按鈕 -->
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn
-        fab
-        icon="add"
-        color="primary"
-        to="/caregivers"
-      >
+      <q-btn fab icon="add" color="primary" to="/caregivers">
         <q-tooltip>建立新預約</q-tooltip>
       </q-btn>
     </q-page-sticky>
@@ -207,11 +206,11 @@ const filteredBookings = computed(() => {
   if (activeTab.value === 'all') {
     return bookingStore.bookings
   }
-  return bookingStore.bookings.filter(b => b.status === activeTab.value)
+  return bookingStore.bookings.filter((b) => b.status === activeTab.value)
 })
 
-const pendingCount = computed(() => 
-  bookingStore.bookings.filter(b => b.status === 'pending').length
+const pendingCount = computed(
+  () => bookingStore.bookings.filter((b) => b.status === 'pending').length,
 )
 
 const emptyMessage = computed(() => {
@@ -227,13 +226,15 @@ const emptyMessage = computed(() => {
 })
 
 // 輔助函數
-const getCaregiverName = (caregiverId: number) => {
+const getCaregiverName = (caregiverId: number | string) => {
   // 這裡應該從 caregiverStore 獲取，暫時返回模擬資料
   const names = ['張美玲', '陳淑芬', '王雅婷', '李秀蘭', '林惠珍']
-  return names[caregiverId % names.length] || `看護師 ${caregiverId}`
+  const id =
+    typeof caregiverId === 'string' ? parseInt(caregiverId) || 0 : caregiverId
+  return names[id % names.length] || `看護師 ${caregiverId}`
 }
 
-const getCaregiverAvatar = (caregiverId: number) => {
+const getCaregiverAvatar = (caregiverId: number | string) => {
   return `https://i.pravatar.cc/150?img=${caregiverId}`
 }
 
@@ -268,7 +269,7 @@ const getStatusLabel = (status: string) => {
 }
 
 // 操作方法
-const cancelBooking = async (bookingId: string) => {
+const cancelBooking = (bookingId: string) => {
   $q.dialog({
     title: '確認取消',
     message: '確定要取消這個預約嗎？',
@@ -290,7 +291,7 @@ const cancelBooking = async (bookingId: string) => {
   })
 }
 
-const contactCaregiver = (caregiverId: number) => {
+const contactCaregiver = (caregiverId: number | string) => {
   $q.dialog({
     title: '聯絡看護師',
     message: `看護師聯絡方式：\n電話：0987-654-321\n請在服務時間內聯繫`,

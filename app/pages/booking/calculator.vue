@@ -47,489 +47,391 @@
       <div class="container">
         <!-- 計算器主卡片 -->
         <div class="calculator-main-card">
-            <q-card class="modern-card main-calculator" flat>
-              <q-card-section class="card-header">
-                <div class="section-title">
-                  <q-icon name="tune" class="title-icon" />
-                  <h3>服務選擇</h3>
-                </div>
-              </q-card-section>
+          <q-card class="modern-card main-calculator" flat>
+            <q-card-section class="card-header">
+              <div class="section-title">
+                <q-icon name="tune" class="title-icon" />
+                <h3>服務選擇</h3>
+              </div>
+            </q-card-section>
 
-              <q-card-section>
-                <!-- 服務類型選擇 -->
-                <div class="service-type-selector">
-                  <div class="row q-col-gutter-md">
-                    <div class="col-12 col-sm-6">
-                      <div
-                        class="type-card"
-                        :class="{ active: selectedCategory === '鐘點制' }"
-                        @click="selectedCategory = '鐘點制'"
-                      >
-                        <div class="type-icon">
-                          <q-icon name="schedule" />
-                        </div>
-                        <h4>鐘點制</h4>
-                        <p>彈性時間，按小時計費</p>
-                        <div
-                          v-if="selectedCategory === '鐘點制'"
-                          class="type-badge"
-                        >
-                          <q-icon name="check" />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-12 col-sm-6">
-                      <div
-                        class="type-card"
-                        :class="{ active: selectedCategory === '包班制' }"
-                        @click="selectedCategory = '包班制'"
-                      >
-                        <div class="type-icon">
-                          <q-icon name="event" />
-                        </div>
-                        <h4>包班制</h4>
-                        <p>長期照護，按班次計費</p>
-                        <div
-                          v-if="selectedCategory === '包班制'"
-                          class="type-badge"
-                        >
-                          <q-icon name="check" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="row q-mt-md q-col-gutter-sm">
-                  <div class="col-12 col-sm-8">
-                    <q-input
-                      v-model="searchText"
-                      label="搜尋服務項目"
-                      outlined
-                      clearable
-                      class="search-input"
+            <q-card-section>
+              <!-- 服務類型選擇 -->
+              <div class="service-type-selector">
+                <div class="row q-col-gutter-md">
+                  <div class="col-12 col-sm-6">
+                    <div
+                      class="type-card"
+                      :class="{ active: selectedCategory === '鐘點制' }"
+                      @click="selectedCategory = '鐘點制'"
                     >
-                      <template #prepend>
-                        <q-icon name="search" color="primary" />
-                      </template>
-                    </q-input>
+                      <div class="type-icon">
+                        <q-icon name="schedule" />
+                      </div>
+                      <h4>鐘點制</h4>
+                      <p>彈性時間，按小時計費</p>
+                      <div
+                        v-if="selectedCategory === '鐘點制'"
+                        class="type-badge"
+                      >
+                        <q-icon name="check" />
+                      </div>
+                    </div>
                   </div>
-                  <div class="col-12 col-sm-4">
+                  <div class="col-12 col-sm-6">
+                    <div
+                      class="type-card"
+                      :class="{ active: selectedCategory === '包班制' }"
+                      @click="selectedCategory = '包班制'"
+                    >
+                      <div class="type-icon">
+                        <q-icon name="event" />
+                      </div>
+                      <h4>包班制</h4>
+                      <p>長期照護，按班次計費</p>
+                      <div
+                        v-if="selectedCategory === '包班制'"
+                        class="type-badge"
+                      >
+                        <q-icon name="check" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row q-mt-md q-col-gutter-sm">
+                <div class="col-12 col-sm-8">
+                  <q-input
+                    v-model="searchText"
+                    label="搜尋服務項目"
+                    outlined
+                    clearable
+                    class="search-input"
+                  >
+                    <template #prepend>
+                      <q-icon name="search" color="primary" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-12 col-sm-4">
+                  <q-btn
+                    color="primary"
+                    icon="refresh"
+                    label="重置所有選擇"
+                    class="full-width"
+                    outline
+                    @click="resetSelections"
+                  />
+                </div>
+              </div>
+            </q-card-section>
+
+            <!-- 統一篩選區域 -->
+            <q-card-section class="q-pt-none">
+              <div class="row items-center justify-between">
+                <div class="text-subtitle2">篩選選項：</div>
+                <q-btn
+                  flat
+                  dense
+                  round
+                  :icon="showFilters ? 'expand_less' : 'expand_more'"
+                  @click="showFilters = !showFilters"
+                />
+              </div>
+              <q-slide-transition>
+                <div
+                  v-show="showFilters"
+                  class="filter-section q-pa-sm rounded-borders q-mt-sm"
+                >
+                  <!-- 價格篩選 -->
+                  <div class="filter-group">
+                    <div class="filter-label">價格篩選：</div>
+                    <div class="row q-col-gutter-sm">
+                      <div class="col-auto">
+                        <q-chip
+                          clickable
+                          :color="
+                            activeFilters.price === 100 ? 'primary' : 'grey-4'
+                          "
+                          :text-color="
+                            activeFilters.price === 100 ? 'white' : 'black'
+                          "
+                          :outline="activeFilters.price !== 100"
+                          @click="applyFilter('price', 100)"
+                        >
+                          價格 > 100元
+                        </q-chip>
+                      </div>
+                      <div class="col-auto">
+                        <q-chip
+                          clickable
+                          :color="
+                            activeFilters.price === 50 ? 'primary' : 'grey-4'
+                          "
+                          :text-color="
+                            activeFilters.price === 50 ? 'white' : 'black'
+                          "
+                          :outline="activeFilters.price !== 50"
+                          @click="applyFilter('price', 50)"
+                        >
+                          價格 > 50元
+                        </q-chip>
+                      </div>
+                      <div class="col-auto">
+                        <q-chip
+                          clickable
+                          :color="
+                            activeFilters.price === 0 ? 'primary' : 'grey-4'
+                          "
+                          :text-color="
+                            activeFilters.price === 0 ? 'white' : 'black'
+                          "
+                          :outline="activeFilters.price !== 0"
+                          @click="applyFilter('price', 0)"
+                        >
+                          全部
+                        </q-chip>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 子類別篩選 -->
+                  <div class="filter-group q-mt-sm">
+                    <div class="filter-label">類別篩選：</div>
+                    <div class="row q-col-gutter-sm">
+                      <div
+                        v-for="subCat in availableSubCategories"
+                        :key="subCat"
+                        class="col-auto"
+                      >
+                        <q-chip
+                          clickable
+                          :color="
+                            activeFilters.subCategory === subCat
+                              ? 'secondary'
+                              : 'grey-4'
+                          "
+                          :text-color="
+                            activeFilters.subCategory === subCat
+                              ? 'white'
+                              : 'black'
+                          "
+                          :outline="activeFilters.subCategory !== subCat"
+                          @click="applyFilter('subCategory', subCat)"
+                        >
+                          {{ subCat }}
+                        </q-chip>
+                      </div>
+                      <div class="col-auto">
+                        <q-chip
+                          clickable
+                          :color="
+                            !activeFilters.subCategory ? 'secondary' : 'grey-4'
+                          "
+                          :text-color="
+                            !activeFilters.subCategory ? 'white' : 'black'
+                          "
+                          :outline="activeFilters.subCategory !== null"
+                          @click="applyFilter('subCategory', null)"
+                        >
+                          全部
+                        </q-chip>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 重置篩選 -->
+                  <div class="text-right q-mt-sm">
                     <q-btn
-                      color="primary"
-                      icon="refresh"
-                      label="重置所有選擇"
-                      class="full-width"
                       outline
-                      @click="resetSelections"
+                      size="sm"
+                      color="secondary"
+                      icon="filter_alt_off"
+                      label="清除篩選"
+                      :disable="!isAnyFilterActive"
+                      @click="resetAllFilters"
                     />
                   </div>
                 </div>
-              </q-card-section>
+              </q-slide-transition>
+            </q-card-section>
 
-              <!-- 統一篩選區域 -->
-              <q-card-section class="q-pt-none">
-                <div class="row items-center justify-between">
-                  <div class="text-subtitle2">篩選選項：</div>
-                  <q-btn
-                    flat
-                    dense
-                    round
-                    :icon="showFilters ? 'expand_less' : 'expand_more'"
-                    @click="showFilters = !showFilters"
-                  />
-                </div>
-                <q-slide-transition>
+            <!-- 服務項目列表 -->
+            <q-card-section>
+              <!-- 包班制班次選擇 -->
+              <div v-if="selectedCategory === '包班制'" class="q-mb-md">
+                <div class="text-subtitle1 q-mb-sm">選擇班次</div>
+                <div class="row q-col-gutter-md">
                   <div
-                    v-show="showFilters"
-                    class="filter-section q-pa-sm rounded-borders q-mt-sm"
+                    v-for="item in shiftTypeItems"
+                    :key="item.code"
+                    class="col-12 col-sm-6"
                   >
-                    <!-- 價格篩選 -->
-                    <div class="filter-group">
-                      <div class="filter-label">價格篩選：</div>
-                      <div class="row q-col-gutter-sm">
-                        <div class="col-auto">
-                          <q-chip
-                            clickable
-                            :color="
-                              activeFilters.price === 100 ? 'primary' : 'grey-4'
-                            "
-                            :text-color="
-                              activeFilters.price === 100 ? 'white' : 'black'
-                            "
-                            :outline="activeFilters.price !== 100"
-                            @click="applyFilter('price', 100)"
-                          >
-                            價格 > 100元
-                          </q-chip>
+                    <q-card
+                      :class="{
+                        'shift-card': true,
+                        'shift-card-selected': isSelected(item),
+                      }"
+                      clickable
+                      @click="selectShiftType(item)"
+                    >
+                      <q-card-section class="q-py-sm">
+                        <div class="row items-center">
+                          <div class="col-auto">
+                            <q-icon
+                              :name="item.icon"
+                              :color="getItemColor(item)"
+                              size="md"
+                            />
+                          </div>
+                          <div class="col q-ml-sm">
+                            <div class="text-subtitle2">{{ item.name }}</div>
+                            <div class="text-caption">
+                              <q-icon
+                                name="paid"
+                                size="xs"
+                                color="primary"
+                                class="q-mr-xs"
+                              />
+                              <span
+                                >{{ formatCurrency(item.price) }} 元/班</span
+                              >
+                            </div>
+                          </div>
+                          <div class="col-auto">
+                            <q-radio
+                              v-model="selectedShiftType"
+                              :val="item.code"
+                              color="primary"
+                            />
+                          </div>
                         </div>
-                        <div class="col-auto">
-                          <q-chip
-                            clickable
-                            :color="
-                              activeFilters.price === 50 ? 'primary' : 'grey-4'
-                            "
-                            :text-color="
-                              activeFilters.price === 50 ? 'white' : 'black'
-                            "
-                            :outline="activeFilters.price !== 50"
-                            @click="applyFilter('price', 50)"
-                          >
-                            價格 > 50元
-                          </q-chip>
-                        </div>
-                        <div class="col-auto">
-                          <q-chip
-                            clickable
-                            :color="
-                              activeFilters.price === 0 ? 'primary' : 'grey-4'
-                            "
-                            :text-color="
-                              activeFilters.price === 0 ? 'white' : 'black'
-                            "
-                            :outline="activeFilters.price !== 0"
-                            @click="applyFilter('price', 0)"
-                          >
-                            全部
-                          </q-chip>
-                        </div>
-                      </div>
-                    </div>
+                      </q-card-section>
+                    </q-card>
+                  </div>
+                </div>
+              </div>
 
-                    <!-- 子類別篩選 -->
-                    <div class="filter-group q-mt-sm">
-                      <div class="filter-label">類別篩選：</div>
-                      <div class="row q-col-gutter-sm">
+              <div class="text-subtitle1 q-mb-sm">
+                {{
+                  selectedCategory === '包班制'
+                    ? '選擇附加服務'
+                    : '選擇服務項目'
+                }}
+              </div>
+              <q-list bordered separator class="rounded-borders">
+                <transition-group name="list" tag="div">
+                  <q-item
+                    v-for="item in filteredItems"
+                    v-show="
+                      !(
+                        selectedCategory === '鐘點制' &&
+                        item.subCategory === '時段加價'
+                      )
+                    "
+                    :key="item.code"
+                    v-ripple
+                    :clickable="
+                      !(
+                        selectedCategory === '鐘點制' &&
+                        !isSelected(item) &&
+                        wouldExceedLimit(item)
+                      )
+                    "
+                    :class="{
+                      'selected-item': isSelected(item),
+                      'mandatory-item': item.code === 'HR01',
+                      'disabled-item':
+                        selectedCategory === '鐘點制' &&
+                        !isSelected(item) &&
+                        wouldExceedLimit(item),
+                    }"
+                    class="service-item q-pa-md"
+                    @click="toggleItem(item)"
+                  >
+                    <q-item-section avatar>
+                      <q-icon
+                        :name="item.icon"
+                        :color="getItemColor(item)"
+                        size="md"
+                      />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label class="text-weight-bold text-body1">
+                        {{ item.name }}
+                        <q-badge
+                          v-if="item.code === 'HR01'"
+                          color="positive"
+                          class="q-ml-sm"
+                        >
+                          必選
+                        </q-badge>
+                      </q-item-label>
+                      <q-item-label caption class="q-mt-sm">
+                        <div class="row items-center">
+                          <q-icon
+                            name="paid"
+                            size="xs"
+                            color="primary"
+                            class="q-mr-xs"
+                          />
+                          <span>金額：{{ item.price }} 元</span>
+                        </div>
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-checkbox
+                        v-model="selectedItems"
+                        :val="item"
+                        color="primary"
+                        :disable="
+                          (item.code === 'HR01' && !isSelected(item)) ||
+                          (selectedCategory === '鐘點制' &&
+                            !isSelected(item) &&
+                            wouldExceedLimit(item))
+                        "
+                        :aria-label="`選擇 ${item.name}`"
+                        @click.stop="toggleItem(item)"
+                      />
+                    </q-item-section>
+                  </q-item>
+                </transition-group>
+              </q-list>
+
+              <!-- 費用總計和預約按鈕 -->
+              <div v-if="selectedItems.length > 0" class="cost-summary-section">
+                <q-separator class="q-my-md" />
+                <div class="q-pa-md">
+                  <!-- 鐘點制時數計算 -->
+                  <div v-if="selectedCategory === '鐘點制'" class="q-mb-md">
+                    <div class="text-subtitle1 q-mb-sm">服務時間設定</div>
+
+                    <!-- 天數選擇 -->
+                    <div class="q-mb-sm">
+                      <div class="text-subtitle2 q-mb-xs">天數選擇</div>
+                      <div class="row q-col-gutter-xs">
                         <div
-                          v-for="subCat in availableSubCategories"
-                          :key="subCat"
+                          v-for="days in [1, 2, 3, 5, 7]"
+                          :key="days"
                           class="col-auto"
                         >
-                          <q-chip
-                            clickable
-                            :color="
-                              activeFilters.subCategory === subCat
-                                ? 'secondary'
-                                : 'grey-4'
-                            "
-                            :text-color="
-                              activeFilters.subCategory === subCat
-                                ? 'white'
-                                : 'black'
-                            "
-                            :outline="activeFilters.subCategory !== subCat"
-                            @click="applyFilter('subCategory', subCat)"
-                          >
-                            {{ subCat }}
-                          </q-chip>
-                        </div>
-                        <div class="col-auto">
-                          <q-chip
-                            clickable
-                            :color="
-                              !activeFilters.subCategory
-                                ? 'secondary'
-                                : 'grey-4'
-                            "
-                            :text-color="
-                              !activeFilters.subCategory ? 'white' : 'black'
-                            "
-                            :outline="activeFilters.subCategory !== null"
-                            @click="applyFilter('subCategory', null)"
-                          >
-                            全部
-                          </q-chip>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 重置篩選 -->
-                    <div class="text-right q-mt-sm">
-                      <q-btn
-                        outline
-                        size="sm"
-                        color="secondary"
-                        icon="filter_alt_off"
-                        label="清除篩選"
-                        :disable="!isAnyFilterActive"
-                        @click="resetAllFilters"
-                      />
-                    </div>
-                  </div>
-                </q-slide-transition>
-              </q-card-section>
-
-              <!-- 服務項目列表 -->
-              <q-card-section>
-                <!-- 包班制班次選擇 -->
-                <div v-if="selectedCategory === '包班制'" class="q-mb-md">
-                  <div class="text-subtitle1 q-mb-sm">選擇班次</div>
-                  <div class="row q-col-gutter-md">
-                    <div
-                      v-for="item in shiftTypeItems"
-                      :key="item.code"
-                      class="col-12 col-sm-6"
-                    >
-                      <q-card
-                        :class="{
-                          'shift-card': true,
-                          'shift-card-selected': isSelected(item),
-                        }"
-                        clickable
-                        @click="selectShiftType(item)"
-                      >
-                        <q-card-section class="q-py-sm">
-                          <div class="row items-center">
-                            <div class="col-auto">
-                              <q-icon
-                                :name="item.icon"
-                                :color="getItemColor(item)"
-                                size="md"
-                              />
-                            </div>
-                            <div class="col q-ml-sm">
-                              <div class="text-subtitle2">{{ item.name }}</div>
-                              <div class="text-caption">
-                                <q-icon
-                                  name="paid"
-                                  size="xs"
-                                  color="primary"
-                                  class="q-mr-xs"
-                                />
-                                <span
-                                  >{{ formatCurrency(item.price) }} 元/班</span
-                                >
-                              </div>
-                            </div>
-                            <div class="col-auto">
-                              <q-radio
-                                v-model="selectedShiftType"
-                                :val="item.code"
-                                color="primary"
-                              />
-                            </div>
-                          </div>
-                        </q-card-section>
-                      </q-card>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="text-subtitle1 q-mb-sm">
-                  {{
-                    selectedCategory === '包班制'
-                      ? '選擇附加服務'
-                      : '選擇服務項目'
-                  }}
-                </div>
-                <q-list bordered separator class="rounded-borders">
-                  <transition-group name="list" tag="div">
-                    <q-item
-                      v-for="item in filteredItems"
-                      v-show="
-                        !(
-                          selectedCategory === '鐘點制' &&
-                          item.subCategory === '時段加價'
-                        )
-                      "
-                      :key="item.code"
-                      v-ripple
-                      :clickable="
-                        !(
-                          selectedCategory === '鐘點制' &&
-                          !isSelected(item) &&
-                          wouldExceedLimit(item)
-                        )
-                      "
-                      :class="{
-                        'selected-item': isSelected(item),
-                        'mandatory-item': item.code === 'HR01',
-                        'disabled-item':
-                          selectedCategory === '鐘點制' &&
-                          !isSelected(item) &&
-                          wouldExceedLimit(item),
-                      }"
-                      class="service-item q-pa-md"
-                      @click="toggleItem(item)"
-                    >
-                      <q-item-section avatar>
-                        <q-icon
-                          :name="item.icon"
-                          :color="getItemColor(item)"
-                          size="md"
-                        />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label class="text-weight-bold text-body1">
-                          {{ item.name }}
-                          <q-badge
-                            v-if="item.code === 'HR01'"
-                            color="positive"
-                            class="q-ml-sm"
-                          >
-                            必選
-                          </q-badge>
-                        </q-item-label>
-                        <q-item-label caption class="q-mt-sm">
-                          <div class="row items-center">
-                            <q-icon
-                              name="paid"
-                              size="xs"
-                              color="primary"
-                              class="q-mr-xs"
-                            />
-                            <span>金額：{{ item.price }} 元</span>
-                          </div>
-                        </q-item-label>
-                      </q-item-section>
-                      <q-item-section side>
-                        <q-checkbox
-                          v-model="selectedItems"
-                          :val="item"
-                          color="primary"
-                          :disable="
-                            (item.code === 'HR01' && !isSelected(item)) ||
-                            (selectedCategory === '鐘點制' &&
-                              !isSelected(item) &&
-                              wouldExceedLimit(item))
-                          "
-                          :aria-label="`選擇 ${item.name}`"
-                          @click.stop="toggleItem(item)"
-                        />
-                      </q-item-section>
-                    </q-item>
-                  </transition-group>
-                </q-list>
-
-                <!-- 費用總計和預約按鈕 -->
-                <div v-if="selectedItems.length > 0" class="cost-summary-section">
-                  <q-separator class="q-my-md" />
-                  <div class="q-pa-md">
-                    <!-- 鐘點制時數計算 -->
-                    <div v-if="selectedCategory === '鐘點制'" class="q-mb-md">
-                      <div class="text-subtitle1 q-mb-sm">服務時間設定</div>
-                      
-                      <!-- 天數選擇 -->
-                      <div class="q-mb-sm">
-                        <div class="text-subtitle2 q-mb-xs">天數選擇</div>
-                        <div class="row q-col-gutter-xs">
-                          <div v-for="days in [1, 2, 3, 5, 7]" :key="days" class="col-auto">
-                            <q-btn
-                              :color="dayCount === days ? 'secondary' : 'white'"
-                              :text-color="dayCount === days ? 'white' : 'secondary'"
-                              :label="`${days}天`"
-                              size="sm"
-                              :unelevated="dayCount === days"
-                              :flat="dayCount !== days"
-                              class="q-px-sm"
-                              @click="dayCount = days"
-                            />
-                          </div>
-                          <div class="col">
-                            <q-input
-                              v-model.number="dayCount"
-                              type="number"
-                              label="自訂"
-                              outlined
-                              dense
-                              min="1"
-                              :rules="[(val) => val >= 1 || '請輸入有效天數']"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- 小時數選擇 -->
-                      <div class="q-mb-sm">
-                        <div class="text-subtitle2 q-mb-xs">每日服務時數</div>
-                        <div class="row q-col-gutter-xs">
-                          <div v-for="hours in [4, 8, 10, 12, 24]" :key="hours" class="col-auto">
-                            <q-btn
-                              :color="hourCount === hours ? 'primary' : 'white'"
-                              :text-color="hourCount === hours ? 'white' : 'primary'"
-                              :label="`${hours}時`"
-                              size="sm"
-                              :unelevated="hourCount === hours"
-                              :flat="hourCount !== hours"
-                              class="q-px-sm"
-                              @click="hourCount = hours"
-                            />
-                          </div>
-                          <div class="col">
-                            <q-input
-                              v-model.number="hourCount"
-                              type="number"
-                              label="自訂"
-                              outlined
-                              dense
-                              min="1"
-                              :rules="[(val) => val >= 1 || '請輸入有效小時數']"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- 加價項目 -->
-                      <div class="q-mb-sm">
-                        <div class="text-subtitle2 q-mb-xs">加價項目</div>
-                        <div class="row q-col-gutter-sm">
-                          <div class="col-auto">
-                            <q-chip
-                              clickable
-                              :color="isNightShift ? 'blue-grey' : 'grey-3'"
-                              :text-color="isNightShift ? 'white' : 'black'"
-                              @click="isNightShift = !isNightShift; toggleAdditionalService('HR09')"
-                            >
-                              <q-icon name="nights_stay" class="q-mr-xs" />
-                              夜間時段 +20元
-                            </q-chip>
-                          </div>
-                          <div class="col-auto">
-                            <q-chip
-                              clickable
-                              :color="isUrgent ? 'amber' : 'grey-3'"
-                              :text-color="isUrgent ? 'white' : 'black'"
-                              @click="isUrgent = !isUrgent; toggleAdditionalService('HR10')"
-                            >
-                              <q-icon name="priority_high" class="q-mr-xs" />
-                              加價急徵 +30元
-                            </q-chip>
-                          </div>
-                          <div class="col-auto">
-                            <q-chip
-                              clickable
-                              :color="isDoubleUrgent ? 'orange' : 'grey-3'"
-                              :text-color="isDoubleUrgent ? 'white' : 'black'"
-                              @click="isDoubleUrgent = !isDoubleUrgent; toggleAdditionalService('HR11')"
-                            >
-                              <q-icon name="flash_on" class="q-mr-xs" />
-                              二次加價 +30元
-                            </q-chip>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 包班制天數計算 -->
-                    <div v-if="selectedCategory === '包班制'" class="q-mb-md">
-                      <div class="text-subtitle1 q-mb-sm">包班時間設定</div>
-                      <div class="text-subtitle2 q-mb-xs">包班天數</div>
-                      <div class="row q-col-gutter-xs">
-                        <div v-for="days in [1, 3, 5, 7, 14]" :key="days" class="col-auto">
                           <q-btn
-                            :color="shiftDayCount === days ? 'secondary' : 'white'"
-                            :text-color="shiftDayCount === days ? 'white' : 'secondary'"
+                            :color="dayCount === days ? 'secondary' : 'white'"
+                            :text-color="
+                              dayCount === days ? 'white' : 'secondary'
+                            "
                             :label="`${days}天`"
                             size="sm"
-                            :unelevated="shiftDayCount === days"
-                            :flat="shiftDayCount !== days"
+                            :unelevated="dayCount === days"
+                            :flat="dayCount !== days"
                             class="q-px-sm"
-                            @click="shiftDayCount = days"
+                            @click="dayCount = days"
                           />
                         </div>
                         <div class="col">
                           <q-input
-                            v-model.number="shiftDayCount"
+                            v-model.number="dayCount"
                             type="number"
                             label="自訂"
                             outlined
@@ -541,99 +443,254 @@
                       </div>
                     </div>
 
-                    <q-separator class="q-my-sm" />
-                    
-                    <!-- 費用明細 -->
-                    <div class="row items-center justify-between q-mb-sm">
-                      <div class="text-subtitle2">服務項目</div>
-                      <div class="text-subtitle1 text-weight-bold">
-                        {{ formatCurrency(selectedCategory === '鐘點制' ? 
-                          selectedHourlyItems.reduce((sum, item) => item.subCategory !== '時段加價' ? sum + item.price : sum, 0) * hourCount * dayCount :
-                          (selectedShiftItems.reduce((sum, item) => sum + item.price, 0) + (selectedShiftType === 'SH01' ? 3000 : 5500)) * shiftDayCount
-                        ) }} 元
-                      </div>
-                    </div>
-                    
-                    <div v-if="selectedCategory === '鐘點制' && (isNightShift || isUrgent || isDoubleUrgent)" class="row items-center justify-between q-mb-sm">
-                      <div class="text-subtitle2">加價項目</div>
-                      <div class="text-subtitle1 text-weight-bold">
-                        {{ formatCurrency(
-                          selectedHourlyItems.reduce((sum, item) => item.subCategory === '時段加價' ? sum + item.price : sum, 0) * dayCount
-                        ) }} 元
-                      </div>
-                    </div>
-                    
-                    <!-- 小費設定 -->
-                    <div class="row items-center q-mb-sm">
-                      <div class="col-4">
-                        <span class="text-subtitle2">小費金額</span>
-                      </div>
-                      <div class="col-8">
-                        <div class="row items-center justify-end">
+                    <!-- 小時數選擇 -->
+                    <div class="q-mb-sm">
+                      <div class="text-subtitle2 q-mb-xs">每日服務時數</div>
+                      <div class="row q-col-gutter-xs">
+                        <div
+                          v-for="hours in [4, 8, 10, 12, 24]"
+                          :key="hours"
+                          class="col-auto"
+                        >
                           <q-btn
-                            round
-                            flat
-                            dense
+                            :color="hourCount === hours ? 'primary' : 'white'"
+                            :text-color="
+                              hourCount === hours ? 'white' : 'primary'
+                            "
+                            :label="`${hours}時`"
                             size="sm"
-                            icon="remove"
-                            color="grey"
-                            @click="tipAmount = Math.max(0, tipAmount - 50)"
+                            :unelevated="hourCount === hours"
+                            :flat="hourCount !== hours"
+                            class="q-px-sm"
+                            @click="hourCount = hours"
                           />
+                        </div>
+                        <div class="col">
                           <q-input
-                            v-model.number="tipAmount"
+                            v-model.number="hourCount"
                             type="number"
-                            dense
+                            label="自訂"
                             outlined
-                            class="q-mx-sm"
-                            style="width: 100px"
-                            :rules="[(val) => val >= 0 || '請輸入有效金額']"
-                          >
-                            <template #append>
-                              <span class="text-grey-8">元</span>
-                            </template>
-                          </q-input>
-                          <q-btn
-                            round
-                            flat
                             dense
-                            size="sm"
-                            icon="add"
-                            color="primary"
-                            @click="tipAmount += 50"
+                            min="1"
+                            :rules="[(val) => val >= 1 || '請輸入有效小時數']"
                           />
                         </div>
                       </div>
                     </div>
 
-                    <q-separator class="q-my-md" />
-                    
-                    <!-- 總金額 -->
-                    <div class="row items-center justify-between q-mb-md">
-                      <div class="text-h6 text-weight-bold">總計金額</div>
-                      <div class="text-h4 text-primary text-weight-bold">
-                        {{ formatCurrency(totalCost + tipAmount) }} 元
+                    <!-- 加價項目 -->
+                    <div class="q-mb-sm">
+                      <div class="text-subtitle2 q-mb-xs">加價項目</div>
+                      <div class="row q-col-gutter-sm">
+                        <div class="col-auto">
+                          <q-chip
+                            clickable
+                            :color="isNightShift ? 'blue-grey' : 'grey-3'"
+                            :text-color="isNightShift ? 'white' : 'black'"
+                            @click="
+                              isNightShift = !isNightShift
+                              toggleAdditionalService('HR09')
+                            "
+                          >
+                            <q-icon name="nights_stay" class="q-mr-xs" />
+                            夜間時段 +20元
+                          </q-chip>
+                        </div>
+                        <div class="col-auto">
+                          <q-chip
+                            clickable
+                            :color="isUrgent ? 'amber' : 'grey-3'"
+                            :text-color="isUrgent ? 'white' : 'black'"
+                            @click="
+                              isUrgent = !isUrgent
+                              toggleAdditionalService('HR10')
+                            "
+                          >
+                            <q-icon name="priority_high" class="q-mr-xs" />
+                            加價急徵 +30元
+                          </q-chip>
+                        </div>
+                        <div class="col-auto">
+                          <q-chip
+                            clickable
+                            :color="isDoubleUrgent ? 'orange' : 'grey-3'"
+                            :text-color="isDoubleUrgent ? 'white' : 'black'"
+                            @click="
+                              isDoubleUrgent = !isDoubleUrgent
+                              toggleAdditionalService('HR11')
+                            "
+                          >
+                            <q-icon name="flash_on" class="q-mr-xs" />
+                            二次加價 +30元
+                          </q-chip>
+                        </div>
                       </div>
                     </div>
-
-                    <!-- 聯繫我們按鈕 -->
-                    <q-btn
-                      color="primary"
-                      size="lg"
-                      class="full-width"
-                      @click="router.push('/support/contact')"
-                    >
-                      <q-icon name="contact_support" class="q-mr-sm" />
-                      聯繫我們
-                    </q-btn>
                   </div>
+
+                  <!-- 包班制天數計算 -->
+                  <div v-if="selectedCategory === '包班制'" class="q-mb-md">
+                    <div class="text-subtitle1 q-mb-sm">包班時間設定</div>
+                    <div class="text-subtitle2 q-mb-xs">包班天數</div>
+                    <div class="row q-col-gutter-xs">
+                      <div
+                        v-for="days in [1, 3, 5, 7, 14]"
+                        :key="days"
+                        class="col-auto"
+                      >
+                        <q-btn
+                          :color="
+                            shiftDayCount === days ? 'secondary' : 'white'
+                          "
+                          :text-color="
+                            shiftDayCount === days ? 'white' : 'secondary'
+                          "
+                          :label="`${days}天`"
+                          size="sm"
+                          :unelevated="shiftDayCount === days"
+                          :flat="shiftDayCount !== days"
+                          class="q-px-sm"
+                          @click="shiftDayCount = days"
+                        />
+                      </div>
+                      <div class="col">
+                        <q-input
+                          v-model.number="shiftDayCount"
+                          type="number"
+                          label="自訂"
+                          outlined
+                          dense
+                          min="1"
+                          :rules="[(val) => val >= 1 || '請輸入有效天數']"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <q-separator class="q-my-sm" />
+
+                  <!-- 費用明細 -->
+                  <div class="row items-center justify-between q-mb-sm">
+                    <div class="text-subtitle2">服務項目</div>
+                    <div class="text-subtitle1 text-weight-bold">
+                      {{
+                        formatCurrency(
+                          selectedCategory === '鐘點制'
+                            ? selectedHourlyItems.reduce(
+                                (sum, item) =>
+                                  item.subCategory !== '時段加價'
+                                    ? sum + item.price
+                                    : sum,
+                                0,
+                              ) *
+                                hourCount *
+                                dayCount
+                            : (selectedShiftItems.reduce(
+                                (sum, item) => sum + item.price,
+                                0,
+                              ) +
+                                (selectedShiftType === 'SH01' ? 3000 : 5500)) *
+                                shiftDayCount,
+                        )
+                      }}
+                      元
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="
+                      selectedCategory === '鐘點制' &&
+                      (isNightShift || isUrgent || isDoubleUrgent)
+                    "
+                    class="row items-center justify-between q-mb-sm"
+                  >
+                    <div class="text-subtitle2">加價項目</div>
+                    <div class="text-subtitle1 text-weight-bold">
+                      {{
+                        formatCurrency(
+                          selectedHourlyItems.reduce(
+                            (sum, item) =>
+                              item.subCategory === '時段加價'
+                                ? sum + item.price
+                                : sum,
+                            0,
+                          ) * dayCount,
+                        )
+                      }}
+                      元
+                    </div>
+                  </div>
+
+                  <!-- 小費設定 -->
+                  <div class="row items-center q-mb-sm">
+                    <div class="col-4">
+                      <span class="text-subtitle2">小費金額</span>
+                    </div>
+                    <div class="col-8">
+                      <div class="row items-center justify-end">
+                        <q-btn
+                          round
+                          flat
+                          dense
+                          size="sm"
+                          icon="remove"
+                          color="grey"
+                          @click="tipAmount = Math.max(0, tipAmount - 50)"
+                        />
+                        <q-input
+                          v-model.number="tipAmount"
+                          type="number"
+                          dense
+                          outlined
+                          class="q-mx-sm"
+                          style="width: 100px"
+                          :rules="[(val) => val >= 0 || '請輸入有效金額']"
+                        >
+                          <template #append>
+                            <span class="text-grey-8">元</span>
+                          </template>
+                        </q-input>
+                        <q-btn
+                          round
+                          flat
+                          dense
+                          size="sm"
+                          icon="add"
+                          color="primary"
+                          @click="tipAmount += 50"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <q-separator class="q-my-md" />
+
+                  <!-- 總金額 -->
+                  <div class="row items-center justify-between q-mb-md">
+                    <div class="text-h6 text-weight-bold">總計金額</div>
+                    <div class="text-h4 text-primary text-weight-bold">
+                      {{ formatCurrency(totalCost + tipAmount) }} 元
+                    </div>
+                  </div>
+
+                  <!-- 聯繫我們按鈕 -->
+                  <q-btn
+                    color="primary"
+                    size="lg"
+                    class="full-width"
+                    @click="router.push('/support/contact')"
+                  >
+                    <q-icon name="contact_support" class="q-mr-sm" />
+                    聯繫我們
+                  </q-btn>
                 </div>
-              </q-card-section>
-            </q-card>
+              </div>
+            </q-card-section>
+          </q-card>
         </div>
       </div>
     </main>
-
-
 
     <!-- 幫助對話框 -->
     <q-dialog v-model="showHelp">
@@ -671,7 +728,6 @@ usePageSeo('護理費計算器 - DogFriend', '快速計算並預估您的護理�
 
 const router = useRouter()
 const $q = useQuasar()
-
 
 const {
   particlesLoaded,
@@ -904,7 +960,6 @@ const {
   margin-bottom: 2rem;
 }
 
-
 .type-card {
   position: relative;
   padding: 2rem 1.5rem;
@@ -1021,7 +1076,6 @@ const {
   opacity: 1;
 }
 
-
 /* 響應式設計 */
 @media (max-width: 768px) {
   .hero-title {
@@ -1031,7 +1085,6 @@ const {
   .calculator-main-card {
     max-width: 100%;
   }
-
 
   .action-content {
     flex-direction: column;

@@ -303,7 +303,11 @@
                     <q-btn
                       flat
                       color="primary"
-                      @click="navigateTo(`/support/reviews?caregiverId=${caregiver.id}`)"
+                      @click="
+                        navigateTo(
+                          `/support/reviews?caregiverId=${caregiver.id}`,
+                        )
+                      "
                     >
                       查看全部 {{ reviews.length }} 則評價
                     </q-btn>
@@ -529,40 +533,41 @@ const {
   pending: isLoading,
   error,
 } = await useFetch(`/api/caregivers/${caregiverId.value}`, {
-  transform: (data: { caregiver: Record<string, unknown> }) => {
+  transform: (data: any) => {
     // 確保資料格式正確
-    if (!data) return null
+    if (!data || !data.caregiver) return null
+    const c = data.caregiver
 
     // 將 server 的資料格式轉換為頁面使用的格式
     return {
-      id: parseInt(data.id?.toString().replace('caregiver-', '') || '0'),
-      name: data.name || '未提供姓名',
-      photo: data.avatar || '/default-avatar.png',
-      rating: data.rating || 4.5,
-      experience: `${data.experience_years || 5}年專業照護經驗，${data.bio || '專業護理服務'}`,
-      skills: Array.isArray(data.specialties)
-        ? data.specialties.join('，')
+      id: parseInt(c.id?.toString().replace('caregiver-', '') || '0'),
+      name: c.name || '未提供姓名',
+      photo: c.avatar || '/default-avatar.png',
+      rating: c.rating || 4.5,
+      experience: `${c.experience_years || 5}年專業照護經驗，${c.bio || '專業護理服務'}`,
+      skills: Array.isArray(c.specialties)
+        ? c.specialties.map((s: any) => s.name || s).join('，')
         : '專業護理',
-      hourly_rate: data.hourly_rate || 500,
-      shift_rate: (data.hourly_rate || 500) * 8,
+      hourly_rate: c.hourly_rate || 500,
+      shift_rate: (c.hourly_rate || 500) * 8,
       location:
-        Array.isArray(data.service_areas) && data.service_areas.length > 0
-          ? data.service_areas[0]
+        Array.isArray(c.service_areas) && c.service_areas.length > 0
+          ? `${c.service_areas[0].city}${c.service_areas[0].district}`
           : '台北市',
       available: true, // 根據 availability 判斷
-      licenses: Array.isArray(data.certifications)
-        ? data.certifications
+      licenses: Array.isArray(c.certifications)
+        ? c.certifications.map((cert: any) => cert.name || cert)
         : ['護理師執照'],
-      review_count: data.reviews_count || 12,
-      experience_years: data.experience_years || 5,
+      review_count: c.reviews_count || c.total_reviews || 12,
+      experience_years: c.experience_years || 5,
       specialization:
-        (Array.isArray(data.specialties) && data.specialties.length > 0
-          ? data.specialties[0]
+        (Array.isArray(c.specialties) && c.specialties.length > 0
+          ? c.specialties[0].name || c.specialties[0]
           : '護理') + '專家',
-      description: data.bio || '專業護理師，提供優質的護理服務',
+      description: c.bio || '專業護理師，提供優質的護理服務',
       verified: true,
-      created_at: data.created_at || new Date().toISOString(),
-      updated_at: data.updated_at || new Date().toISOString(),
+      created_at: c.created_at || new Date().toISOString(),
+      updated_at: c.updated_at || new Date().toISOString(),
     }
   },
 })
@@ -591,21 +596,13 @@ const loadReviews = async () => {
 
     // 轉換資料格式
     if (response?.data?.reviews) {
-      reviews.value = response.data.reviews.map(
-        (r: {
-          id: string
-          rating: number
-          comment: string
-          user_name: string
-          created_at: string
-        }) => ({
-          id: r.id,
-          rating: r.rating,
-          comment: r.comment,
-          user_name: r.patient_id ? '已驗證用戶' : '匿名用戶',
-          created_at: r.created_at,
-        }),
-      )
+      reviews.value = response.data.reviews.map((r: any) => ({
+        id: r.id,
+        rating: r.rating,
+        comment: r.comment,
+        user_name: r.user_name || (r.patient_id ? '已驗證用戶' : '匿名用戶'),
+        created_at: r.created_at,
+      }))
     }
   } catch (err) {
     console.error('載入評價失敗:', err)
@@ -780,19 +777,19 @@ watch(caregiver, (newCaregiver) => {
   .content-wrapper {
     padding: 0;
   }
-  
+
   .breadcrumbs-nav {
     border-radius: 0;
     margin-bottom: 0.5rem;
   }
-  
+
   /* 為卡片在手機版添加間距 */
   .info-card,
   .section-card {
     border-radius: 0;
     margin: 0 0 0.5rem 0;
   }
-  
+
   .q-card-section {
     padding: 1rem !important;
   }

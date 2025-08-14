@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div class="card-body" v-if="!compact">
+    <div v-if="!compact" class="card-body">
       <div class="experience">
         <h4>
           <q-icon name="work_history" size="18px" color="primary" />
@@ -110,9 +110,9 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 手機版精簡內容 -->
-    <div class="card-body-compact" v-else>
+    <div v-else class="card-body-compact">
       <div class="compact-info">
         <div class="info-item">
           <q-icon name="work_history" size="16px" color="grey-7" />
@@ -120,7 +120,7 @@
         </div>
         <div class="skills-preview">
           <q-chip
-            v-for="(skill, index) in skillsArray.slice(0, 2)"
+            v-for="skill in skillsArray.slice(0, 2)"
             :key="skill"
             size="sm"
             outline
@@ -142,8 +142,8 @@
           outline
           color="primary"
           size="sm"
-          @click.stop="goDetail"
           class="btn-detail"
+          @click.stop="goDetail"
         >
           查看詳情
         </q-btn>
@@ -151,8 +151,8 @@
           unelevated
           color="primary"
           size="sm"
-          @click.stop="$emit('book', caregiver)"
           class="btn-book"
+          @click.stop="$emit('book', caregiver)"
         >
           立即預約
         </q-btn>
@@ -199,7 +199,11 @@ const isAvailable = computed(() => {
     return available
   }
   const availability = (available || '').toLowerCase()
-  return availability.includes('全天') || availability.includes('24') || availability.includes('可')
+  return (
+    availability.includes('全天') ||
+    availability.includes('24') ||
+    availability.includes('可')
+  )
 })
 
 const availabilityClass = computed(() => {
@@ -231,7 +235,7 @@ const openChat = () => {
     message: `即將開放與 ${props.caregiver.name} 的私訊功能`,
     color: 'info',
     position: 'top',
-    timeout: 2000
+    timeout: 2000,
   })
 }
 
@@ -240,7 +244,7 @@ const toggleFavorite = () => {
     message: '收藏功能即將開放',
     color: 'info',
     position: 'top',
-    timeout: 2000
+    timeout: 2000,
   })
 }
 </script>

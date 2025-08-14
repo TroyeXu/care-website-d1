@@ -24,8 +24,8 @@
         <div class="header-right row q-gutter-xs items-center">
           <!-- 用戶選單（已登入） -->
           <div v-if="currentUser" class="row items-center q-gutter-sm">
-            <q-chip 
-              color="primary" 
+            <q-chip
+              color="primary"
               text-color="white"
               icon="verified_user"
               class="gt-sm"
@@ -33,7 +33,7 @@
             >
               {{ currentUser.role === 'caregiver' ? '看護' : '客戶' }}
             </q-chip>
-            
+
             <q-btn
               flat
               round
@@ -41,41 +41,49 @@
               icon="notifications"
               @click="showNotifications = true"
             >
-              <q-badge color="red" floating v-if="unreadCount > 0">
+              <q-badge v-if="unreadCount > 0" color="red" floating>
                 {{ unreadCount }}
               </q-badge>
             </q-btn>
-            
-            <q-btn-dropdown
-              flat
-              dense
-              no-caps
-              class="text-weight-medium"
-            >
-              <template v-slot:label>
+
+            <q-btn-dropdown flat dense no-caps class="text-weight-medium">
+              <template #label>
                 <q-avatar size="28px" class="q-mr-sm">
-                  <img :src="currentUser.avatar || 'https://cdn.quasar.dev/img/avatar.png'" />
+                  <img
+                    :src="
+                      currentUser.avatar ||
+                      'https://cdn.quasar.dev/img/avatar.png'
+                    "
+                  />
                 </q-avatar>
                 {{ currentUser.name }}
               </template>
               <q-list>
-                <q-item clickable v-close-popup @click="router.push('/profile')">
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="router.push('/profile')"
+                >
                   <q-item-section avatar>
                     <q-icon name="person" />
                   </q-item-section>
                   <q-item-section>個人資料</q-item-section>
                 </q-item>
-                
-                <q-item clickable v-close-popup @click="router.push('/bookings')">
+
+                <q-item
+                  v-close-popup
+                  clickable
+                  @click="router.push('/bookings')"
+                >
                   <q-item-section avatar>
                     <q-icon name="event_note" />
                   </q-item-section>
                   <q-item-section>我的預約</q-item-section>
                 </q-item>
-                
+
                 <q-separator />
-                
-                <q-item clickable v-close-popup @click="handleLogout">
+
+                <q-item v-close-popup clickable @click="handleLogout">
                   <q-item-section avatar>
                     <q-icon name="logout" />
                   </q-item-section>
@@ -84,7 +92,7 @@
               </q-list>
             </q-btn-dropdown>
           </div>
-          
+
           <!-- 登入/註冊按鈕（未登入） -->
           <div v-else class="row q-gutter-sm items-center">
             <q-btn
@@ -160,7 +168,11 @@
     </q-page-container>
 
     <!-- 底部快速選單 -->
-    <q-footer v-if="showFooter" elevated class="bg-white border-t mobile-footer">
+    <q-footer
+      v-if="showFooter"
+      elevated
+      class="bg-white border-t mobile-footer"
+    >
       <q-tabs
         v-model="activeTab"
         dense
@@ -247,7 +259,6 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
   </q-layout>
 </template>
 
@@ -356,7 +367,11 @@ const currentPageTitle = computed(() => {
 // 方法
 const goBack = async () => {
   // 檢查是否可以返回上一頁
-  if (typeof window !== 'undefined' && window.history.length > 1 && route.path !== '/') {
+  if (
+    typeof window !== 'undefined' &&
+    window.history.length > 1 &&
+    route.path !== '/'
+  ) {
     router.go(-1)
   } else {
     // 如果不能返回或在首頁，就返回首頁
@@ -391,7 +406,6 @@ const checkAuth = async () => {
   }
 }
 
-
 // 監聽路由變化更新底部選項卡
 watch(
   () => route.path,
@@ -414,7 +428,7 @@ watch(
 onMounted(() => {
   // 檢查認證狀態
   checkAuth()
-  
+
   // 監聽測試頁面的抽屜開關事件
   window.addEventListener('toggle-drawer', () => {
     drawer.value = !drawer.value

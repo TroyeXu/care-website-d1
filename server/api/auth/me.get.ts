@@ -14,8 +14,8 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const user = await getCurrentUser(event, db)
-    
+    const user = await getCurrentUser(event)
+
     if (!user) {
       return {
         user: null,

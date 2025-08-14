@@ -11,7 +11,7 @@
 
         <!-- 登入表單 -->
         <q-card-section class="q-px-lg">
-          <q-form @submit="handleLogin" class="q-gutter-md">
+          <q-form class="q-gutter-md" @submit="handleLogin">
             <q-input
               v-model="form.email"
               type="email"
@@ -19,11 +19,11 @@
               filled
               lazy-rules
               :rules="[
-                val => !!val || '請輸入電子郵件',
-                val => isValidEmail(val) || '請輸入有效的電子郵件'
+                (val) => !!val || '請輸入電子郵件',
+                (val) => isValidEmail(val) || '請輸入有效的電子郵件',
               ]"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="email" />
               </template>
             </q-input>
@@ -34,12 +34,12 @@
               label="密碼"
               filled
               lazy-rules
-              :rules="[val => !!val || '請輸入密碼']"
+              :rules="[(val) => !!val || '請輸入密碼']"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="lock" />
               </template>
-              <template v-slot:append>
+              <template #append>
                 <q-icon
                   :name="showPassword ? 'visibility_off' : 'visibility'"
                   class="cursor-pointer"
@@ -57,7 +57,7 @@
                 no-caps
                 color="primary"
                 label="忘記密碼？"
-                @click="navigateTo('/auth/forgot-password')"
+                @click="() => router.push('/auth/forgot-password')"
               />
             </div>
 
@@ -114,7 +114,7 @@
               no-caps
               color="primary"
               label="立即註冊"
-              @click="navigateTo('/auth/register')"
+              @click="() => router.push('/auth/register')"
             />
           </div>
         </q-card-section>
@@ -172,20 +172,21 @@ const handleLogin = async () => {
       },
     })
 
-    if (response?.user) {
+    if (response?.data?.user) {
       $q.notify({
         type: 'positive',
         message: '登入成功！',
         timeout: 2000,
       })
-      
+
       // 儲存到 localStorage（如果勾選記住我）
       if (rememberMe.value) {
         localStorage.setItem('rememberedEmail', form.value.email)
       }
-      
+
       // 跳轉到首頁或之前的頁面
-      const redirectTo = router.currentRoute.value.query.redirect as string || '/'
+      const redirectTo =
+        (router.currentRoute.value.query.redirect as string) || '/'
       router.push(redirectTo)
     }
   } catch (error: any) {
@@ -273,7 +274,7 @@ onMounted(() => {
   .auth-container {
     max-width: 100%;
   }
-  
+
   .auth-card {
     border-radius: 12px;
   }

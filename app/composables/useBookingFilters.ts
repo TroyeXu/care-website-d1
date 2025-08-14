@@ -1,4 +1,4 @@
-import { } from 'vue'
+import {} from 'vue'
 import type { CaregiverDisplay } from '~/types/caregiver'
 // import type { Caregiver } from '~/stores/caregivers' // 已使用 CaregiverDisplay
 

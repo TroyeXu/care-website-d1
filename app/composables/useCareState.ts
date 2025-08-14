@@ -1,7 +1,8 @@
 import { ref } from 'vue'
+import type { CareItem } from '../types/care'
 
 export default function useCareState() {
-  const careItems = ref([
+  const careItems = ref<CareItem[]>([
     {
       code: 'HR01',
       name: '基本照護(必選)',
@@ -20,6 +21,7 @@ export default function useCareState() {
       subCategory: '醫療照護',
       icon: 'medical_services',
       color: 'light-blue',
+      selectedByDefault: false,
     },
     {
       code: 'HR03',
@@ -29,6 +31,7 @@ export default function useCareState() {
       subCategory: '醫療照護',
       icon: 'medical_services',
       color: 'teal',
+      selectedByDefault: false,
     },
     {
       code: 'HR04',
@@ -38,6 +41,7 @@ export default function useCareState() {
       subCategory: '醫療照護',
       icon: 'medical_services',
       color: 'cyan',
+      selectedByDefault: false,
     },
     {
       code: 'HR05',
@@ -47,6 +51,7 @@ export default function useCareState() {
       subCategory: '醫療照護',
       icon: 'medical_services',
       color: 'indigo',
+      selectedByDefault: false,
     },
     {
       code: 'HR06',
@@ -56,6 +61,7 @@ export default function useCareState() {
       subCategory: '特殊需求',
       icon: 'bed',
       color: 'deep-purple',
+      selectedByDefault: false,
     },
     {
       code: 'HR07',
@@ -65,6 +71,7 @@ export default function useCareState() {
       subCategory: '特殊需求',
       icon: 'psychology',
       color: 'purple',
+      selectedByDefault: false,
     },
     {
       code: 'HR08',
@@ -74,6 +81,7 @@ export default function useCareState() {
       subCategory: '特殊需求',
       icon: 'coronavirus',
       color: 'red',
+      selectedByDefault: false,
     },
     {
       code: 'HR09',
@@ -83,6 +91,7 @@ export default function useCareState() {
       subCategory: '時段加價',
       icon: 'bedtime',
       color: 'blue-grey',
+      selectedByDefault: false,
     },
     {
       code: 'HR10',
@@ -92,6 +101,7 @@ export default function useCareState() {
       subCategory: '時段加價',
       icon: 'priority_high',
       color: 'amber',
+      selectedByDefault: false,
     },
     {
       code: 'HR11',
@@ -101,6 +111,7 @@ export default function useCareState() {
       subCategory: '時段加價',
       icon: 'bolt',
       color: 'orange',
+      selectedByDefault: false,
     },
     {
       code: 'SH01',
@@ -110,6 +121,7 @@ export default function useCareState() {
       subCategory: '基本班次',
       icon: 'schedule',
       color: 'primary',
+      selectedByDefault: false,
     },
     {
       code: 'SH02',
@@ -119,6 +131,7 @@ export default function useCareState() {
       subCategory: '基本班次',
       icon: 'access_time_filled',
       color: 'secondary',
+      selectedByDefault: false,
     },
     {
       code: 'SH03',
@@ -128,6 +141,7 @@ export default function useCareState() {
       subCategory: '特殊需求',
       icon: 'bed',
       color: 'deep-purple',
+      selectedByDefault: false,
     },
     {
       code: 'SH04',
@@ -137,6 +151,7 @@ export default function useCareState() {
       subCategory: '特殊需求',
       icon: 'psychology',
       color: 'purple',
+      selectedByDefault: false,
     },
     {
       code: 'SH05',
@@ -146,6 +161,7 @@ export default function useCareState() {
       subCategory: '特殊需求',
       icon: 'coronavirus',
       color: 'red',
+      selectedByDefault: false,
     },
   ])
 
