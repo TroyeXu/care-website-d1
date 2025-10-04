@@ -194,7 +194,10 @@ const loading = ref(false)
 onMounted(async () => {
   loading.value = true
   try {
-    await bookingStore.fetchBookings()
+    await Promise.all([
+      bookingStore.fetchBookings(),
+      caregiverStore.fetchCaregivers(),
+    ])
     // 如果 API 失敗，保持空陣列
   } finally {
     loading.value = false
@@ -227,11 +230,9 @@ const emptyMessage = computed(() => {
 
 // 輔助函數
 const getCaregiverName = (caregiverId: number | string) => {
-  // 這裡應該從 caregiverStore 獲取，暫時返回模擬資料
-  const names = ['張美玲', '陳淑芬', '王雅婷', '李秀蘭', '林惠珍']
-  const id =
-    typeof caregiverId === 'string' ? parseInt(caregiverId) || 0 : caregiverId
-  return names[id % names.length] || `看護師 ${caregiverId}`
+  // 從 caregiverStore 獲取看護師資訊
+  const caregiver = caregiverStore.caregivers.find((c) => c.id === caregiverId)
+  return caregiver?.name || `看護師 ${caregiverId}`
 }
 
 const getCaregiverAvatar = (caregiverId: number | string) => {

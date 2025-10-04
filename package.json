@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nuxt dev --port 3333",
+    "dev": "NITRO_PRESET=node nuxt dev --port 3333",
+    "dev:cf": "npm run build && wrangler dev --local --persist-to .wrangler/state",
     "dev:wrangler": "wrangler dev --local --persist-to .wrangler/state",
     "build": "nuxt build",
     "preview": "nuxt preview",
@@ -69,6 +70,6 @@
     "stylelint-config-standard-scss": "^11.0.0",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "wrangler": "^3.22.1"
+    "wrangler": "^4.33.0"
   }
 }

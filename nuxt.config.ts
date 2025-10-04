@@ -20,7 +20,7 @@ export default defineNuxtConfig({
 
   // Cloudflare Workers 配置（支援混合渲染）
   nitro: {
-    preset: 'cloudflare-module',
+    preset: process.env.NITRO_PRESET || 'cloudflare-module',
     // 預渲染靜態頁面
     prerender: {
       crawlLinks: true,

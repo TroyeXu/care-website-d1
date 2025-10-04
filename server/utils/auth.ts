@@ -90,7 +90,7 @@ export async function verifyPasswordCrypto(
 }
 
 // 簡單的 JWT 實作（適用於 Workers）
-export async function generateJWT(
+async function generateAuthJWT(
   payload: Record<string, any>,
   secret: string,
   expiresIn: number = 7 * 24 * 60 * 60, // 預設 7 天
@@ -138,7 +138,7 @@ export async function generateJWT(
 }
 
 // 驗證 JWT
-export async function verifyJWT(
+async function verifyAuthJWT(
   token: string,
   secret: string,
 ): Promise<Record<string, any> | null> {
@@ -273,7 +273,7 @@ export async function getCurrentUser(event: H3Event): Promise<User | null> {
   if (!token) return null
 
   const secret = getJWTSecret(event)
-  const payload = await verifyJWT(token, secret)
+  const payload = await verifyAuthJWT(token, secret)
   if (!payload || !payload.userId) return null
 
   const user = await queryFirst<UserWithPassword>(
@@ -362,7 +362,7 @@ export async function loginUser(
   }
 
   const secret = getJWTSecret(event)
-  const token = await generateJWT(payload, secret)
+  const token = await generateAuthJWT(payload, secret)
 
   // 設定 Cookie
   setAuthCookie(event, token)
@@ -449,7 +449,7 @@ export async function registerUser(
   }
 
   const secret = getJWTSecret(event)
-  const token = await generateJWT(payload, secret)
+  const token = await generateAuthJWT(payload, secret)
 
   // 設定 Cookie
   setAuthCookie(event, token)

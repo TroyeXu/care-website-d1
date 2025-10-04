@@ -321,11 +321,11 @@ export const useApiService = () => {
   const updateBookingStatus = async (bookingId: string, status: string) => {
     try {
       isLoading.value = true
-      // 目前 API 還沒實作，先使用假資料
-      return {
-        success: true,
-        booking: { id: bookingId, status },
-      }
+      const response = await $fetch(`/api/bookings/${bookingId}/status`, {
+        method: 'PUT',
+        body: { status },
+      })
+      return response
     } catch (err) {
       handleError(err)
     } finally {
@@ -350,15 +350,11 @@ export const useApiService = () => {
   ) => {
     try {
       isLoading.value = true
-      // API 尚未實作，返回成功
-      return {
-        success: true,
-        payment: {
-          id: `pay-${Date.now()}`,
-          ...paymentData,
-          status: 'completed',
-        },
-      }
+      const response = await $fetch<any>('/api/payments', {
+        method: 'post',
+        body: paymentData,
+      })
+      return response
     } catch (err) {
       handleError(err)
     } finally {
@@ -369,8 +365,8 @@ export const useApiService = () => {
   const getPaymentHistory = async (userId: string) => {
     try {
       isLoading.value = true
-      // API 尚未實作，返回空陣列
-      return []
+      const response = await $fetch(`/api/payments/history/${userId}`)
+      return response
     } catch (err) {
       return []
     } finally {
@@ -391,15 +387,11 @@ export const useApiService = () => {
   ) => {
     try {
       isLoading.value = true
-      // API 尚未實作
-      return {
-        success: true,
-        review: {
-          id: `rev-${Date.now()}`,
-          ...reviewData,
-          created_at: new Date().toISOString(),
-        },
-      }
+      const response = await $fetch('/api/reviews', {
+        method: 'POST',
+        body: reviewData,
+      })
+      return response
     } catch (err) {
       handleError(err)
     } finally {
@@ -410,8 +402,8 @@ export const useApiService = () => {
   const getReviewsByCaregiver = async (caregiverId: number | string) => {
     try {
       isLoading.value = true
-      // API 尚未實作，返回空陣列
-      return []
+      const response = await $fetch(`/api/reviews/caregiver/${caregiverId}`)
+      return response
     } catch (err) {
       return []
     } finally {
@@ -430,13 +422,8 @@ export const useApiService = () => {
   const getDashboardStats = async (userId: string) => {
     try {
       isLoading.value = true
-      // API 尚未實作，返回預設值
-      return {
-        totalBookings: 0,
-        activeBookings: 0,
-        completedBookings: 0,
-        totalSpent: 0,
-      }
+      const response = await $fetch(`/api/dashboard/stats/${userId}`)
+      return response
     } catch (err) {
       return {
         totalBookings: 0,
@@ -530,13 +517,11 @@ export const useApiService = () => {
   }) => {
     try {
       isLoading.value = true
-      // API 尚未實作，模擬成功
-      return {
-        id: `contact-${Date.now()}`,
-        ...contactData,
-        created_at: new Date().toISOString(),
-        message: '您的訊息已成功送出，我們會盡快回覆您',
-      }
+      const response = await $fetch('/api/contact', {
+        method: 'POST',
+        body: contactData,
+      })
+      return response
     } catch (err) {
       handleError(err)
     } finally {

@@ -310,7 +310,9 @@ const handleSubmit = async (values: ContactFormValues) => {
   submitError.value = ''
 
   try {
-    const response = await apiService.submitContactForm(values)
+    const response = (await apiService.submitContactForm(values)) as {
+      message?: string
+    }
 
     // 設定成功狀態
     submitSuccess.value = true
@@ -318,7 +320,7 @@ const handleSubmit = async (values: ContactFormValues) => {
     // 顯示成功通知
     $q.notify({
       type: 'positive',
-      message: response.message || '您的訊息已成功送出，我們會盡快回覆您',
+      message: response?.message || '您的訊息已成功送出，我們會盡快回覆您',
       icon: 'check_circle',
       timeout: 6000,
       position: 'top',

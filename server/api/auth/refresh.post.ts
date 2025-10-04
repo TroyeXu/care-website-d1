@@ -1,11 +1,6 @@
 import { defineEventHandler, createError } from 'h3'
-import {
-  getToken,
-  verifyJWT,
-  generateJWT,
-  getJWTSecret,
-  setAuthCookie,
-} from '../../utils/auth'
+import { getToken, getJWTSecret, setAuthCookie } from '../../utils/auth'
+import { verifyJWT, generateJWT } from '../../utils/crypto'
 
 export default defineEventHandler(async (event) => {
   // 獲取當前 token

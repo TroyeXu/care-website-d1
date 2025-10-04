@@ -130,22 +130,11 @@
           <div class="text-body2">請於服務時直接向看護師付款，並索取收據。</div>
         </div>
 
-        <!-- 測試按鈕 -->
+        <!-- 操作按鈕 -->
         <div class="row q-gutter-sm">
           <div class="col">
             <q-btn flat color="grey" :disable="isSubmitting" @click="resetForm">
               清除
-            </q-btn>
-          </div>
-          <div class="col-auto">
-            <q-btn
-              flat
-              color="orange"
-              :disable="isSubmitting"
-              size="sm"
-              @click="fillTestData"
-            >
-              填入測試資料
             </q-btn>
           </div>
           <div class="col-auto">
@@ -271,19 +260,6 @@ const resetForm = () => {
     expiryMonth: '',
     expiryYear: '',
     cvv: '',
-  }
-}
-
-// 測試付款資料填入
-const fillTestData = () => {
-  bookingId.value = 'booking-test-' + Date.now()
-  amount.value = 1500
-  method.value = 'credit_card'
-  cardDetails.value = {
-    number: '4111111111111111',
-    expiryMonth: '12',
-    expiryYear: '2025',
-    cvv: '123',
   }
 }
 </script>

@@ -175,22 +175,26 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    resetPassword(email: string) {
+    async resetPassword(email: string) {
       this.loading = true
       this.error = null
 
       try {
-        // 檢查 email 是否存在
-        const user = this.users.find((u) => u.email === email)
-        if (!user) {
-          throw new Error('找不到此電子郵件帳號')
-        }
+        // 呼叫 API 發送重設密碼郵件
+        const response = await $fetch<{ message?: string }>(
+          '/api/auth/reset-password',
+          {
+            method: 'POST',
+            body: { email },
+          },
+        )
 
-        // 模擬發送重設密碼郵件
-        console.log(`已發送重設密碼郵件至: ${email}`)
-        return { success: true, message: '重設密碼郵件已發送' }
+        return {
+          success: true,
+          message: response?.message || '重設密碼郵件已發送',
+        }
       } catch (err: any) {
-        this.error = err.message || '重設密碼失敗'
+        this.error = err.data?.message || err.message || '重設密碼失敗'
         console.error('Password reset error:', err)
         throw new Error(this.error || '未知錯誤')
       } finally {

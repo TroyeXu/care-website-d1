@@ -642,7 +642,6 @@ const scrollToApplication = () => {
 // 頁面標題
 definePageMeta({
   title: '成為照護員',
-  layout: 'default',
 })
 </script>
 
