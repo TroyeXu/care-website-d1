@@ -1,5 +1,9 @@
 export interface StorageProvider {
-  upload(key: string, data: Blob | Buffer | Uint8Array, type: string): Promise<string>
+  upload(
+    key: string,
+    data: Blob | Buffer | Uint8Array,
+    type: string,
+  ): Promise<string>
   getUrl(key: string): string
   delete(key: string): Promise<boolean>
 }
@@ -8,7 +12,12 @@ export interface StorageProvider {
  * Mock Storage Provider for Development
  */
 class MockStorageProvider implements StorageProvider {
-  async upload(key: string, data: Blob | Buffer | Uint8Array, type: string): Promise<string> {
+  async upload(
+    key: string,
+    data: Blob | Buffer | Uint8Array,
+    type: string,
+  ): Promise<string> {
+    await Promise.resolve()
     console.log('\n===== 📁 MOCK FILE UPLOAD 📁 =====')
     console.log('Key:', key)
     console.log('Type:', type)
@@ -25,6 +34,7 @@ class MockStorageProvider implements StorageProvider {
   }
 
   async delete(key: string): Promise<boolean> {
+    await Promise.resolve()
     console.log(`Mock file deleted: ${key}`)
     return true
   }
@@ -41,7 +51,11 @@ class R2StorageProvider implements StorageProvider {
     this.bucket = bucket
   }
 
-  async upload(key: string, data: Blob | Buffer | Uint8Array, type: string): Promise<string> {
+  async upload(
+    key: string,
+    data: Blob | Buffer | Uint8Array,
+    type: string,
+  ): Promise<string> {
     if (!this.bucket) throw new Error('R2 Bucket not configured')
 
     await this.bucket.put(key, data, {
@@ -53,7 +67,8 @@ class R2StorageProvider implements StorageProvider {
 
   getUrl(key: string): string {
     // Assuming a public domain is mapped to the bucket
-    const publicDomain = process.env.PUBLIC_STORAGE_URL || 'https://storage.example.com'
+    const publicDomain =
+      process.env.PUBLIC_STORAGE_URL || 'https://storage.example.com'
     return `${publicDomain}/${key}`
   }
 
@@ -85,10 +100,10 @@ export function getStorageProvider(event?: any): StorageProvider {
 /**
  * Helper to upload file
  */
-export async function uploadFile(
+export function uploadFile(
   key: string,
   data: Blob | Buffer | Uint8Array,
-  type: string
+  type: string,
 ): Promise<string> {
   const provider = getStorageProvider()
   return provider.upload(key, data, type)

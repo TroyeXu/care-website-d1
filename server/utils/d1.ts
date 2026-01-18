@@ -22,30 +22,35 @@ class MockD1Database {
         console.log(`[MockDB] Bind:`, args)
         return {
           first: async () => {
-             console.log(`[MockDB] First`)
-             return null
+            await Promise.resolve()
+            console.log(`[MockDB] First`)
+            return null
           },
           all: async () => {
-             console.log(`[MockDB] All`)
-             return { results: [] }
+            await Promise.resolve()
+            console.log(`[MockDB] All`)
+            return { results: [] }
           },
           run: async () => {
-             console.log(`[MockDB] Run`)
-             return { success: true, meta: { changes: 1 } }
-          }
+            await Promise.resolve()
+            console.log(`[MockDB] Run`)
+            return { success: true, meta: { changes: 1 } }
+          },
         }
-      }
+      },
     }
   }
 
   async batch(statements: any[]) {
-     console.log(`[MockDB] Batch:`, statements.length)
-     return []
+    await Promise.resolve()
+    console.log(`[MockDB] Batch:`, statements.length)
+    return []
   }
 
   async exec(query: string) {
-     console.log(`[MockDB] Exec: ${query}`)
-     return { count: 0, duration: 0 }
+    await Promise.resolve()
+    console.log(`[MockDB] Exec: ${query}`)
+    return { count: 0, duration: 0 }
   }
 }
 

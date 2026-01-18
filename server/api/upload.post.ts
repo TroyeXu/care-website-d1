@@ -20,7 +20,12 @@ export default defineEventHandler(async (event) => {
     const file = multipartData[0] // 假設只上傳第一個檔案
 
     // 驗證檔案類型
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf']
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'application/pdf',
+    ]
     if (!file.type || !allowedTypes.includes(file.type)) {
       throw createError({
         statusCode: 400,
@@ -37,21 +42,24 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const extension = file.type === 'application/pdf' ? 'pdf' : file.type.split('/')[1]
+    const extension =
+      file.type === 'application/pdf' ? 'pdf' : file.type.split('/')[1]
     const key = `uploads/${nanoid()}.${extension}`
 
     // 上傳檔案
     const url = await uploadFile(key, file.data, file.type)
 
-    return createSuccessResponse({
-      url,
-      params: {
-        key,
-        type: file.type,
-        size: file.data.length
-      }
-    }, '檔案上傳成功')
-
+    return createSuccessResponse(
+      {
+        url,
+        params: {
+          key,
+          type: file.type,
+          size: file.data.length,
+        },
+      },
+      '檔案上傳成功',
+    )
   } catch (error: any) {
     handleError(error, '檔案上傳')
   }

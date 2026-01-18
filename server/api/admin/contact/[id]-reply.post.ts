@@ -75,7 +75,6 @@ export default defineEventHandler(async (event) => {
       { status: status || 'replied' },
     )
 
-
     // 發送 Email 通知給提交者
     const emailHtml = `
       <h2>您的聯絡表單已收到回覆</h2>
@@ -89,8 +88,11 @@ export default defineEventHandler(async (event) => {
       <p style="font-size: 12px; color: #666;">此郵件為系統自動發送，請勿直接回覆。</p>
     `
 
-    sendEmail(submission.email, `[回覆] ${submission.subject}`, emailHtml)
-      .catch(err => console.error('Failed to send reply notification:', err))
+    sendEmail(
+      submission.email,
+      `[回覆] ${submission.subject}`,
+      emailHtml,
+    ).catch((err) => console.error('Failed to send reply notification:', err))
 
     // 取得更新後的資料
     const updatedSubmission = await db

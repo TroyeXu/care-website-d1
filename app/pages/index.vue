@@ -7,9 +7,7 @@
         src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=1200"
       >
         <div class="absolute-full flex flex-center">
-          <div
-            class="hero-content text-center q-pa-md animate-fade-in"
-          >
+          <div class="hero-content text-center q-pa-md animate-fade-in">
             <div class="hero-badge q-mb-md">
               <q-chip
                 color="white"

@@ -17,6 +17,7 @@ export interface EmailProvider {
  */
 class MockEmailProvider implements EmailProvider {
   async send(message: EmailMessage): Promise<boolean> {
+    await Promise.resolve()
     console.log('\n===== 📧 MOCK EMAIL SENT 📧 =====')
     console.log('To:', message.to)
     console.log('Subject:', message.subject)
@@ -91,7 +92,7 @@ export function getEmailProvider(): EmailProvider {
 /**
  * Helper function to send email easily
  */
-export async function sendEmail(
+export function sendEmail(
   to: string | string[],
   subject: string,
   html: string,

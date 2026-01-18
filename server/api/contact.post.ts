@@ -63,8 +63,12 @@ export default defineEventHandler(async (event) => {
     `
 
     // 非阻塞式發送
-    sendEmail(adminEmail, `[新訊息] ${subject || '一般諮詢'}`, emailHtml, 'system@side-care.com')
-      .catch(err => console.error('Failed to send admin notification:', err))
+    sendEmail(
+      adminEmail,
+      `[新訊息] ${subject || '一般諮詢'}`,
+      emailHtml,
+      'system@side-care.com',
+    ).catch((err) => console.error('Failed to send admin notification:', err))
 
     return createSuccessResponse(
       {
