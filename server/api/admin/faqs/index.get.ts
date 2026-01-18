@@ -2,19 +2,24 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
+import { createSuccessResponse, calculatePagination, calculateOffset } from '../../../utils/api-response'
+import { handleError } from '../../../utils/error-handler'
+import { validatePaginationParams } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
   await requirePermission('content.view')(event)
 
-  const query = getQuery(event)
-  /* eslint-disable camelcase */
-  const { category, search, is_active, page = 1, limit = 20 } = query
-  /* eslint-enable camelcase */
-
-  const db = getD1(event)
-
   try {
+    const query = getQuery(event)
+    /* eslint-disable camelcase */
+    const { category, search, is_active, page = 1, limit = 20 } = query
+    /* eslint-enable camelcase */
+
+    // 驗證分頁參數
+    validatePaginationParams(Number(page), Number(limit))
+
+    const db = getD1(event)
     // 建立查詢條件
     const conditions = []
     const params = []
@@ -57,7 +62,7 @@ export default defineEventHandler(async (event) => {
     const total = countResult?.total || 0
 
     // 查詢 FAQ 列表
-    const offset = (Number(page) - 1) * Number(limit)
+    const offset = calculateOffset(Number(page), Number(limit))
     const result = await db
       .prepare(
         `
@@ -101,22 +106,14 @@ export default defineEventHandler(async (event) => {
       updated_at: row.updated_at,
     }))
 
-    return {
-      success: true,
+    const pagination = calculatePagination(Number(total), Number(page), Number(limit))
+
+    return createSuccessResponse({
       faqs,
       categories: categories.results,
-      pagination: {
-        total: Number(total),
-        page: Number(page),
-        limit: Number(limit),
-        pages: Math.ceil(Number(total) / Number(limit)),
-      },
-    }
-  } catch (error) {
-    console.error('取得 FAQ 列表錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '取得 FAQ 列表失敗',
+      pagination,
     })
+  } catch (error) {
+    handleError(error, '取得 FAQ 列表')
   }
 })

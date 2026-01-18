@@ -1,0 +1,45 @@
+{
+  "name": "DogFriend API Tests",
+  "version": "1.0.0",
+  "baseUrl": "http://localhost:3333",
+  "specs": [
+    "spec/**/*.spec.md"
+  ],
+  "output": {
+    "format": "html",
+    "path": "test-reports"
+  },
+  "timeout": 30000,
+  "retry": {
+    "enabled": true,
+    "maxAttempts": 2
+  },
+  "environment": {
+    "development": {
+      "baseUrl": "http://localhost:3333"
+    },
+    "staging": {
+      "baseUrl": "https://staging.dogfriend.example.com"
+    },
+    "production": {
+      "baseUrl": "https://api.dogfriend.example.com"
+    }
+  },
+  "headers": {
+    "Content-Type": "application/json",
+    "Accept": "application/json"
+  },
+  "reporters": [
+    "console",
+    "html",
+    "json"
+  ],
+  "coverage": {
+    "enabled": true,
+    "threshold": {
+      "endpoints": 100,
+      "statusCodes": 100,
+      "errors": 95
+    }
+  }
+}

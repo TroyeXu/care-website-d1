@@ -156,6 +156,12 @@
 import { ref, computed, watch } from 'vue'
 import { useBookingStore } from '~/stores/bookings'
 import { useCaregiverStore } from '~/stores/caregivers'
+import {
+  useCostCalculator,
+  type CostCalculationParams,
+} from '~/composables/useCostCalculator'
+
+import { useAuthStore } from '~/stores/auth'
 
 interface Props {
   caregiverId?: string
@@ -169,6 +175,8 @@ const emit = defineEmits<{
 
 const bookingStore = useBookingStore()
 const caregiverStore = useCaregiverStore()
+const authStore = useAuthStore()
+const { calculateCostBreakdown } = useCostCalculator()
 
 const caregiver = computed(() => {
   const c = props.caregiverId
@@ -211,23 +219,18 @@ const estimatedCost = computed(() => {
     return 0
   }
 
-  const startDate = new Date(form.value.startDate)
-  const endDate = new Date(form.value.endDate || form.value.startDate)
-  const days =
-    Math.ceil(
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-    ) + 1
-
-  if (form.value.serviceType === 'hourly' && form.value.endTime) {
-    const startTime = new Date(`2000-01-01T${form.value.startTime}`)
-    const endTime = new Date(`2000-01-01T${form.value.endTime}`)
-    const hours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60)
-    return Math.round(hours * caregiver.value.hourly_rate * days)
-  } else if (form.value.serviceType === 'shift') {
-    return caregiver.value.shift_rate * days
+  const params: CostCalculationParams = {
+    caregiver: caregiver.value,
+    serviceType: form.value.serviceType,
+    startDate: form.value.startDate,
+    endDate: form.value.endDate || form.value.startDate,
+    startTime: form.value.startTime,
+    endTime: form.value.endTime,
+    specialNeeds: form.value.patientInfo.medicalConditions,
   }
 
-  return 0
+  const breakdown = calculateCostBreakdown(params)
+  return breakdown.total
 })
 
 watch(
@@ -274,9 +277,14 @@ const handleSubmit = async () => {
       Math.abs(endDateTime.getTime() - startDateTime.getTime()) /
       (1000 * 60 * 60)
 
+    if (!authStore.user) {
+      alert('請先登入會員')
+      return
+    }
+
     const bookingData = {
       caregiver_id: caregiver.value.id,
-      user_id: 'user-001', // 暫時使用固定用戶ID
+      user_id: authStore.user.id,
       service_date: form.value.startDate,
       start_time: form.value.startTime,
       end_time: form.value.endTime || '20:00',

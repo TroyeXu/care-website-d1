@@ -132,6 +132,7 @@
 import { ref, computed } from 'vue'
 import { useDialogPluginComponent } from 'quasar'
 import { useBookingStore } from '~/stores/bookings'
+import { useAuthStore } from '~/stores/auth'
 
 const props = defineProps<{
   caregiverId: string
@@ -145,6 +146,7 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent()
 
 const bookingStore = useBookingStore()
+const authStore = useAuthStore()
 const submitting = ref(false)
 
 // 表單資料
@@ -217,6 +219,12 @@ const submitBooking = async () => {
 
   submitting.value = true
 
+  if (!authStore.user) {
+    alert('請先登入會員')
+    submitting.value = false
+    return
+  }
+
   try {
     // 計算總時數
     const startDateTime = new Date(
@@ -232,7 +240,7 @@ const submitBooking = async () => {
 
     const bookingData = {
       caregiver_id: props.caregiverId,
-      user_id: 'user-001', // 暫時使用固定用戶ID
+      user_id: authStore.user.id,
       service_date: form.value.startDate,
       start_time: form.value.startTime,
       end_time:

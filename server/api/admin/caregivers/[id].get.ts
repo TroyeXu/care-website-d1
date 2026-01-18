@@ -1,23 +1,22 @@
 // 管理員：看護師詳情 API
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler, getRouterParam } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
+import { createSuccessResponse } from '../../../utils/api-response'
+import { handleError, createNotFoundError } from '../../../utils/error-handler'
+import { validateId } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
   await requirePermission('caregiver.view')(event)
 
   const caregiverId = getRouterParam(event, 'id')
-  if (!caregiverId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '缺少看護師 ID',
-    })
-  }
-
-  const db = getD1(event)
 
   try {
+    // 驗證 ID
+    validateId(caregiverId, 'id')
+
+    const db = getD1(event)
     // 取得看護師基本資料
     const caregiver = await db
       .prepare(
@@ -38,10 +37,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!caregiver) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該看護師',
-      })
+      throw createNotFoundError('看護師', caregiverId)
     }
 
     // 取得審核資料
@@ -126,8 +122,7 @@ export default defineEventHandler(async (event) => {
       .bind(caregiverId)
       .all()
 
-    return {
-      success: true,
+    return createSuccessResponse({
       caregiver: {
         id: caregiver.id,
         user_id: caregiver.user_id,
@@ -160,14 +155,8 @@ export default defineEventHandler(async (event) => {
         avg_amount: bookingStats?.avg_amount || 0,
       },
       recent_bookings: recentBookings.results,
-    }
-  } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('取得看護師詳情錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '取得看護師詳情失敗',
     })
+  } catch (error: any) {
+    handleError(error, '取得看護師詳情')
   }
 })

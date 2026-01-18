@@ -1,27 +1,26 @@
 // 管理員：更新 FAQ API
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, getRouterParam } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
 import { logAdminAction } from '../../../utils/admin-auth'
+import { createSuccessResponse } from '../../../utils/api-response'
+import { handleError, createNotFoundError, createValidationError } from '../../../utils/error-handler'
+import { validateId } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
   await requirePermission('content.edit')(event)
 
   const faqId = getRouterParam(event, 'id')
-  const updates = await readBody(event)
-
-  if (!faqId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '缺少 FAQ ID',
-    })
-  }
-
-  const db = getD1(event)
-  const admin = event.context.admin
 
   try {
+    // 驗證 ID
+    validateId(faqId, 'id')
+
+    const updates = await readBody(event)
+    const db = getD1(event)
+    const admin = event.context.admin
+
     // 檢查 FAQ 是否存在
     const existing = await db
       .prepare('SELECT * FROM faqs WHERE id = ?')
@@ -29,10 +28,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!existing) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該 FAQ',
-      })
+      throw createNotFoundError('FAQ', faqId)
     }
 
     // 準備更新欄位
@@ -66,10 +62,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (updateFields.length === 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: '沒有提供要更新的欄位',
-      })
+      throw createValidationError('沒有提供要更新的欄位')
     }
 
     // 加入更新者和時間
@@ -108,10 +101,8 @@ export default defineEventHandler(async (event) => {
       .bind(faqId)
       .first()
 
-    return {
-      success: true,
-      message: 'FAQ 已更新',
-      faq: {
+    return createSuccessResponse(
+      {
         id: updated?.id,
         category: updated?.category,
         category_name: updated?.category_name,
@@ -125,14 +116,9 @@ export default defineEventHandler(async (event) => {
         sort_order: updated?.sort_order,
         updated_at: updated?.updated_at,
       },
-    }
+      'FAQ 已更新',
+    )
   } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('更新 FAQ 錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '更新 FAQ 失敗',
-    })
+    handleError(error, '更新 FAQ')
   }
 })

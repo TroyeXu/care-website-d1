@@ -1,10 +1,16 @@
-import { defineEventHandler, getRouterParam, createError } from 'h3'
+import { defineEventHandler, getRouterParam } from 'h3'
 import { getD1 } from '../../utils/d1'
+import { createSuccessResponse } from '../../utils/api-response'
+import { handleError, createNotFoundError } from '../../utils/error-handler'
+import { validateId } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const caregiverId = getRouterParam(event, 'id')
 
   try {
+    // 驗證 ID
+    validateId(caregiverId, 'id')
+
     const db = getD1(event)
 
     // 查詢看護基本資料（包含使用者資料）
@@ -31,10 +37,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!caregiver) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該看護',
-      })
+      throw createNotFoundError('看護師', caregiverId)
     }
 
     // 查詢證照
@@ -128,7 +131,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     // 整理回傳格式
-    return {
+    const caregiverDetail = {
       id: caregiver.id,
       user_id: caregiver.user_id,
       name: caregiver.name,
@@ -187,15 +190,9 @@ export default defineEventHandler(async (event) => {
       created_at: caregiver.created_at,
       updated_at: caregiver.updated_at,
     }
-  } catch (error: any) {
-    if (error.statusCode === 404) {
-      throw error
-    }
 
-    console.error('Database error:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: `資料庫查詢錯誤: ${error.message}`,
-    })
+    return createSuccessResponse(caregiverDetail)
+  } catch (error: any) {
+    handleError(error, '取得看護師詳情')
   }
 })

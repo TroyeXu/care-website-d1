@@ -11,6 +11,15 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
 
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+    layoutTransition: { name: 'layout', mode: 'out-in' },
+    head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+    }
+  },
+
   // TypeScript 設定
   typescript: {
     strict: false,
@@ -76,6 +85,11 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3333',
+      bankAccount: {
+        bankName: '台灣銀行',
+        accountName: '護理服務平台有限公司',
+        accountNumber: '123-456-789012',
+      },
     },
   },
   modules: [

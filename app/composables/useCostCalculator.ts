@@ -19,6 +19,11 @@ export interface CostCalculationParams {
   specialNeeds?: string[]
   isUrgent?: boolean
   isDoubleUrgent?: boolean
+  extraItems?: {
+    name: string
+    price: number
+    type: 'fixed' | 'hourly' | 'daily'
+  }[]
 }
 
 export interface CostBreakdown {
@@ -205,6 +210,27 @@ export const useCostCalculator = () => {
         description: modifier.description,
       })
       runningTotal += amount
+    }
+
+    // Apply extra items (arbitrary modifiers)
+    if (params.extraItems) {
+      for (const item of params.extraItems) {
+        let amount = 0
+        if (item.type === 'hourly') {
+          amount = item.price * days * (hours || 1)
+        } else if (item.type === 'daily') {
+          amount = item.price * days
+        } else {
+          amount = item.price // fixed one-time
+        }
+        modifierDetails.push({
+          name: item.name,
+          amount,
+          type: 'fixed',
+          description: item.name,
+        })
+        runningTotal += amount
+      }
     }
 
     // Apply percentage modifiers

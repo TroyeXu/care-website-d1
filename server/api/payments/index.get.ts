@@ -1,12 +1,26 @@
-import { defineEventHandler, getQuery, createError } from 'h3'
+import { defineEventHandler, getQuery } from 'h3'
 import { getD1 } from '../../utils/d1'
+import {
+  createSuccessResponse,
+  calculatePagination,
+  calculateOffset,
+} from '../../utils/api-response'
+import { handleError } from '../../utils/error-handler'
+import { validatePaginationParams } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  /* eslint-disable camelcase */
-  const { user_id, booking_id, status, page = 1, limit = 20 } = query
-
   try {
+    const query = getQuery(event)
+    /* eslint-disable camelcase */
+    const { user_id, booking_id, status } = query
+    /* eslint-enable camelcase */
+
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 20
+
+    validatePaginationParams(page, limit)
+    const offset = calculateOffset(page, limit)
+
     const db = getD1(event)
 
     // 建立查詢條件
@@ -22,7 +36,6 @@ export default defineEventHandler(async (event) => {
       conditions.push('p.booking_id = ?')
       params.push(booking_id)
     }
-    /* eslint-enable camelcase */
 
     if (status) {
       conditions.push('p.status = ?')
@@ -31,9 +44,6 @@ export default defineEventHandler(async (event) => {
 
     const whereClause =
       conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
-
-    // 計算分頁
-    const offset = (Number(page) - 1) * Number(limit)
 
     // 查詢總數
     const countQuery = `
@@ -76,9 +86,8 @@ export default defineEventHandler(async (event) => {
     let stats = null
     /* eslint-disable camelcase */
     if (user_id) {
-      /* eslint-enable camelcase */
       const statsQuery = `
-        SELECT 
+        SELECT
           COUNT(*) as total_payments,
           COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_payments,
           COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_payments,
@@ -90,23 +99,20 @@ export default defineEventHandler(async (event) => {
       `
       stats = await db.prepare(statsQuery).bind(user_id).first()
     }
+    /* eslint-enable camelcase */
 
-    return {
-      success: true,
-      data: {
+    const total = Number(countResult?.total || 0)
+    const pagination = calculatePagination(total, page, limit)
+
+    return createSuccessResponse(
+      {
         payments: results.results || [],
-        total: countResult?.total || 0,
-        page: Number(page),
-        limit: Number(limit),
-        totalPages: Math.ceil((countResult?.total || 0) / Number(limit)),
         stats,
       },
-    }
+      undefined,
+      { pagination },
+    )
   } catch (error: any) {
-    console.error('Get payments error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || '獲取付款記錄失敗',
-    })
+    handleError(error, '獲取付款記錄')
   }
 })

@@ -2,6 +2,12 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
+import {
+  createSuccessResponse,
+  calculatePagination,
+  calculateOffset,
+} from '../../../utils/api-response'
+import { handleError } from '../../../utils/error-handler'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -21,6 +27,10 @@ export default defineEventHandler(async (event) => {
   const db = getD1(event)
 
   try {
+    // 驗證分頁參數
+    const pageNum = Number(page) || 1
+    const limitNum = Number(limit) || 20
+
     // 建立查詢條件
     const conditions = []
     const params = []
@@ -59,7 +69,7 @@ export default defineEventHandler(async (event) => {
     const total = countResult?.total || 0
 
     // 查詢用戶列表
-    const offset = (Number(page) - 1) * Number(limit)
+    const offset = calculateOffset(pageNum, limitNum)
     const result = await db
       .prepare(
         `
@@ -81,7 +91,7 @@ export default defineEventHandler(async (event) => {
         LIMIT ? OFFSET ?
       `,
       )
-      .bind(...params, Number(limit), offset)
+      .bind(...params, limitNum, offset)
       .all()
 
     // 格式化資料
@@ -115,21 +125,11 @@ export default defineEventHandler(async (event) => {
       updated_at: row.updated_at,
     }))
 
-    return {
-      success: true,
-      users,
-      pagination: {
-        total: Number(total),
-        page: Number(page),
-        limit: Number(limit),
-        pages: Math.ceil(Number(total) / Number(limit)),
-      },
-    }
+    // 使用統一的分頁回應格式
+    const pagination = calculatePagination(Number(total), pageNum, limitNum)
+
+    return createSuccessResponse(users, undefined, { pagination })
   } catch (error) {
-    console.error('取得用戶列表錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '取得用戶列表失敗',
-    })
+    handleError(error, '取得用戶列表')
   }
 })

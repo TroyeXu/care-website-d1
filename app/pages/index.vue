@@ -562,14 +562,15 @@ useHead({
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(0, 0, 0, 0.6) 0%,
-    rgba(0, 0, 0, 0.3) 100%
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(25, 118, 210, 0.4) 100%
   );
   pointer-events: none;
 }
 
 .hero-content {
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   background: rgba(255, 255, 255, 0.1);
   padding: 4rem 3rem;
   border-radius: 2rem;
@@ -580,70 +581,10 @@ useHead({
   z-index: 2;
 }
 
-.hero-title {
-  font-size: 3.5rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  line-height: 1.2;
-}
+/* ... existing styles ... */
 
-.hero-subtitle {
-  font-weight: 300;
-  opacity: 0.95;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.hero-badge {
-  display: inline-block;
-  animation: float 3s ease-in-out infinite;
-}
-
-.hero-btn-primary {
-  padding: 0 3rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  box-shadow: 0 8px 20px rgba(33, 150, 243, 0.3);
-  transition: all 0.3s ease;
-}
-
-.hero-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(33, 150, 243, 0.4);
-}
-
-.hero-btn-secondary {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  transition: all 0.3s ease;
-}
-
-.hero-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.3) !important;
-  border-color: white;
-}
-
-.hero-features {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.hero-feature {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2rem;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 0.9rem;
-}
-
-/* Stats Section Styles */
 .stats-section {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  background: linear-gradient(135deg, var(--primary-color, #1976d2) 0%, var(--primary-dark, #1565c0) 100%);
   color: white;
   position: relative;
   overflow: hidden;

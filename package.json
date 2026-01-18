@@ -1,7 +1,7 @@
 {
   "name": "care-calculator",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "NITRO_PRESET=node nuxt dev --port 3333",
@@ -22,6 +22,8 @@
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
     "type-check": "nuxt typecheck",
     "check-all": "npm run type-check && npm run lint && npm run format:check",
+    "spec:validate": "node scripts/validate-specs.mjs",
+    "spec:check": "npm run spec:validate",
     "prepare": "husky"
   },
   "dependencies": {
@@ -66,6 +68,7 @@
     "lint-staged": "^16.1.2",
     "prettier": "^3.2.5",
     "sass": "^1.89.0",
+    "speckit": "^0.1.0",
     "stylelint": "^15.11.0",
     "stylelint-config-standard-scss": "^11.0.0",
     "typescript": "^5.8.3",

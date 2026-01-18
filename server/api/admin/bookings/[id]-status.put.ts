@@ -1,9 +1,16 @@
 // 管理員：更新預約狀態 API
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, getRouterParam } from 'h3'
 import { nanoid } from 'nanoid'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
 import { logAdminAction } from '../../../utils/admin-auth'
+import { createSuccessResponse } from '../../../utils/api-response'
+import {
+  handleError,
+  createNotFoundError,
+  createValidationError,
+} from '../../../utils/error-handler'
+import { validateId, validateRequired, validateEnum } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -12,40 +19,25 @@ export default defineEventHandler(async (event) => {
   const bookingId = getRouterParam(event, 'id')
   const { status, reason, notes } = await readBody(event)
 
-  if (!bookingId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '缺少預約 ID',
-    })
-  }
-
-  if (!status) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '缺少狀態',
-    })
-  }
-
-  // 驗證狀態轉換規則
-  const validStatuses = [
-    'pending',
-    'confirmed',
-    'in_progress',
-    'completed',
-    'cancelled',
-    'disputed',
-  ]
-  if (!validStatuses.includes(status)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '無效的狀態',
-    })
-  }
-
-  const db = getD1(event)
-  const admin = event.context.admin
-
   try {
+    // 使用統一的驗證工具
+    validateId(bookingId, 'id')
+    validateRequired(status, 'status', '狀態')
+
+    // 驗證狀態列舉值
+    const validStatuses = [
+      'pending',
+      'confirmed',
+      'in_progress',
+      'completed',
+      'cancelled',
+      'disputed',
+    ]
+    validateEnum(status, validStatuses, 'status', '預約狀態')
+
+    const db = getD1(event)
+    const admin = event.context.admin
+
     // 取得當前預約狀態
     const booking = await db
       .prepare('SELECT * FROM bookings WHERE id = ?')
@@ -53,10 +45,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!booking) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該預約',
-      })
+      throw createNotFoundError('預約', bookingId)
     }
 
     const previousStatus = booking.status
@@ -75,10 +64,10 @@ export default defineEventHandler(async (event) => {
 
     // 管理員可以強制更改狀態（除了某些限制）
     if (!admin.is_super && !allowedTransitions.includes(status)) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: `無法從 ${previousStatus} 轉換到 ${status}`,
-      })
+      throw createValidationError(
+        `無法從 ${previousStatus} 轉換到 ${status}`,
+        'status',
+      )
     }
 
     // 使用批次操作（D1 不支援事務）
@@ -178,24 +167,17 @@ export default defineEventHandler(async (event) => {
       .bind(bookingId)
       .first()
 
-    return {
-      success: true,
-      message: '預約狀態已更新',
-      booking: {
+    return createSuccessResponse(
+      {
         id: updated?.id,
         status: updated?.status,
         user_name: updated?.user_name,
         caregiver_name: updated?.caregiver_name,
         updated_at: updated?.updated_at,
       },
-    }
+      '預約狀態已更新',
+    )
   } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('更新預約狀態錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '更新狀態失敗',
-    })
+    handleError(error, '更新預約狀態')
   }
 })

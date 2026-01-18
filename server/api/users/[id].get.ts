@@ -1,24 +1,23 @@
-import { defineEventHandler, getRouterParam, createError } from 'h3'
+import { defineEventHandler, getRouterParam } from 'h3'
 import { getD1 } from '../../utils/d1'
+import { createSuccessResponse } from '../../utils/api-response'
+import { handleError, createNotFoundError } from '../../utils/error-handler'
+import { validateId } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
 
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '用戶 ID 為必填',
-    })
-  }
-
   try {
+    // 驗證 ID
+    validateId(id, 'id')
+
     const db = getD1(event)
 
     // 查詢用戶資料
     const user = await db
       .prepare(
         `
-        SELECT 
+        SELECT
           id,
           email,
           name,
@@ -30,7 +29,7 @@ export default defineEventHandler(async (event) => {
           gender,
           created_at,
           updated_at
-        FROM users 
+        FROM users
         WHERE id = ?
       `,
       )
@@ -38,10 +37,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!user) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該用戶',
-      })
+      throw createNotFoundError('用戶', id)
     }
 
     // 如果是看護師，獲取額外資訊
@@ -78,19 +74,12 @@ export default defineEventHandler(async (event) => {
       .bind(id)
       .first()
 
-    return {
-      success: true,
-      data: {
-        ...user,
-        caregiver_info: caregiverInfo,
-        booking_stats: bookingStats,
-      },
-    }
-  } catch (error: any) {
-    console.error('Get user error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || '獲取用戶資料失敗',
+    return createSuccessResponse({
+      ...user,
+      caregiver_info: caregiverInfo,
+      booking_stats: bookingStats,
     })
+  } catch (error: any) {
+    handleError(error, '取得用戶資料')
   }
 })

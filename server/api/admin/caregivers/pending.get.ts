@@ -2,19 +2,25 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
+import { createSuccessResponse, calculatePagination, calculateOffset } from '../../../utils/api-response'
+import { handleError } from '../../../utils/error-handler'
+import { validatePaginationParams } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
   await requirePermission('caregiver.verify')(event)
 
-  const query = getQuery(event)
-  const { page = 1, limit = 20 } = query
-
-  const db = getD1(event)
-
   try {
+    const query = getQuery(event)
+    const { page = 1, limit = 20 } = query
+
+    // 驗證分頁參數
+    validatePaginationParams(Number(page), Number(limit))
+
+    const db = getD1(event)
+
     // 查詢待審核的看護師
-    const offset = (Number(page) - 1) * Number(limit)
+    const offset = calculateOffset(Number(page), Number(limit))
 
     // 計算總數
     const countResult = await db
@@ -77,21 +83,13 @@ export default defineEventHandler(async (event) => {
       created_at: row.created_at,
     }))
 
-    return {
-      success: true,
+    const pagination = calculatePagination(Number(total), Number(page), Number(limit))
+
+    return createSuccessResponse({
       pending: caregivers,
-      pagination: {
-        total: Number(total),
-        page: Number(page),
-        limit: Number(limit),
-        pages: Math.ceil(Number(total) / Number(limit)),
-      },
-    }
-  } catch (error) {
-    console.error('取得待審核看護師列表錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '取得待審核列表失敗',
+      pagination,
     })
+  } catch (error) {
+    handleError(error, '取得待審核看護師列表')
   }
 })

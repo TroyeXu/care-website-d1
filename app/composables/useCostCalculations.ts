@@ -1,4 +1,9 @@
 import { computed, type Ref } from 'vue'
+import {
+  useCostCalculator,
+  type CostCalculationParams,
+} from './useCostCalculator'
+import type { CaregiverDisplay } from '~/types/caregiver'
 
 interface CostItem {
   code: string
@@ -19,6 +24,8 @@ interface CostCalculationsState {
 }
 
 export default function useCostCalculations(state: CostCalculationsState) {
+  const { calculateCostBreakdown, formatCurrency: formatCurrencyNew } =
+    useCostCalculator()
   const {
     selectedCategory,
     selectedHourlyItems,
@@ -48,50 +55,120 @@ export default function useCostCalculations(state: CostCalculationsState) {
     return false
   }
 
-  const hourlyTotalWithTime = computed(() => {
-    if (selectedCategory.value !== '鐘點制') return 0
-    return selectedHourlyItems.value.reduce((sum, item) => {
-      if (item.subCategory === '時段加價') {
-        return sum + item.price * dayCount.value
-      }
-      return sum + item.price * hourCount.value * dayCount.value
-    }, 0)
-  })
+  const costBreakdown = computed(() => {
+    const isHourly = selectedCategory.value === '鐘點制'
 
-  const shiftTotalWithDays = computed(() => {
-    if (selectedCategory.value !== '包班制') return 0
-    let basePrice = 0
-    if (selectedShiftType.value === 'SH01') {
-      basePrice = 3000
-    } else if (selectedShiftType.value === 'SH02') {
-      basePrice = 5500
+    // Construct virtual caregiver
+    const virtualCaregiver: CaregiverDisplay = {
+      id: 'virtual',
+      user_id: 'virtual',
+      name: 'Virtual',
+      hourly_rate: isHourly ? hourlyRate.value : 0,
+      shift_rate: !isHourly
+        ? selectedShiftType.value === 'SH01'
+          ? 3000
+          : 5500
+        : 0,
+      rating: 5,
+      reviews_count: 0,
+      experience_years: 0,
+      is_verified: true,
+      bio: '',
+      avatar_url: '',
+      phone: '',
+      email: '',
     }
-    const additionalServices = selectedShiftItems.value.reduce(
-      (sum, item) => sum + item.price,
-      0,
-    )
-    return (basePrice + additionalServices) * shiftDayCount.value
+
+    // Prepare Extra Items
+    const extraItems: CostCalculationParams['extraItems'] = []
+
+    if (isHourly) {
+      selectedHourlyItems.value
+        .filter((item) => item.subCategory === '時段加價')
+        .forEach((item) => {
+          extraItems.push({
+            name: item.name,
+            price: item.price,
+            type: 'daily', // Multiplied by days
+          })
+        })
+    } else {
+      // Shift mode additional services are added to daily rate in original logic
+      selectedShiftItems.value.forEach((item) => {
+        extraItems.push({
+          name: item.name,
+          price: item.price,
+          type: 'daily',
+        })
+      })
+    }
+
+    // Hack dates to match dayCount
+    // We start from today
+    const startDate = new Date()
+    const endDate = new Date(startDate)
+    const targetDays = isHourly ? dayCount.value : shiftDayCount.value
+    endDate.setDate(startDate.getDate() + Math.max(0, targetDays - 1))
+
+    // Calculate End Time for Hourly
+    // If start is 08:00, and we want X hours.
+    // If X <= 24, we can just set end time.
+    // calculateCostBreakdown uses hours calculation if provided.
+    // But since we provided hourly_rate, it multiplies (hours * days).
+    // Let's set start/end time to match hourCount.
+    const startTimeStr = '08:00'
+    let endTimeStr
+
+    if (isHourly) {
+      // Simple hour addition
+      const endHour = 8 + hourCount.value
+      // format to HH:MM
+      const h = Math.floor(endHour) % 24
+      const m = (endHour % 1) * 60
+      endTimeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`
+      // If it crosses day boundary, calculateCostBreakdown logic might be tricky if we don't adjust dates.
+      // But calculateBaseCost uses calculateHours which handles overnight.
+    }
+
+    const params: CostCalculationParams = {
+      caregiver: virtualCaregiver,
+      serviceType: isHourly ? 'hourly' : 'shift',
+      startDate: startDate.toISOString().split('T')[0],
+      endDate: endDate.toISOString().split('T')[0],
+      startTime: startTimeStr,
+      endTime: endTimeStr,
+      extraItems,
+    }
+
+    return calculateCostBreakdown(params)
   })
 
-  const totalCost = computed(() =>
-    selectedCategory.value === '鐘點制'
-      ? hourlyTotalWithTime.value
-      : shiftTotalWithDays.value,
+  const totalCost = computed(() => costBreakdown.value.total)
+
+  // Backwards compatibility
+  const hourlyTotalWithTime = computed(() =>
+    selectedCategory.value === '鐘點制' ? totalCost.value : 0,
+  )
+  const shiftTotalWithDays = computed(() =>
+    selectedCategory.value === '包班制' ? totalCost.value : 0,
   )
 
   function calculatePreviewCost(item: CostItem): number {
-    if (
-      selectedCategory.value === '鐘點制' &&
-      item.subCategory !== '時段加價'
-    ) {
-      return totalCost.value + item.price * hourCount.value
+    // Fixed bug: include dayCount in preview calculation
+    if (selectedCategory.value === '鐘點制') {
+      if (item.subCategory !== '時段加價') {
+        return totalCost.value + item.price * hourCount.value * dayCount.value
+      } else {
+        return totalCost.value + item.price * dayCount.value
+      }
     } else {
-      return totalCost.value + item.price
+      // Shift
+      return totalCost.value + item.price * shiftDayCount.value
     }
   }
 
   function formatCurrency(value: number): string {
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    return formatCurrencyNew(value)
   }
 
   return {

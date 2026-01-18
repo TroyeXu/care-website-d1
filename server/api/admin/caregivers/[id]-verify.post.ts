@@ -1,44 +1,53 @@
 // 管理員：審核看護師 API
-import { defineEventHandler, readBody, createError } from 'h3'
+import {
+  defineEventHandler,
+  readBody,
+  getRouterParam,
+} from 'h3'
 import { nanoid } from 'nanoid'
 import { getD1 } from '../../../utils/d1'
-import { requireAdmin, requirePermission } from '../../../middleware/admin'
-import { logAdminAction } from '../../../utils/admin-auth'
+import {
+  getCurrentAdmin,
+  logAdminAction,
+  hasPermission,
+} from '../../../utils/admin-auth'
+import { createSuccessResponse } from '../../../utils/api-response'
+import {
+  handleError,
+  createAuthenticationError,
+  createAuthorizationError,
+  createNotFoundError,
+  createValidationError,
+} from '../../../utils/error-handler'
+import { validateId, validateRequired, validateEnum } from '../../../utils/validation'
+import { NotificationHelpers } from '../../../utils/notification'
 
 export default defineEventHandler(async (event) => {
-  await requireAdmin(event)
-  await requirePermission('caregiver.verify')(event)
-
   const caregiverId = getRouterParam(event, 'id')
   const { action, reason } = await readBody(event)
 
-  if (!caregiverId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '缺少看護師 ID',
-    })
-  }
-
-  if (!action || !['approve', 'reject'].includes(action)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '無效的審核動作',
-    })
-  }
-
-  if (action === 'reject' && !reason) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '拒絕時必須提供原因',
-    })
-  }
-
-  const db = getD1(event)
-  const admin = event.context.admin
-
   try {
-    // 開始交易
-    const results = []
+    // 驗證管理員權限
+    const admin = await getCurrentAdmin(event)
+    if (!admin) {
+      throw createAuthenticationError('未授權')
+    }
+
+    // 檢查是否有審核看護師的權限
+    if (!hasPermission(admin, 'caregivers.verify')) {
+      throw createAuthorizationError('無此操作權限')
+    }
+
+    // 使用統一的驗證工具
+    validateId(caregiverId, 'id')
+    validateRequired(action, 'action', '審核動作')
+    validateEnum(action, ['approve', 'reject'], 'action', '審核動作')
+
+    if (action === 'reject') {
+      validateRequired(reason, 'reason', '拒絕原因')
+    }
+
+    const db = getD1(event)
 
     // 檢查看護師是否存在
     const caregiver = await db
@@ -47,10 +56,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!caregiver) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該看護師',
-      })
+      throw createNotFoundError('看護師', caregiverId)
     }
 
     // 檢查是否已有審核記錄
@@ -136,26 +142,32 @@ export default defineEventHandler(async (event) => {
       { reason: action === 'reject' ? reason : null },
     )
 
-    // TODO: 發送通知給看護師 (如果有通知系統)
+    // 發送通知給看護師
+    if (action === 'approve') {
+      await NotificationHelpers.caregiverVerified(
+        event,
+        String(caregiver.user_id),
+        caregiverId,
+      )
+    } else {
+      await NotificationHelpers.caregiverRejected(
+        event,
+        String(caregiver.user_id),
+        reason || '',
+      )
+    }
 
-    return {
-      success: true,
-      message: action === 'approve' ? '審核通過' : '審核拒絕',
-      verification: {
+    return createSuccessResponse(
+      {
         caregiver_id: caregiverId,
         status: newStatus,
         reviewed_at: now,
         reviewed_by: admin.id,
         rejection_reason: action === 'reject' ? reason : null,
       },
-    }
+      action === 'approve' ? '審核通過' : '審核拒絕',
+    )
   } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('審核看護師錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '審核處理失敗',
-    })
+    handleError(error, '審核看護師')
   }
 })

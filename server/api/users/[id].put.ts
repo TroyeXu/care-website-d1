@@ -1,18 +1,16 @@
-import { defineEventHandler, getRouterParam, readBody, createError } from 'h3'
+import { defineEventHandler, getRouterParam, readBody } from 'h3'
 import { getD1 } from '../../utils/d1'
+import { createSuccessResponse } from '../../utils/api-response'
+import { handleError, createNotFoundError, createValidationError } from '../../utils/error-handler'
+import { validateId } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
-  const body = await readBody(event)
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '用戶 ID 為必填',
-    })
-  }
 
   try {
+    validateId(id, 'id')
+
+    const body = await readBody(event)
     const db = getD1(event)
 
     // 檢查用戶是否存在
@@ -22,10 +20,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!existingUser) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該用戶',
-      })
+      throw createNotFoundError('用戶', id)
     }
 
     // 建立更新欄位
@@ -60,10 +55,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (updates.length === 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: '沒有要更新的資料',
-      })
+      throw createValidationError('沒有提供要更新的欄位')
     }
 
     // 加入更新時間
@@ -72,7 +64,7 @@ export default defineEventHandler(async (event) => {
 
     // 執行更新
     const updateQuery = `
-      UPDATE users 
+      UPDATE users
       SET ${updates.join(', ')}
       WHERE id = ?
     `
@@ -86,7 +78,7 @@ export default defineEventHandler(async (event) => {
     const updatedUser = await db
       .prepare(
         `
-        SELECT 
+        SELECT
           id,
           email,
           name,
@@ -99,22 +91,15 @@ export default defineEventHandler(async (event) => {
           gender,
           created_at,
           updated_at
-        FROM users 
+        FROM users
         WHERE id = ?
       `,
       )
       .bind(id)
       .first()
 
-    return {
-      success: true,
-      data: updatedUser,
-    }
+    return createSuccessResponse(updatedUser, '用戶資料已更新')
   } catch (error: any) {
-    console.error('Update user error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || '更新用戶資料失敗',
-    })
+    handleError(error, '更新用戶資料')
   }
 })

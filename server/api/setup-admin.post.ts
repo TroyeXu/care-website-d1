@@ -1,20 +1,18 @@
 // 初始化管理員帳號的臨時端點（僅限開發環境）
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler } from 'h3'
 import { hashPassword } from '../utils/crypto'
 import { getD1 } from '../utils/d1'
+import { createSuccessResponse } from '../utils/api-response'
+import { handleError, createAuthorizationError } from '../utils/error-handler'
 
 export default defineEventHandler(async (event) => {
-  // 僅限開發環境
-  if (process.env.NODE_ENV === 'production') {
-    throw createError({
-      statusCode: 403,
-      statusMessage: 'This endpoint is only available in development',
-    })
-  }
-
-  const db = getD1(event)
-
   try {
+    // 僅限開發環境
+    if (process.env.NODE_ENV === 'production') {
+      throw createAuthorizationError('此端點僅在開發環境可用')
+    }
+
+    const db = getD1(event)
     // 生成密碼雜湊
     const passwordHash = await hashPassword('admin123')
 
@@ -64,19 +62,16 @@ export default defineEventHandler(async (event) => {
       .bind(adminId, userId, roleId, 1, 'system')
       .run()
 
-    return {
-      success: true,
-      message: '管理員帳號建立成功',
-      credentials: {
-        email: 'admin@example.com',
-        password: 'admin123',
+    return createSuccessResponse(
+      {
+        credentials: {
+          email: 'admin@example.com',
+          password: 'admin123',
+        },
       },
-    }
+      '管理員帳號建立成功',
+    )
   } catch (error: any) {
-    console.error('建立管理員帳號錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '建立管理員帳號失敗: ' + error.message,
-    })
+    handleError(error, '建立管理員帳號')
   }
 })

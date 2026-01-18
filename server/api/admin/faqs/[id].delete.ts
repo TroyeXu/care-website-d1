@@ -1,8 +1,11 @@
 // 管理員：刪除 FAQ API
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler, getRouterParam } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
 import { logAdminAction } from '../../../utils/admin-auth'
+import { createSuccessResponse } from '../../../utils/api-response'
+import { handleError, createNotFoundError } from '../../../utils/error-handler'
+import { validateId } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -10,16 +13,12 @@ export default defineEventHandler(async (event) => {
 
   const faqId = getRouterParam(event, 'id')
 
-  if (!faqId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '缺少 FAQ ID',
-    })
-  }
-
-  const db = getD1(event)
-
   try {
+    // 驗證 ID
+    validateId(faqId, 'id')
+
+    const db = getD1(event)
+
     // 檢查 FAQ 是否存在
     const existing = await db
       .prepare('SELECT * FROM faqs WHERE id = ?')
@@ -27,10 +26,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!existing) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該 FAQ',
-      })
+      throw createNotFoundError('FAQ', faqId)
     }
 
     // 刪除 FAQ
@@ -42,17 +38,8 @@ export default defineEventHandler(async (event) => {
       category: existing.category,
     })
 
-    return {
-      success: true,
-      message: 'FAQ 已刪除',
-    }
+    return createSuccessResponse(null, 'FAQ 已刪除')
   } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('刪除 FAQ 錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '刪除 FAQ 失敗',
-    })
+    handleError(error, '刪除 FAQ')
   }
 })

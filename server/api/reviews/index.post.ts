@@ -1,37 +1,35 @@
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
 import { nanoid } from 'nanoid'
 import { getD1 } from '../../utils/d1'
+import { createSuccessResponse } from '../../utils/api-response'
+import {
+  handleError,
+  createNotFoundError,
+  createConflictError,
+  createValidationError,
+} from '../../utils/error-handler'
+import { validateRequired, validateNumberRange } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
-  // 驗證必填欄位
-  const requiredFields = ['booking_id', 'user_id', 'caregiver_id', 'rating']
-  for (const field of requiredFields) {
-    if (!body[field]) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: `${field} 為必填欄位`,
-      })
-    }
-  }
-
-  // 驗證評分範圍
-  if (body.rating < 1 || body.rating > 5) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '評分必須在 1 到 5 之間',
-    })
-  }
-
   try {
+    // 使用統一的驗證工具
+    validateRequired(body.booking_id, 'booking_id', '預約 ID')
+    validateRequired(body.user_id, 'user_id', '用戶 ID')
+    validateRequired(body.caregiver_id, 'caregiver_id', '看護師 ID')
+    validateRequired(body.rating, 'rating', '評分')
+
+    // 驗證評分範圍
+    validateNumberRange(body.rating, 1, 5, 'rating', '評分')
+
     const db = getD1(event)
 
     // 檢查預約是否存在且已完成
     const booking = await db
       .prepare(
         `
-        SELECT * FROM bookings 
+        SELECT * FROM bookings
         WHERE id = ? AND user_id = ? AND caregiver_id = ?
       `,
       )
@@ -39,17 +37,11 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!booking) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該預約記錄',
-      })
+      throw createNotFoundError('預約記錄', body.booking_id)
     }
 
     if (booking.status !== 'completed') {
-      throw createError({
-        statusCode: 400,
-        statusMessage: '只能對已完成的預約進行評價',
-      })
+      throw createValidationError('只能對已完成的預約進行評價', 'booking_id')
     }
 
     // 檢查是否已評價過
@@ -59,9 +51,8 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (existingReview) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: '該預約已經評價過了',
+      throw createConflictError('該預約已經評價過了', {
+        reviewId: existingReview.id,
       })
     }
 
@@ -110,12 +101,12 @@ export default defineEventHandler(async (event) => {
       await db
         .prepare(
           `
-          UPDATE caregivers 
-          SET rating = ?, total_reviews = ? 
+          UPDATE caregivers
+          SET rating = ?, review_count = ?, updated_at = datetime('now')
           WHERE id = ?
         `,
         )
-        .bind(avgRating, allReviews.length, body.caregiver_id)
+        .bind(avgRating.toFixed(1), allReviews.length, body.caregiver_id)
         .run()
     }
 
@@ -123,7 +114,7 @@ export default defineEventHandler(async (event) => {
     const newReview = await db
       .prepare(
         `
-        SELECT 
+        SELECT
           r.*,
           u.name as user_name,
           cu.name as caregiver_name
@@ -137,15 +128,8 @@ export default defineEventHandler(async (event) => {
       .bind(reviewId)
       .first()
 
-    return {
-      success: true,
-      data: newReview,
-    }
+    return createSuccessResponse(newReview, '評價新增成功')
   } catch (error: any) {
-    console.error('Create review error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || '新增評價失敗',
-    })
+    handleError(error, '新增評價')
   }
 })

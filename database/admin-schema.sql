@@ -33,9 +33,27 @@ CREATE TABLE IF NOT EXISTS admin_logs (
   FOREIGN KEY (admin_id) REFERENCES admins(id)
 );
 
+-- 看護師審核記錄表
+CREATE TABLE IF NOT EXISTS caregiver_verifications (
+  id TEXT PRIMARY KEY,
+  caregiver_id TEXT NOT NULL,
+  status TEXT DEFAULT 'pending',
+  submitted_at TEXT DEFAULT (datetime('now')),
+  reviewed_at TEXT,
+  reviewed_by TEXT,
+  rejection_reason TEXT,
+  documents TEXT, -- JSON array
+  notes TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (caregiver_id) REFERENCES caregivers(id),
+  FOREIGN KEY (reviewed_by) REFERENCES admins(id)
+);
+
 -- 索引
 CREATE INDEX IF NOT EXISTS idx_admins_user_id ON admins(user_id);
 CREATE INDEX IF NOT EXISTS idx_admins_role_id ON admins(role_id);
 CREATE INDEX IF NOT EXISTS idx_admin_logs_admin_id ON admin_logs(admin_id);
 CREATE INDEX IF NOT EXISTS idx_admin_logs_action ON admin_logs(action);
 CREATE INDEX IF NOT EXISTS idx_admin_logs_created_at ON admin_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_caregiver_verifications_caregiver_id ON caregiver_verifications(caregiver_id);
+CREATE INDEX IF NOT EXISTS idx_caregiver_verifications_status ON caregiver_verifications(status);

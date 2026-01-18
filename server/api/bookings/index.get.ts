@@ -1,5 +1,12 @@
-import { defineEventHandler, getQuery, createError } from 'h3'
+import { defineEventHandler, getQuery } from 'h3'
 import { getD1 } from '../../utils/d1'
+import {
+  createSuccessResponse,
+  calculatePagination,
+  calculateOffset,
+} from '../../utils/api-response'
+import { handleError } from '../../utils/error-handler'
+import { validatePaginationParams } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -7,6 +14,12 @@ export default defineEventHandler(async (event) => {
 
   try {
     const db = getD1(event)
+
+    // 驗證分頁參數
+    const pageNum = Number(page)
+    const limitNum = Number(limit)
+    validatePaginationParams(pageNum, limitNum)
+    const offset = calculateOffset(pageNum, limitNum)
 
     // 建立查詢條件
     const conditions = []
@@ -29,9 +42,6 @@ export default defineEventHandler(async (event) => {
 
     const whereClause =
       conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
-
-    // 計算分頁
-    const offset = (Number(page) - 1) * Number(limit)
 
     // 查詢總數
     const countQuery = `
@@ -69,7 +79,7 @@ export default defineEventHandler(async (event) => {
 
     const listStmt = db
       .prepare(listQuery)
-      .bind(...params, Number(limit), offset)
+      .bind(...params, limitNum, offset)
 
     const results = await listStmt.all()
 
@@ -108,17 +118,14 @@ export default defineEventHandler(async (event) => {
         },
       })) || []
 
-    return {
-      bookings,
-      total,
-      page: Number(page),
-      limit: Number(limit),
-      totalPages: Math.ceil(total / Number(limit)),
-    }
-  } catch (error: any) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: `無法取得預約列表: ${error.message}`,
+    // 計算分頁資訊
+    const pagination = calculatePagination(total, pageNum, limitNum)
+
+    return createSuccessResponse(bookings, undefined, {
+      pagination,
+      filters: { userId, caregiverId, status },
     })
+  } catch (error: any) {
+    handleError(error, '取得預約列表')
   }
 })

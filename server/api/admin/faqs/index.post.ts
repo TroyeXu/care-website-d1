@@ -1,9 +1,15 @@
 // 管理員：新增 FAQ API
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
 import { nanoid } from 'nanoid'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
 import { logAdminAction } from '../../../utils/admin-auth'
+import { createSuccessResponse } from '../../../utils/api-response'
+import {
+  handleError,
+  createValidationError,
+} from '../../../utils/error-handler'
+import { validateRequired } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -22,17 +28,15 @@ export default defineEventHandler(async (event) => {
   } = body
   /* eslint-enable camelcase */
 
-  if (!category || !question || !answer) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '請提供分類、問題和答案',
-    })
-  }
-
-  const db = getD1(event)
-  const admin = event.context.admin
-
   try {
+    // 使用統一的驗證工具
+    validateRequired(category, 'category', '分類')
+    validateRequired(question, 'question', '問題')
+    validateRequired(answer, 'answer', '答案')
+
+    const db = getD1(event)
+    const admin = event.context.admin
+
     // 檢查分類是否存在
     const categoryExists = await db
       .prepare('SELECT id FROM faq_categories WHERE id = ?')
@@ -40,10 +44,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!categoryExists) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: '無效的分類',
-      })
+      throw createValidationError('無效的分類', 'category')
     }
 
     // 如果沒有提供排序，自動計算
@@ -115,10 +116,8 @@ export default defineEventHandler(async (event) => {
       .bind(faqId)
       .first()
 
-    return {
-      success: true,
-      message: 'FAQ 已新增',
-      faq: {
+    return createSuccessResponse(
+      {
         id: newFaq?.id,
         category: newFaq?.category,
         category_name: newFaq?.category_name,
@@ -130,14 +129,9 @@ export default defineEventHandler(async (event) => {
         sort_order: newFaq?.sort_order,
         created_at: newFaq?.created_at,
       },
-    }
+      'FAQ 已新增',
+    )
   } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('新增 FAQ 錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '新增 FAQ 失敗',
-    })
+    handleError(error, '新增 FAQ')
   }
 })

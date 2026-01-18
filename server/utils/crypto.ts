@@ -2,20 +2,19 @@
 // 使用 Web Crypto API 替代 bcrypt
 
 // 密碼雜湊
+// 密碼雜湊 (使用與 server/utils/auth.ts 相同的 Hex:Hex 格式)
 export async function hashPassword(password: string): Promise<string> {
   const encoder = new TextEncoder()
   const salt = crypto.getRandomValues(new Uint8Array(16))
-
-  // 使用 PBKDF2 演算法
   const keyMaterial = await crypto.subtle.importKey(
     'raw',
     encoder.encode(password),
     'PBKDF2',
     false,
-    ['deriveBits'],
+    ['deriveBits', 'deriveKey'],
   )
 
-  const hashBuffer = await crypto.subtle.deriveBits(
+  const key = await crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
       salt,
@@ -23,45 +22,46 @@ export async function hashPassword(password: string): Promise<string> {
       hash: 'SHA-256',
     },
     keyMaterial,
-    256,
+    { name: 'AES-GCM', length: 256 },
+    true,
+    ['encrypt', 'decrypt'],
   )
 
-  // 將 salt 和 hash 組合並轉換為 base64
-  const hashArray = new Uint8Array(hashBuffer)
-  const combined = new Uint8Array(salt.length + hashArray.length)
-  combined.set(salt)
-  combined.set(hashArray, salt.length)
+  const exported = await crypto.subtle.exportKey('raw', key)
+  const hashArray = Array.from(new Uint8Array(exported))
+  const saltArray = Array.from(salt)
 
-  return btoa(String.fromCharCode(...combined))
+  // 組合 salt 和 hash
+  return (
+    saltArray.map((b) => b.toString(16).padStart(2, '0')).join('') +
+    ':' +
+    hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+  )
 }
 
 // 驗證密碼
 export async function verifyPassword(
   password: string,
-  hashedPassword: string,
+  storedHash: string,
 ): Promise<boolean> {
   try {
-    const encoder = new TextEncoder()
+    const [saltHex, hashHex] = storedHash.split(':')
+    if (!saltHex || !hashHex) return false
 
-    // 解碼 base64
-    const combined = Uint8Array.from(atob(hashedPassword), (c) =>
-      c.charCodeAt(0),
+    const salt = new Uint8Array(
+      saltHex.match(/.{2}/g)!.map((byte) => parseInt(byte, 16)),
     )
 
-    // 分離 salt 和 hash
-    const salt = combined.slice(0, 16)
-    const storedHash = combined.slice(16)
-
-    // 使用相同的 salt 重新計算 hash
+    const encoder = new TextEncoder()
     const keyMaterial = await crypto.subtle.importKey(
       'raw',
       encoder.encode(password),
       'PBKDF2',
       false,
-      ['deriveBits'],
+      ['deriveBits', 'deriveKey'],
     )
 
-    const hashBuffer = await crypto.subtle.deriveBits(
+    const key = await crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
         salt,
@@ -69,23 +69,18 @@ export async function verifyPassword(
         hash: 'SHA-256',
       },
       keyMaterial,
-      256,
+      { name: 'AES-GCM', length: 256 },
+      true,
+      ['encrypt', 'decrypt'],
     )
 
-    const hashArray = new Uint8Array(hashBuffer)
+    const exported = await crypto.subtle.exportKey('raw', key)
+    const hashArray = Array.from(new Uint8Array(exported))
+    const computedHash = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('')
 
-    // 比較 hash
-    if (hashArray.length !== storedHash.length) {
-      return false
-    }
-
-    for (let i = 0; i < hashArray.length; i++) {
-      if (hashArray[i] !== storedHash[i]) {
-        return false
-      }
-    }
-
-    return true
+    return computedHash === hashHex
   } catch (error) {
     console.error('密碼驗證錯誤:', error)
     return false

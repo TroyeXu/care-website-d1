@@ -1,27 +1,26 @@
 // 管理員：更新看護師資料 API
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody, getRouterParam } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
 import { logAdminAction } from '../../../utils/admin-auth'
+import { createSuccessResponse } from '../../../utils/api-response'
+import { handleError, createNotFoundError, createValidationError } from '../../../utils/error-handler'
+import { validateId } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
   await requirePermission('caregiver.edit')(event)
 
   const caregiverId = getRouterParam(event, 'id')
-  const updates = await readBody(event)
-
-  if (!caregiverId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '缺少看護師 ID',
-    })
-  }
-
-  const db = getD1(event)
-  const admin = event.context.admin
 
   try {
+    // 驗證 ID
+    validateId(caregiverId, 'id')
+
+    const updates = await readBody(event)
+    const db = getD1(event)
+    const admin = event.context.admin
+
     // 檢查看護師是否存在
     const existing = await db
       .prepare('SELECT * FROM caregivers WHERE id = ?')
@@ -29,10 +28,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!existing) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該看護師',
-      })
+      throw createNotFoundError('看護師', caregiverId)
     }
 
     // 準備更新欄位
@@ -65,10 +61,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (updateFields.length === 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: '沒有提供要更新的欄位',
-      })
+      throw createValidationError('沒有提供要更新的欄位')
     }
 
     // 加入更新時間
@@ -144,24 +137,17 @@ export default defineEventHandler(async (event) => {
       .bind(caregiverId)
       .first()
 
-    return {
-      success: true,
-      message: '看護師資料已更新',
-      caregiver: {
+    return createSuccessResponse(
+      {
         ...updated,
         skills: updated?.skills ? JSON.parse(updated.skills as string) : [],
         languages: updated?.languages
           ? JSON.parse(updated.languages as string)
           : [],
       },
-    }
+      '看護師資料已更新',
+    )
   } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('更新看護師資料錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '更新失敗',
-    })
+    handleError(error, '更新看護師資料')
   }
 })

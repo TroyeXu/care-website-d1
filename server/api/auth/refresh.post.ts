@@ -1,19 +1,18 @@
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler } from 'h3'
 import { getToken, getJWTSecret, setAuthCookie } from '../../utils/auth'
 import { verifyJWT, generateJWT } from '../../utils/crypto'
+import { createSuccessResponse } from '../../utils/api-response'
+import { handleError, createAuthenticationError } from '../../utils/error-handler'
 
 export default defineEventHandler(async (event) => {
-  // 獲取當前 token
-  const token = getToken(event)
-
-  if (!token) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: '未提供認證 Token',
-    })
-  }
-
   try {
+    // 獲取當前 token
+    const token = getToken(event)
+
+    if (!token) {
+      throw createAuthenticationError('未提供認證 Token')
+    }
+
     // 獲取 JWT secret
     const secret = getJWTSecret(event)
 
@@ -21,10 +20,7 @@ export default defineEventHandler(async (event) => {
     const payload = await verifyJWT(token, secret)
 
     if (!payload || !payload.userId) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: 'Token 無效或已過期',
-      })
+      throw createAuthenticationError('Token 無效或已過期')
     }
 
     // 生成新的 token
@@ -37,19 +33,13 @@ export default defineEventHandler(async (event) => {
     const newToken = await generateJWT(newPayload, secret)
     setAuthCookie(event, newToken)
 
-    return {
-      success: true,
-      token: newToken,
-      message: 'Token 已更新',
-    }
+    return createSuccessResponse(
+      {
+        token: newToken,
+      },
+      'Token 已更新',
+    )
   } catch (error: any) {
-    if (error.statusCode) {
-      throw error
-    }
-
-    throw createError({
-      statusCode: 500,
-      statusMessage: '更新 Token 失敗',
-    })
+    handleError(error, '更新 Token')
   }
 })

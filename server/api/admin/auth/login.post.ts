@@ -1,22 +1,27 @@
 // 管理員登入 API
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
 import { verifyPassword } from '../../../utils/crypto'
 import { getD1 } from '../../../utils/d1'
 import { setAdminAuth, type AdminUser } from '../../../utils/admin-auth'
+import { createSuccessResponse } from '../../../utils/api-response'
+import {
+  handleError,
+  createAuthenticationError,
+  createAuthorizationError,
+} from '../../../utils/error-handler'
+import { validateRequired, validateEmail } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const { email, password } = await readBody(event)
 
-  if (!email || !password) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '請輸入電子郵件和密碼',
-    })
-  }
-
-  const db = getD1(event)
-
   try {
+    // 使用統一的驗證工具
+    validateRequired(email, 'email', 'Email')
+    validateRequired(password, 'password', '密碼')
+    validateEmail(email, 'email')
+
+    const db = getD1(event)
+
     // 查詢用戶
     const user = await db
       .prepare('SELECT * FROM users WHERE email = ?')
@@ -24,10 +29,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!user) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: '帳號或密碼錯誤',
-      })
+      throw createAuthenticationError('帳號或密碼錯誤')
     }
 
     // 驗證密碼
@@ -36,17 +38,14 @@ export default defineEventHandler(async (event) => {
       user.password_hash as string,
     )
     if (!isValidPassword) {
-      throw createError({
-        statusCode: 401,
-        statusMessage: '帳號或密碼錯誤',
-      })
+      throw createAuthenticationError('帳號或密碼錯誤')
     }
 
     // 檢查是否為管理員
     const adminData = await db
       .prepare(
         `
-        SELECT 
+        SELECT
           a.*,
           r.name as role_name,
           r.permissions
@@ -59,10 +58,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!adminData) {
-      throw createError({
-        statusCode: 403,
-        statusMessage: '您沒有管理員權限',
-      })
+      throw createAuthorizationError('您沒有管理員權限')
     }
 
     // 準備管理員資料
@@ -79,9 +75,8 @@ export default defineEventHandler(async (event) => {
     // 設定登入狀態
     await setAdminAuth(event, admin)
 
-    return {
-      success: true,
-      admin: {
+    return createSuccessResponse(
+      {
         id: admin.id,
         name: admin.name,
         email: admin.email,
@@ -89,14 +84,9 @@ export default defineEventHandler(async (event) => {
         is_super: admin.is_super,
         permissions: admin.permissions,
       },
-    }
+      '登入成功',
+    )
   } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('管理員登入錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '登入失敗，請稍後再試',
-    })
+    handleError(error, '管理員登入')
   }
 })

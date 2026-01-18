@@ -1,23 +1,22 @@
 // 管理員：用戶詳情 API
-import { defineEventHandler, createError } from 'h3'
+import { defineEventHandler, getRouterParam } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
+import { createSuccessResponse } from '../../../utils/api-response'
+import { handleError, createNotFoundError } from '../../../utils/error-handler'
+import { validateId } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
   await requirePermission('user.view')(event)
 
   const userId = getRouterParam(event, 'id')
-  if (!userId) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '缺少用戶 ID',
-    })
-  }
-
-  const db = getD1(event)
 
   try {
+    // 驗證 ID
+    validateId(userId, 'id')
+
+    const db = getD1(event)
     // 取得用戶資料
     const user = await db
       .prepare('SELECT * FROM users WHERE id = ?')
@@ -25,10 +24,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!user) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該用戶',
-      })
+      throw createNotFoundError('用戶', userId)
     }
 
     // 取得預約記錄
@@ -116,8 +112,7 @@ export default defineEventHandler(async (event) => {
       .bind(userId)
       .first()
 
-    return {
-      success: true,
+    return createSuccessResponse({
       user: {
         id: user.id,
         name: user.name,
@@ -164,14 +159,8 @@ export default defineEventHandler(async (event) => {
         cancelled_bookings: stats?.cancelled_bookings || 0,
         total_spent: stats?.total_spent || 0,
       },
-    }
-  } catch (error: any) {
-    if (error.statusCode) throw error
-
-    console.error('取得用戶詳情錯誤:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: '取得用戶詳情失敗',
     })
+  } catch (error: any) {
+    handleError(error, '取得用戶詳情')
   }
 })

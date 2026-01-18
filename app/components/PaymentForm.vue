@@ -112,9 +112,9 @@
         >
           <div class="text-subtitle2 q-mb-sm">銀行轉帳資訊</div>
           <div class="text-body2">
-            <div>銀行：台灣銀行</div>
-            <div>戶名：護理服務平台有限公司</div>
-            <div>帳號：123-456-789012</div>
+            <div>銀行：{{ config.public.bankAccount.bankName }}</div>
+            <div>戶名：{{ config.public.bankAccount.accountName }}</div>
+            <div>帳號：{{ config.public.bankAccount.accountNumber }}</div>
             <div class="text-caption text-grey-6 q-mt-sm">
               請於轉帳完成後提交此表單
             </div>
@@ -157,10 +157,12 @@
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { useApiService } from '~/composables/useApiService'
+import { useRuntimeConfig } from '#app'
 
 // 組合式函數
 const $q = useQuasar()
 const apiService = useApiService()
+const config = useRuntimeConfig()
 
 // 響應式資料
 const bookingId = ref('')

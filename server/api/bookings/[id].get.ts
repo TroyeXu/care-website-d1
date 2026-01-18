@@ -1,17 +1,23 @@
-import { defineEventHandler, getRouterParam, createError } from 'h3'
+import { defineEventHandler, getRouterParam } from 'h3'
 import { getD1 } from '../../utils/d1'
+import { createSuccessResponse } from '../../utils/api-response'
+import { handleError, createNotFoundError } from '../../utils/error-handler'
+import { validateId } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
 
   try {
+    // 驗證 ID
+    validateId(id, 'id')
+
     const db = getD1(event)
 
     // 查詢預約資料，包含相關的使用者和看護資訊
     const booking = await db
       .prepare(
         `
-      SELECT 
+      SELECT
         b.*,
         u.name as user_name,
         u.email as user_email,
@@ -31,14 +37,11 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!booking) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '預約不存在',
-      })
+      throw createNotFoundError('預約', id)
     }
 
     // 整理回傳格式
-    return {
+    const formattedBooking = {
       id: booking.id,
       user_id: booking.user_id,
       caregiver_id: booking.caregiver_id,
@@ -68,10 +71,9 @@ export default defineEventHandler(async (event) => {
         phone: booking.caregiver_phone,
       },
     }
+
+    return createSuccessResponse(formattedBooking)
   } catch (error: any) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: `無法取得預約資料: ${error.message}`,
-    })
+    handleError(error, '取得預約資料')
   }
 })

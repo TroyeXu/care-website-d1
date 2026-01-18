@@ -1,6 +1,7 @@
 name = "care-platform-worker"
 main = "./.output/server/index.mjs"
 compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
 assets = { directory = "./.output/public" }
 
 # D1 資料庫配置
@@ -12,4 +13,11 @@ database_id = "f853a6b0-cb5b-4359-b7b5-c75494da8bfa"
 # 環境變數（非敏感）
 [vars]
 NODE_ENV = "production"
-# JWT_SECRET 應該使用 wrangler secret 或 Dashboard 設置，不要寫在這裡
+
+# 敏感環境變數（需透過 wrangler secret 設置）
+# 設置方式：
+# wrangler secret put JWT_SECRET
+# wrangler secret put ADMIN_JWT_SECRET
+#
+# JWT_SECRET - JWT 密鑰（必須）
+# ADMIN_JWT_SECRET - 管理員 JWT 密鑰（可選，未設置則使用 JWT_SECRET）

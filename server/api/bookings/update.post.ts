@@ -1,18 +1,16 @@
-import { defineEventHandler, readBody, createError } from 'h3'
+import { defineEventHandler, readBody } from 'h3'
 import { getD1 } from '../../utils/d1'
+import { createSuccessResponse } from '../../utils/api-response'
+import { handleError, createNotFoundError, createValidationError } from '../../utils/error-handler'
+import { validateId } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  const { id, ...updateData } = body
-
-  if (!id) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: '預約 ID 為必填',
-    })
-  }
-
   try {
+    const body = await readBody(event)
+    const { id, ...updateData } = body
+
+    validateId(id, 'id')
+
     const db = getD1(event)
 
     // 檢查預約是否存在
@@ -22,10 +20,7 @@ export default defineEventHandler(async (event) => {
       .first()
 
     if (!existingBooking) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: '找不到該預約',
-      })
+      throw createNotFoundError('預約', id)
     }
 
     // 建立更新欄位
@@ -52,10 +47,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (updates.length === 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: '沒有要更新的資料',
-      })
+      throw createValidationError('沒有要更新的資料')
     }
 
     // 加入更新時間
@@ -64,7 +56,7 @@ export default defineEventHandler(async (event) => {
 
     // 執行更新
     const updateQuery = `
-      UPDATE bookings 
+      UPDATE bookings
       SET ${updates.join(', ')}
       WHERE id = ?
     `
@@ -77,8 +69,7 @@ export default defineEventHandler(async (event) => {
     // 返回更新後的資料
     const updatedBooking = await db
       .prepare(
-        `
-        SELECT 
+        `SELECT
           b.*,
           u.name as user_name,
           u.email as user_email,
@@ -88,21 +79,13 @@ export default defineEventHandler(async (event) => {
         LEFT JOIN users u ON b.user_id = u.id
         LEFT JOIN caregivers c ON b.caregiver_id = c.id
         LEFT JOIN users cu ON c.user_id = cu.id
-        WHERE b.id = ?
-      `,
+        WHERE b.id = ?`,
       )
       .bind(id)
       .first()
 
-    return {
-      success: true,
-      data: updatedBooking,
-    }
+    return createSuccessResponse(updatedBooking, '預約更新成功')
   } catch (error: any) {
-    console.error('Update booking error:', error)
-    throw createError({
-      statusCode: error.statusCode || 500,
-      statusMessage: error.statusMessage || '更新預約失敗',
-    })
+    handleError(error, '更新預約')
   }
 })

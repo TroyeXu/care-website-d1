@@ -416,10 +416,11 @@ const {
         sortBy: sortBy.value,
         page: currentPage.value,
         limit: pageSize,
+        q: searchQuery.value,
       },
     }),
   {
-    watch: [filters, sortBy, currentPage],
+    watch: [filters, sortBy, currentPage, searchQuery],
   },
 )
 
@@ -514,16 +515,6 @@ const skillOptions = [
 const filteredCaregivers = computed(() => {
   let result = [...caregivers.value]
 
-  // 搜尋
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase()
-    result = result.filter(
-      (c) =>
-        c.name.toLowerCase().includes(query) ||
-        c.specialties.some((s) => s.toLowerCase().includes(query)),
-    )
-  }
-
   // 快速篩選
   if (activeQuickFilter.value === 'available') {
     result = result.filter((c) => c.is_available)
@@ -588,9 +579,9 @@ const activeFilterCount = computed(() => {
 })
 
 // 方法
-const handleSearch = async () => {
+const handleSearch = () => {
   currentPage.value = 1
-  await refresh()
+  // refresh is automatically called because searchQuery is in the watch list
 }
 
 const toggleQuickFilter = (key: string) => {
