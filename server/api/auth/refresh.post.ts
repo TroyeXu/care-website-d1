@@ -2,7 +2,10 @@ import { defineEventHandler } from 'h3'
 import { getToken, getJWTSecret, setAuthCookie } from '../../utils/auth'
 import { verifyJWT, generateJWT } from '../../utils/crypto'
 import { createSuccessResponse } from '../../utils/api-response'
-import { handleError, createAuthenticationError } from '../../utils/error-handler'
+import {
+  handleError,
+  createAuthenticationError,
+} from '../../utils/error-handler'
 
 export default defineEventHandler(async (event) => {
   try {

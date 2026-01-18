@@ -17,11 +17,11 @@ import { validateId, validateRequired } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const submissionId = getRouterParam(event, 'id')
-  const { reply_message, status } = await readBody(event)
+  const { reply_message: replyMessage, status } = await readBody(event)
 
   try {
     validateId(submissionId, 'id')
-    validateRequired(reply_message, 'reply_message', '回覆訊息')
+    validateRequired(replyMessage, 'reply_message', '回覆訊息')
 
     // 驗證管理員權限
     const admin = await getCurrentAdmin(event)
@@ -57,12 +57,7 @@ export default defineEventHandler(async (event) => {
              updated_at = datetime('now')
          WHERE id = ?`,
       )
-      .bind(
-        reply_message,
-        status || 'replied',
-        admin.id,
-        submissionId,
-      )
+      .bind(replyMessage, status || 'replied', admin.id, submissionId)
       .run()
 
     // 記錄操作日誌

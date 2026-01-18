@@ -1,6 +1,16 @@
 // 統一的 API 回應格式工具
 
 /**
+ * 分頁資訊格式
+ */
+export interface PaginationMeta {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
+
+/**
  * 成功回應格式
  */
 export interface SuccessResponse<T = any> {
@@ -11,16 +21,6 @@ export interface SuccessResponse<T = any> {
     pagination?: PaginationMeta
     [key: string]: any
   }
-}
-
-/**
- * 分頁資訊格式
- */
-export interface PaginationMeta {
-  page: number
-  limit: number
-  total: number
-  totalPages: number
 }
 
 /**

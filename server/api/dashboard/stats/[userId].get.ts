@@ -3,7 +3,10 @@ import { defineEventHandler, getRouterParam } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { getCurrentUser } from '../../../utils/auth'
 import { createSuccessResponse } from '../../../utils/api-response'
-import { handleError, createAuthorizationError } from '../../../utils/error-handler'
+import {
+  handleError,
+  createAuthorizationError,
+} from '../../../utils/error-handler'
 import { validateId } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
@@ -14,7 +17,11 @@ export default defineEventHandler(async (event) => {
 
     // 驗證權限：只能查看自己的統計資料
     const currentUser = await getCurrentUser(event)
-    if (currentUser && currentUser.id !== userId && currentUser.role !== 'admin') {
+    if (
+      currentUser &&
+      currentUser.id !== userId &&
+      currentUser.role !== 'admin'
+    ) {
       throw createAuthorizationError('查看此統計資料')
     }
 

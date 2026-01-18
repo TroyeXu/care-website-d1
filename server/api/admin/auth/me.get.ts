@@ -2,7 +2,10 @@
 import { defineEventHandler } from 'h3'
 import { getCurrentAdmin } from '../../../utils/admin-auth'
 import { createSuccessResponse } from '../../../utils/api-response'
-import { handleError, createAuthenticationError } from '../../../utils/error-handler'
+import {
+  handleError,
+  createAuthenticationError,
+} from '../../../utils/error-handler'
 
 export default defineEventHandler(async (event) => {
   try {

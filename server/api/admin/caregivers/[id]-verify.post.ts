@@ -1,9 +1,5 @@
 // 管理員：審核看護師 API
-import {
-  defineEventHandler,
-  readBody,
-  getRouterParam,
-} from 'h3'
+import { defineEventHandler, readBody, getRouterParam } from 'h3'
 import { nanoid } from 'nanoid'
 import { getD1 } from '../../../utils/d1'
 import {
@@ -19,7 +15,11 @@ import {
   createNotFoundError,
   createValidationError,
 } from '../../../utils/error-handler'
-import { validateId, validateRequired, validateEnum } from '../../../utils/validation'
+import {
+  validateId,
+  validateRequired,
+  validateEnum,
+} from '../../../utils/validation'
 import { NotificationHelpers } from '../../../utils/notification'
 
 export default defineEventHandler(async (event) => {

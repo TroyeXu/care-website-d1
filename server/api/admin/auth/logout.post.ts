@@ -3,7 +3,7 @@ import { defineEventHandler } from 'h3'
 import { clearAdminAuth } from '../../../utils/admin-auth'
 import { createSuccessResponse } from '../../../utils/api-response'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
   // 清除管理員認證 Cookie
   clearAdminAuth(event)
 

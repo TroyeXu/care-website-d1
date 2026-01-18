@@ -11,9 +11,11 @@ import { validatePaginationParams } from '../../utils/validation'
 export default defineEventHandler(async (event) => {
   try {
     const query = getQuery(event)
-    /* eslint-disable camelcase */
-    const { user_id, booking_id, status } = query
-    /* eslint-enable camelcase */
+    const {
+      user_id: userId,
+      booking_id: bookingId,
+      status,
+    } = query as Record<string, string | undefined>
 
     const page = Number(query.page) || 1
     const limit = Number(query.limit) || 20
@@ -24,17 +26,17 @@ export default defineEventHandler(async (event) => {
     const db = getD1(event)
 
     // 建立查詢條件
-    const conditions = []
-    const params = []
+    const conditions: string[] = []
+    const params: (string | undefined)[] = []
 
-    if (user_id) {
+    if (userId) {
       conditions.push('p.user_id = ?')
-      params.push(user_id)
+      params.push(userId)
     }
 
-    if (booking_id) {
+    if (bookingId) {
       conditions.push('p.booking_id = ?')
-      params.push(booking_id)
+      params.push(bookingId)
     }
 
     if (status) {
@@ -47,7 +49,7 @@ export default defineEventHandler(async (event) => {
 
     // 查詢總數
     const countQuery = `
-      SELECT COUNT(*) as total 
+      SELECT COUNT(*) as total
       FROM payments p
       ${whereClause}
     `
@@ -59,7 +61,7 @@ export default defineEventHandler(async (event) => {
 
     // 查詢付款記錄
     const listQuery = `
-      SELECT 
+      SELECT
         p.*,
         u.name as user_name,
         u.email as user_email,
@@ -84,8 +86,7 @@ export default defineEventHandler(async (event) => {
 
     // 計算統計資料
     let stats = null
-    /* eslint-disable camelcase */
-    if (user_id) {
+    if (userId) {
       const statsQuery = `
         SELECT
           COUNT(*) as total_payments,
@@ -97,9 +98,8 @@ export default defineEventHandler(async (event) => {
         FROM payments
         WHERE user_id = ?
       `
-      stats = await db.prepare(statsQuery).bind(user_id).first()
+      stats = await db.prepare(statsQuery).bind(userId).first()
     }
-    /* eslint-enable camelcase */
 
     const total = Number(countResult?.total || 0)
     const pagination = calculatePagination(total, page, limit)

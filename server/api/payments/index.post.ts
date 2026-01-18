@@ -10,44 +10,46 @@ import {
   createValidationError,
   createAuthorizationError,
 } from '../../utils/error-handler'
-import { validateRequired, validateEnum, validateNumberRange } from '../../utils/validation'
+import {
+  validateRequired,
+  validateEnum,
+  validateNumberRange,
+} from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  /* eslint-disable camelcase */
   const {
-    booking_id,
+    booking_id: bookingId,
     amount,
-    payment_method,
-    transaction_id,
+    payment_method: paymentMethod,
+    transaction_id: transactionId,
     status,
     notes,
   } = body
-  /* eslint-enable camelcase */
 
   try {
     // 使用統一的驗證工具
-    validateRequired(booking_id, 'booking_id', '預約 ID')
+    validateRequired(bookingId, 'booking_id', '預約 ID')
     validateRequired(amount, 'amount', '金額')
-    validateRequired(payment_method, 'payment_method', '付款方式')
+    validateRequired(paymentMethod, 'payment_method', '付款方式')
 
     // 驗證金額
     validateNumberRange(amount, 0.01, 1000000, 'amount', '金額')
 
     // 驗證付款方式
     const validMethods = ['bank_transfer', 'cash', 'credit_card', 'other']
-    validateEnum(payment_method, validMethods, 'payment_method')
+    validateEnum(paymentMethod, validMethods, 'payment_method')
 
     const db = getD1(event)
 
     // 檢查預約是否存在
     const booking = await db
       .prepare('SELECT * FROM bookings WHERE id = ?')
-      .bind(booking_id)
+      .bind(bookingId)
       .first()
 
     if (!booking) {
-      throw createNotFoundError('預約', booking_id)
+      throw createNotFoundError('預約', bookingId)
     }
 
     // 驗證權限（只有管理員或預約的用戶可以記錄付款）
@@ -68,11 +70,11 @@ export default defineEventHandler(async (event) => {
       )
       .bind(
         paymentId,
-        booking_id,
+        bookingId,
         booking.user_id,
         amount,
-        payment_method,
-        transaction_id || null,
+        paymentMethod,
+        transactionId || null,
         status || 'completed',
       )
       .run()
@@ -86,7 +88,7 @@ export default defineEventHandler(async (event) => {
              updated_at = datetime('now')
          WHERE id = ?`,
       )
-      .bind(status || 'completed', payment_method, booking_id)
+      .bind(status || 'completed', paymentMethod, bookingId)
       .run()
 
     // 取得新建立的付款記錄

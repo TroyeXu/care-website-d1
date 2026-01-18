@@ -55,15 +55,15 @@ export default defineEventHandler(async (event) => {
     }
 
     // 排除已過期的通知
-    conditions.push(
-      '(expires_at IS NULL OR expires_at > datetime("now"))',
-    )
+    conditions.push('(expires_at IS NULL OR expires_at > datetime("now"))')
 
     const whereClause = conditions.join(' AND ')
 
     // 查詢總數
     const countResult = await db
-      .prepare(`SELECT COUNT(*) as total FROM notifications WHERE ${whereClause}`)
+      .prepare(
+        `SELECT COUNT(*) as total FROM notifications WHERE ${whereClause}`,
+      )
       .bind(...params)
       .first()
 
@@ -98,14 +98,10 @@ export default defineEventHandler(async (event) => {
     // 計算分頁資訊
     const pagination = calculatePagination(total, page, limit)
 
-    return createSuccessResponse(
-      notifications || [],
-      undefined,
-      {
-        pagination,
-        unreadCount,
-      },
-    )
+    return createSuccessResponse(notifications || [], undefined, {
+      pagination,
+      unreadCount,
+    })
   } catch (error) {
     handleError(error, '取得通知列表')
   }

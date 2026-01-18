@@ -77,9 +77,7 @@ export default defineEventHandler(async (event) => {
       LIMIT ? OFFSET ?
     `
 
-    const listStmt = db
-      .prepare(listQuery)
-      .bind(...params, limitNum, offset)
+    const listStmt = db.prepare(listQuery).bind(...params, limitNum, offset)
 
     const results = await listStmt.all()
 

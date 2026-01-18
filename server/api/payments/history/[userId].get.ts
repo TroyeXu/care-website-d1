@@ -2,10 +2,16 @@
 import { defineEventHandler, getRouterParam, getQuery } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { getCurrentUser } from '../../../utils/auth'
-import { createSuccessResponse } from '../../../utils/api-response'
-import { handleError, createAuthorizationError } from '../../../utils/error-handler'
+import {
+  createSuccessResponse,
+  calculatePagination,
+  calculateOffset,
+} from '../../../utils/api-response'
+import {
+  handleError,
+  createAuthorizationError,
+} from '../../../utils/error-handler'
 import { validateId, validatePaginationParams } from '../../../utils/validation'
-import { calculatePagination, calculateOffset } from '../../../utils/api-response'
 
 export default defineEventHandler(async (event) => {
   const userId = getRouterParam(event, 'userId')
@@ -22,7 +28,11 @@ export default defineEventHandler(async (event) => {
 
     // 驗證權限：只能查看自己的付款歷史
     const currentUser = await getCurrentUser(event)
-    if (currentUser && currentUser.id !== userId && currentUser.role !== 'admin') {
+    if (
+      currentUser &&
+      currentUser.id !== userId &&
+      currentUser.role !== 'admin'
+    ) {
       throw createAuthorizationError('查看此付款歷史')
     }
 

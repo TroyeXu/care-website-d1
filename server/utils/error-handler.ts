@@ -93,10 +93,7 @@ export function createNotFoundError(
 /**
  * 建立衝突錯誤
  */
-export function createConflictError(
-  message: string,
-  details?: any,
-): H3Error {
+export function createConflictError(message: string, details?: any): H3Error {
   return createError({
     statusCode: 409,
     statusMessage: message,
@@ -163,10 +160,7 @@ export function handleError(error: any, context?: string): never {
 
   console.error(errorMessage, error)
 
-  throw createInternalError(
-    context ? `${context}失敗` : '操作失敗',
-    error,
-  )
+  throw createInternalError(context ? `${context}失敗` : '操作失敗', error)
 }
 
 /**

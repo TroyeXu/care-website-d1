@@ -60,7 +60,11 @@ export default defineEventHandler(async (event) => {
         break
 
       case 'boolean':
-        if (typeof body.value !== 'boolean' && body.value !== '0' && body.value !== '1') {
+        if (
+          typeof body.value !== 'boolean' &&
+          body.value !== '0' &&
+          body.value !== '1'
+        ) {
           throw createValidationError('設定值必須是布林值', 'value')
         }
         valueToStore = body.value === true || body.value === '1' ? '1' : '0'
@@ -99,16 +103,10 @@ export default defineEventHandler(async (event) => {
       .run()
 
     // 記錄操作日誌
-    await logAdminAction(
-      event,
-      'update_setting',
-      'system_setting',
-      key,
-      {
-        old_value: existing.value,
-        new_value: valueToStore,
-      },
-    )
+    await logAdminAction(event, 'update_setting', 'system_setting', key, {
+      old_value: existing.value,
+      new_value: valueToStore,
+    })
 
     // 取得更新後的設定
     const updated = await db

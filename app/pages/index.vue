@@ -584,7 +584,11 @@ useHead({
 /* ... existing styles ... */
 
 .stats-section {
-  background: linear-gradient(135deg, var(--primary-color, #1976d2) 0%, var(--primary-dark, #1565c0) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color, #1976d2) 0%,
+    var(--primary-dark, #1565c0) 100%
+  );
   color: white;
   position: relative;
   overflow: hidden;

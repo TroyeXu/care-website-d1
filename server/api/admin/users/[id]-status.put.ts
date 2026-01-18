@@ -11,7 +11,11 @@ import {
   createValidationError,
   createAuthorizationError,
 } from '../../../utils/error-handler'
-import { validateId, validateRequired, validateEnum } from '../../../utils/validation'
+import {
+  validateId,
+  validateRequired,
+  validateEnum,
+} from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)

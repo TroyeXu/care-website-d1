@@ -2,7 +2,11 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
-import { createSuccessResponse, calculatePagination, calculateOffset } from '../../../utils/api-response'
+import {
+  createSuccessResponse,
+  calculatePagination,
+  calculateOffset,
+} from '../../../utils/api-response'
 import { handleError } from '../../../utils/error-handler'
 import { validatePaginationParams } from '../../../utils/validation'
 
@@ -83,7 +87,11 @@ export default defineEventHandler(async (event) => {
       created_at: row.created_at,
     }))
 
-    const pagination = calculatePagination(Number(total), Number(page), Number(limit))
+    const pagination = calculatePagination(
+      Number(total),
+      Number(page),
+      Number(limit),
+    )
 
     return createSuccessResponse({
       pending: caregivers,

@@ -4,7 +4,11 @@ import { nanoid } from 'nanoid'
 import { getD1 } from '../utils/d1'
 import { createSuccessResponse } from '../utils/api-response'
 import { handleError } from '../utils/error-handler'
-import { validateRequired, validateEmail, validateStringLength } from '../utils/validation'
+import {
+  validateRequired,
+  validateEmail,
+  validateStringLength,
+} from '../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)

@@ -30,56 +30,62 @@ export default defineEventHandler(async (event) => {
       .all()
 
     // 轉換設定值為適當的型別
-    const formattedSettings = (settings || []).reduce((acc: any, setting: any) => {
-      let value = setting.value
+    const formattedSettings = (settings || []).reduce(
+      (acc: any, setting: any) => {
+        let value = setting.value
 
-      // 根據類型轉換值
-      switch (setting.type) {
-        case 'number':
-          value = Number(value)
-          break
-        case 'boolean':
-          value = value === '1' || value === 'true'
-          break
-        case 'json':
-          try {
-            value = JSON.parse(value)
-          } catch (e) {
-            console.error(`無法解析 JSON 設定 ${setting.key}:`, e)
-          }
-          break
-      }
+        // 根據類型轉換值
+        switch (setting.type) {
+          case 'number':
+            value = Number(value)
+            break
+          case 'boolean':
+            value = value === '1' || value === 'true'
+            break
+          case 'json':
+            try {
+              value = JSON.parse(value)
+            } catch (e) {
+              console.error(`無法解析 JSON 設定 ${setting.key}:`, e)
+            }
+            break
+        }
 
-      acc[setting.key] = value
-      return acc
-    }, {})
+        acc[setting.key] = value
+        return acc
+      },
+      {},
+    )
 
     // 也提供分類分組的格式
-    const groupedSettings = (settings || []).reduce((acc: any, setting: any) => {
-      if (!acc[setting.category]) {
-        acc[setting.category] = {}
-      }
+    const groupedSettings = (settings || []).reduce(
+      (acc: any, setting: any) => {
+        if (!acc[setting.category]) {
+          acc[setting.category] = {}
+        }
 
-      let value = setting.value
-      switch (setting.type) {
-        case 'number':
-          value = Number(value)
-          break
-        case 'boolean':
-          value = value === '1' || value === 'true'
-          break
-        case 'json':
-          try {
-            value = JSON.parse(value)
-          } catch (e) {
-            console.error(`無法解析 JSON 設定 ${setting.key}:`, e)
-          }
-          break
-      }
+        let value = setting.value
+        switch (setting.type) {
+          case 'number':
+            value = Number(value)
+            break
+          case 'boolean':
+            value = value === '1' || value === 'true'
+            break
+          case 'json':
+            try {
+              value = JSON.parse(value)
+            } catch (e) {
+              console.error(`無法解析 JSON 設定 ${setting.key}:`, e)
+            }
+            break
+        }
 
-      acc[setting.category][setting.key] = value
-      return acc
-    }, {})
+        acc[setting.category][setting.key] = value
+        return acc
+      },
+      {},
+    )
 
     return createSuccessResponse({
       settings: formattedSettings,

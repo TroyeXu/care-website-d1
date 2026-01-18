@@ -8,7 +8,11 @@ import {
   createNotFoundError,
   createAuthorizationError,
 } from '../../utils/error-handler'
-import { validateId, validateRequired, validateEnum } from '../../utils/validation'
+import {
+  validateId,
+  validateRequired,
+  validateEnum,
+} from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const bookingId = getRouterParam(event, 'id')
@@ -23,7 +27,13 @@ export default defineEventHandler(async (event) => {
     validateRequired(status, 'status')
 
     // 驗證狀態值
-    const validStatuses = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled']
+    const validStatuses = [
+      'pending',
+      'confirmed',
+      'in_progress',
+      'completed',
+      'cancelled',
+    ]
     validateEnum(status, validStatuses, 'status')
 
     const db = getD1(event)

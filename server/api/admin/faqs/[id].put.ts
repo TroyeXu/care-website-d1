@@ -4,7 +4,11 @@ import { getD1 } from '../../../utils/d1'
 import { requireAdmin, requirePermission } from '../../../middleware/admin'
 import { logAdminAction } from '../../../utils/admin-auth'
 import { createSuccessResponse } from '../../../utils/api-response'
-import { handleError, createNotFoundError, createValidationError } from '../../../utils/error-handler'
+import {
+  handleError,
+  createNotFoundError,
+  createValidationError,
+} from '../../../utils/error-handler'
 import { validateId } from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {

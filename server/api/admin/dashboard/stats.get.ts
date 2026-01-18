@@ -3,7 +3,10 @@ import { defineEventHandler } from 'h3'
 import { getD1 } from '../../../utils/d1'
 import { getCurrentAdmin } from '../../../utils/admin-auth'
 import { createSuccessResponse } from '../../../utils/api-response'
-import { handleError, createAuthenticationError } from '../../../utils/error-handler'
+import {
+  handleError,
+  createAuthenticationError,
+} from '../../../utils/error-handler'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -34,7 +37,9 @@ export default defineEventHandler(async (event) => {
 
     // 獲取活躍看護師數量
     const activeCaregiversResult = await db
-      .prepare("SELECT COUNT(*) as count FROM caregivers WHERE status = 'active'")
+      .prepare(
+        "SELECT COUNT(*) as count FROM caregivers WHERE status = 'active'",
+      )
       .first()
     const activeCaregivers = activeCaregiversResult?.count || 0
 

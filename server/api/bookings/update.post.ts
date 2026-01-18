@@ -1,7 +1,11 @@
 import { defineEventHandler, readBody } from 'h3'
 import { getD1 } from '../../utils/d1'
 import { createSuccessResponse } from '../../utils/api-response'
-import { handleError, createNotFoundError, createValidationError } from '../../utils/error-handler'
+import {
+  handleError,
+  createNotFoundError,
+  createValidationError,
+} from '../../utils/error-handler'
 import { validateId } from '../../utils/validation'
 
 export default defineEventHandler(async (event) => {

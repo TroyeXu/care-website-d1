@@ -47,10 +47,7 @@ export default defineEventHandler(async (event) => {
       .bind(notificationId)
       .run()
 
-    return createSuccessResponse(
-      { id: notificationId },
-      '通知已刪除',
-    )
+    return createSuccessResponse({ id: notificationId }, '通知已刪除')
   } catch (error) {
     handleError(error, '刪除通知')
   }

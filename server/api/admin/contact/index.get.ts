@@ -67,7 +67,11 @@ export default defineEventHandler(async (event) => {
 
     // 取得總數
     const totalQuery = whereClause
-      ? db.prepare(`SELECT COUNT(*) as count FROM contact_submissions ${whereClause}`).bind(...params)
+      ? db
+          .prepare(
+            `SELECT COUNT(*) as count FROM contact_submissions ${whereClause}`,
+          )
+          .bind(...params)
       : db.prepare('SELECT COUNT(*) as count FROM contact_submissions')
 
     const totalResult = await totalQuery.first()

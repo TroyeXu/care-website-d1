@@ -10,10 +10,7 @@ export function validateRequired(
   displayName?: string,
 ): void {
   if (value === undefined || value === null || value === '') {
-    throw createValidationError(
-      `請提供${displayName || fieldName}`,
-      fieldName,
-    )
+    throw createValidationError(`請提供${displayName || fieldName}`, fieldName)
   }
 }
 
@@ -32,7 +29,10 @@ export function validateRequiredFields(
 /**
  * 驗證 Email 格式
  */
-export function validateEmail(email: string, fieldName: string = 'email'): void {
+export function validateEmail(
+  email: string,
+  fieldName: string = 'email',
+): void {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {
     throw createValidationError('Email 格式不正確', fieldName)
@@ -133,10 +133,7 @@ export function validateDateFormat(
 ): void {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/
   if (!dateRegex.test(date)) {
-    throw createValidationError(
-      '日期格式不正確 (請使用 YYYY-MM-DD)',
-      fieldName,
-    )
+    throw createValidationError('日期格式不正確 (請使用 YYYY-MM-DD)', fieldName)
   }
 
   // 驗證日期是否有效
@@ -176,7 +173,10 @@ export function validatePaginationParams(page: number, limit?: number): void {
     throw createValidationError('頁碼必須是大於 0 的整數', 'page')
   }
 
-  if (limit !== undefined && (limit < 1 || limit > 100 || !Number.isInteger(limit))) {
+  if (
+    limit !== undefined &&
+    (limit < 1 || limit > 100 || !Number.isInteger(limit))
+  ) {
     throw createValidationError('每頁筆數必須在 1 到 100 之間的整數', 'limit')
   }
 }

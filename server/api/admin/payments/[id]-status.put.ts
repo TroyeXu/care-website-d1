@@ -13,7 +13,11 @@ import {
   createAuthorizationError,
   createNotFoundError,
 } from '../../../utils/error-handler'
-import { validateId, validateRequired, validateEnum } from '../../../utils/validation'
+import {
+  validateId,
+  validateRequired,
+  validateEnum,
+} from '../../../utils/validation'
 
 export default defineEventHandler(async (event) => {
   const paymentId = getRouterParam(event, 'id')
@@ -73,13 +77,11 @@ export default defineEventHandler(async (event) => {
       .run()
 
     // 記錄操作日誌
-    await logAdminAction(
-      event,
-      'update_payment_status',
-      'payment',
-      paymentId,
-      { old_status: payment.status, new_status: status, notes },
-    )
+    await logAdminAction(event, 'update_payment_status', 'payment', paymentId, {
+      old_status: payment.status,
+      new_status: status,
+      notes,
+    })
 
     // 取得更新後的付款記錄
     const updatedPayment = await db

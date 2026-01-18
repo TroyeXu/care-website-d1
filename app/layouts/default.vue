@@ -18,7 +18,9 @@
         </div>
 
         <!-- 頁面標題 - 絕對定位置中 -->
-        <q-toolbar-title class="header-title text-h6 text-weight-bold text-dark">
+        <q-toolbar-title
+          class="header-title text-h6 text-weight-bold text-dark"
+        >
           {{ currentPageTitle }}
         </q-toolbar-title>
 
@@ -49,7 +51,12 @@
               </q-badge>
             </q-btn>
 
-            <q-btn-dropdown flat dense no-caps class="text-weight-medium text-dark profile-btn">
+            <q-btn-dropdown
+              flat
+              dense
+              no-caps
+              class="text-weight-medium text-dark profile-btn"
+            >
               <template #label>
                 <q-avatar size="32px" class="q-mr-sm shadow-1">
                   <img
@@ -65,8 +72,8 @@
                 <q-item
                   v-close-popup
                   clickable
-                  @click="router.push('/profile')"
                   class="menu-item"
+                  @click="router.push('/profile')"
                 >
                   <q-item-section avatar>
                     <q-icon name="person_outline" />
@@ -77,8 +84,8 @@
                 <q-item
                   v-close-popup
                   clickable
-                  @click="router.push('/bookings')"
                   class="menu-item"
+                  @click="router.push('/bookings')"
                 >
                   <q-item-section avatar>
                     <q-icon name="event_note" />
@@ -88,7 +95,12 @@
 
                 <q-separator class="q-my-xs" />
 
-                <q-item v-close-popup clickable @click="handleLogout" class="menu-item text-negative">
+                <q-item
+                  v-close-popup
+                  clickable
+                  class="menu-item text-negative"
+                  @click="handleLogout"
+                >
                   <q-item-section avatar>
                     <q-icon name="logout" />
                   </q-item-section>
@@ -139,7 +151,9 @@
           <div class="logo-circle q-mx-auto q-mb-md flex flex-center">
             <q-icon name="medical_services" size="32px" color="white" />
           </div>
-          <div class="text-h6 text-white text-weight-bold q-mb-xs">Care Platform</div>
+          <div class="text-h6 text-white text-weight-bold q-mb-xs">
+            Care Platform
+          </div>
           <div class="text-caption text-white opacity-80">專業看護媒合平台</div>
         </div>
 
@@ -161,13 +175,15 @@
                 <q-icon :name="item.icon" />
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-weight-medium">{{ item.label }}</q-item-label>
+                <q-item-label class="text-weight-medium">{{
+                  item.label
+                }}</q-item-label>
                 <q-item-label caption>{{ item.caption }}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
         </q-scroll-area>
-        
+
         <div class="q-pa-md text-center text-caption text-grey-5">
           Version 1.0.0
         </div>
@@ -198,35 +214,39 @@
           name="home"
           icon="home"
           label="首頁"
-          @click="router.push('/')"
           class="footer-tab"
+          @click="router.push('/')"
         />
         <q-tab
           name="caregivers"
           icon="people"
           label="看護師"
-          @click="router.push('/caregivers')"
           class="footer-tab"
+          @click="router.push('/caregivers')"
         />
         <q-tab
           name="calculator"
           icon="calculate"
           label="費用"
-          @click="router.push('/booking/calculator')"
           class="footer-tab"
+          @click="router.push('/booking/calculator')"
         />
         <q-tab
           name="menu"
           icon="menu"
           label="更多"
-          @click="drawer = !drawer"
           class="footer-tab"
+          @click="drawer = !drawer"
         />
       </q-tabs>
     </q-footer>
 
     <!-- 通知對話框 -->
-    <q-dialog v-model="showNotifications" transition-show="scale" transition-hide="scale">
+    <q-dialog
+      v-model="showNotifications"
+      transition-show="scale"
+      transition-hide="scale"
+    >
       <q-card class="card-modern" style="min-width: 320px; max-width: 400px">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6 text-weight-bold">通知中心</div>
@@ -243,7 +263,13 @@
 
         <q-card-section class="q-pt-md">
           <q-list separator>
-            <q-item v-for="i in 3" :key="i" clickable v-ripple class="rounded-borders q-mb-sm notification-item">
+            <q-item
+              v-for="i in 3"
+              :key="i"
+              v-ripple
+              clickable
+              class="rounded-borders q-mb-sm notification-item"
+            >
               <q-item-section avatar>
                 <q-avatar
                   color="blue-1"
@@ -253,20 +279,30 @@
                 />
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-weight-bold">新的預約確認</q-item-label>
+                <q-item-label class="text-weight-bold"
+                  >新的預約確認</q-item-label
+                >
                 <q-item-label caption class="text-grey-7"
                   >您的預約已被確認，請準時到達</q-item-label
                 >
               </q-item-section>
               <q-item-section side top>
-                <q-item-label caption class="text-grey-5">5 分鐘前</q-item-label>
+                <q-item-label caption class="text-grey-5"
+                  >5 分鐘前</q-item-label
+                >
               </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
 
         <q-card-actions align="right" class="q-pa-md bg-grey-1">
-          <q-btn flat color="primary" label="全部已讀" class="text-weight-bold" @click="showNotifications = false" />
+          <q-btn
+            flat
+            color="primary"
+            label="全部已讀"
+            class="text-weight-bold"
+            @click="showNotifications = false"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -504,7 +540,7 @@ onMounted(() => {
 }
 
 .profile-btn:hover {
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* Menu Styles */
@@ -545,7 +581,11 @@ onMounted(() => {
 }
 
 .drawer-header {
-  background: linear-gradient(135deg, var(--primary-color, #1976d2), var(--secondary-color, #26a69a));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color, #1976d2),
+    var(--secondary-color, #26a69a)
+  );
 }
 
 .logo-circle {
