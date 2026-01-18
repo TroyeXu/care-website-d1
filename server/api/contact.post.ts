@@ -9,6 +9,7 @@ import {
   validateEmail,
   validateStringLength,
 } from '../utils/validation'
+import { sendEmail } from '../utils/email'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -46,7 +47,24 @@ export default defineEventHandler(async (event) => {
       )
       .run()
 
-    // TODO: 發送 Email 通知給管理員（如果有 Email 服務）
+    // 發送 Email 通知給管理員
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com'
+    const emailHtml = `
+      <h2>收到新的聯絡表單</h2>
+      <p><strong>姓名:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>電話:</strong> ${phone || '未提供'}</p>
+      <p><strong>主旨:</strong> ${subject || '一般諮詢'}</p>
+      <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 10px;">
+        <p><strong>訊息:</strong></p>
+        <p style="white-space: pre-wrap;">${message}</p>
+      </div>
+      <p>請登入後台查看完整內容。</p>
+    `
+
+    // 非阻塞式發送
+    sendEmail(adminEmail, `[新訊息] ${subject || '一般諮詢'}`, emailHtml, 'system@side-care.com')
+      .catch(err => console.error('Failed to send admin notification:', err))
 
     return createSuccessResponse(
       {

@@ -14,17 +14,51 @@ interface D1Result {
   }
 }
 
+class MockD1Database {
+  prepare(query: string) {
+    console.log(`[MockDB] Prepare: ${query}`)
+    return {
+      bind: (...args: any[]) => {
+        console.log(`[MockDB] Bind:`, args)
+        return {
+          first: async () => {
+             console.log(`[MockDB] First`)
+             return null
+          },
+          all: async () => {
+             console.log(`[MockDB] All`)
+             return { results: [] }
+          },
+          run: async () => {
+             console.log(`[MockDB] Run`)
+             return { success: true, meta: { changes: 1 } }
+          }
+        }
+      }
+    }
+  }
+
+  async batch(statements: any[]) {
+     console.log(`[MockDB] Batch:`, statements.length)
+     return []
+  }
+
+  async exec(query: string) {
+     console.log(`[MockDB] Exec: ${query}`)
+     return { count: 0, duration: 0 }
+  }
+}
+
 // 獲取 D1 資料庫實例
 export function getD1(event: H3Event): D1Database {
   // 在 Cloudflare Workers 環境中，DB 會自動注入到 context
   const db = event.context.cloudflare?.env?.DB
 
   if (!db) {
-    // 開發環境使用 mock 或拋出錯誤
+    // 開發環境使用 mock
     if (process.dev) {
-      throw new Error(
-        'D1 database not configured for development. Please use wrangler dev.',
-      )
+      console.warn('⚠️ D1 database not found, using Mock DB')
+      return new MockD1Database() as unknown as D1Database
     }
     throw new Error('D1 database not available')
   }

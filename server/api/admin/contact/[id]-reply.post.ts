@@ -14,6 +14,7 @@ import {
   createNotFoundError,
 } from '../../../utils/error-handler'
 import { validateId, validateRequired } from '../../../utils/validation'
+import { sendEmail } from '../../../utils/email'
 
 export default defineEventHandler(async (event) => {
   const submissionId = getRouterParam(event, 'id')
@@ -37,10 +38,15 @@ export default defineEventHandler(async (event) => {
     const db = getD1(event)
 
     // 檢查提交是否存在
-    const submission = await db
+    const submission = (await db
       .prepare('SELECT * FROM contact_submissions WHERE id = ?')
       .bind(submissionId)
-      .first()
+      .first()) as {
+      id: string
+      name: string
+      email: string
+      subject: string
+    } | null
 
     if (!submission) {
       throw createNotFoundError('聯絡表單', submissionId)
@@ -69,7 +75,22 @@ export default defineEventHandler(async (event) => {
       { status: status || 'replied' },
     )
 
-    // TODO: 發送 Email 通知給提交者（如果有 Email 服務）
+
+    // 發送 Email 通知給提交者
+    const emailHtml = `
+      <h2>您的聯絡表單已收到回覆</h2>
+      <p>親愛的 ${submission.name} 您好，</p>
+      <p>感謝您的來信，針對您的問題「${submission.subject}」，我們的回覆如下：</p>
+      <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <p style="white-space: pre-wrap;">${replyMessage}</p>
+      </div>
+      <p>如果您有任何其他問題，歡迎隨時與我們聯繫。</p>
+      <hr>
+      <p style="font-size: 12px; color: #666;">此郵件為系統自動發送，請勿直接回覆。</p>
+    `
+
+    sendEmail(submission.email, `[回覆] ${submission.subject}`, emailHtml)
+      .catch(err => console.error('Failed to send reply notification:', err))
 
     // 取得更新後的資料
     const updatedSubmission = await db

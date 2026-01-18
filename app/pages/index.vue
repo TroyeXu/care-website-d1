@@ -8,7 +8,7 @@
       >
         <div class="absolute-full flex flex-center">
           <div
-            class="hero-content text-white text-center q-pa-md animate-fade-in"
+            class="hero-content text-center q-pa-md animate-fade-in"
           >
             <div class="hero-badge q-mb-md">
               <q-chip
@@ -20,7 +20,7 @@
                 政府認證平台
               </q-chip>
             </div>
-            <h1 class="text-h1 text-weight-bold q-mb-md hero-title">
+            <h1 class="text-h1 text-weight-bold q-mb-md hero-title text-black">
               專業看護媒合平台
             </h1>
             <p class="text-h5 q-mb-xl hero-subtitle">
@@ -562,8 +562,8 @@ useHead({
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(25, 118, 210, 0.4) 100%
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.6) 100%
   );
   pointer-events: none;
 }
@@ -575,8 +575,8 @@ useHead({
   padding: 4rem 3rem;
   border-radius: 2rem;
   max-width: 900px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   position: relative;
   z-index: 2;
 }
