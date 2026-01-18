@@ -488,10 +488,7 @@
                             clickable
                             :color="isNightShift ? 'blue-grey' : 'grey-3'"
                             :text-color="isNightShift ? 'white' : 'black'"
-                            @click="
-                              isNightShift = !isNightShift
-                              toggleAdditionalService('HR09')
-                            "
+                            @click="isNightShift = !isNightShift; toggleAdditionalService('HR09')"
                           >
                             <q-icon name="nights_stay" class="q-mr-xs" />
                             夜間時段 +20元
@@ -502,10 +499,7 @@
                             clickable
                             :color="isUrgent ? 'amber' : 'grey-3'"
                             :text-color="isUrgent ? 'white' : 'black'"
-                            @click="
-                              isUrgent = !isUrgent
-                              toggleAdditionalService('HR10')
-                            "
+                            @click="isUrgent = !isUrgent; toggleAdditionalService('HR10')"
                           >
                             <q-icon name="priority_high" class="q-mr-xs" />
                             加價急徵 +30元
@@ -516,10 +510,7 @@
                             clickable
                             :color="isDoubleUrgent ? 'orange' : 'grey-3'"
                             :text-color="isDoubleUrgent ? 'white' : 'black'"
-                            @click="
-                              isDoubleUrgent = !isDoubleUrgent
-                              toggleAdditionalService('HR11')
-                            "
+                            @click="isDoubleUrgent = !isDoubleUrgent; toggleAdditionalService('HR11')"
                           >
                             <q-icon name="flash_on" class="q-mr-xs" />
                             二次加價 +30元
